@@ -10,7 +10,10 @@
 import psutil
 import subprocess
 
-class Resource():
+BUF=1025
+
+
+class SystemResource():
     "获取系统资源，客户端主类"
     def __init__(self):
         "类创建与初始化工作"
