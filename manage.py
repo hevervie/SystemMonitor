@@ -6,7 +6,6 @@
 
 import configparser
 
-
 class ReadConf():
     "读取配置文件"
 
