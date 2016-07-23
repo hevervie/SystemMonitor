@@ -4,9 +4,15 @@
     Created by zhoupan on 7/23/16.
 '''
 
-from socket import *
 import threading
+from socket import *
 
+from Client.manage import ReadConf
+
+PORT = ReadConf().port
+HOST = ReadConf().host
+BUFSIZE = ReadConf().buf_size
+ADDR=(HOST,PORT)
 
 class Clinet(threading.Thread):
     def __init__(self,threadID,threadName):
