@@ -7,33 +7,49 @@
 '''
     依赖包：psutil,subprocess,pip
 '''
-
 import psutil
 import subprocess
 
-#获取CPU信息
-cpu_info=psutil.cpu_times(percpu=True)
+class Resource():
+    "获取系统资源，客户端主类"
+    def __init__(self):
+        "类创建与初始化工作"
+        pass
 
-#获取内存信息
-virt_mem_info=psutil.virtual_memory() #物理内存
-swap_mem_info=psutil.swap_memory() #虚拟内存
+    def get_cpu_info(self):
+        "获取cpu的信息"
 
-#获取磁盘信息
-disk_io_count=psutil.disk_io_counters() #获取磁盘IO信息
-disk_usage=psutil.disk_usage('/') #获取根使用率
+        # 获取CPU信息
+        cpu_info = psutil.cpu_times(percpu=True)
+        return cpu_info
 
-#获取网络信息
-net_io_avrg=psutil.net_io_counters()
-net_io_count=psutil.net_io_counters(pernic=True)
+    def get_men_info(self):
+        "获取内存信息"
 
-#获取登陆用户信息
-user_info=psutil.users()
-#获取主机端口
-r_code,result=subprocess.getstatusoutput("netstat -tln | awk \'BEGIN{ORS=\",\"}; NR>2{sub(\".*:\", \"\", $4); print $4}\'")
-result=result.split(',')
+        # 获取内存信息
+        virt_mem_info = psutil.virtual_memory()  # 物理内存
+        swap_mem_info = psutil.swap_memory()  # 虚拟内存
+        return virt_mem_info,swap_mem_info
+    def get_disk_info(self):
+        "获取磁盘占用率和"
 
-for i,t in enumerate(result):
-    if(t==''):
-        result.pop(i)
+        # 获取网络信息
+        net_io_avrg = psutil.net_io_counters()
+        net_io_count = psutil.net_io_counters(pernic=True)
+        return net_io_avrg,net_io_count
+    def get_user_info(self):
+        "获取用户信息"
 
+        # 获取登陆用户信息
+        user_info = psutil.users()
+    def get_port_info(self):
+        "获取主机端口"
 
+        # 获取主机端口
+        rtu_code, result = subprocess.getstatusoutput(
+            "netstat -tln | awk \'BEGIN{ORS=\",\"}; NR>2{sub(\".*:\", \"\", $4); print $4}\'")
+        host_port = result.split(',')
+        for i, t in enumerate(host_port):
+            if (t == ''):
+                host_port.pop(i)
+        return host_port
