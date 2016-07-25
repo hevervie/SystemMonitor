@@ -17,10 +17,11 @@ class ReadConf():
         "读取配置文件"
 
         cf = configparser.ConfigParser()
-        cf.read("client.conf")
+        cf.read("server.conf")
         self.port = cf.getint("server", "port")
         self.host = cf.get("server", "host")
         self.buf_size = cf.getint("buffer","size")
+        self.max_len = cf.getint("server","size")
 
 if __name__ == '__main__':
     rc = ReadConf()

@@ -7,7 +7,7 @@
 import threading
 from socket import *
 
-from Client.manage import ReadConf
+from Clinet.manage import ReadConf
 
 PORT = ReadConf().port
 HOST = ReadConf().host

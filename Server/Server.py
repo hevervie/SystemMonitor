@@ -8,6 +8,13 @@ import threading
 from socket import *
 from time import ctime
 
+from Server.manage import ReadConf
+
+HOST = ReadConf().host
+PORT = ReadConf().port
+BUFSIZE = ReadConf().buf_size
+MAXLINE = ReadConf().max_len
+ADDR = (HOST,PORT)
 
 class MainThread(threading.Thread):
     def __init__(self, threadID, name, counter):
@@ -31,7 +38,7 @@ class MainThread(threading.Thread):
         #绑定地址和端口
         TcpMain.bind(ADDR)
         #监听连接
-        TcpMain.listen(MAXCLINET)
+        TcpMain.listen(MAXLINE)
         while (True):
             print('服务器监听中......')
             tcpClinet, addr = TcpMain.accept()
