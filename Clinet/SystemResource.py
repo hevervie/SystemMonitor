@@ -24,7 +24,8 @@ class SystemResource():
         "获取cpu的信息"
 
         # 获取CPU信息
-        cpu_info = psutil.cpu_times(percpu=True)
+        # cpu_info = psutil.cpu_times(percpu=True)
+        cpu_info = psutil.cpu_times()
         return cpu_info
 
     def get_men_info(self):
@@ -35,13 +36,13 @@ class SystemResource():
         swap_mem_info = psutil.swap_memory()  # 虚拟内存
         return virt_mem_info, swap_mem_info
 
-    def get_disk_info(self,mount_point="/"):
+    def get_disk_info(self, mount_point="/"):
         "获取磁盘占用率和"
 
         # 获取磁盘信息
         disk_io_count = psutil.disk_io_counters()
         disk_usage = psutil.disk_usage(mount_point)
-        return disk_io_count,disk_usage
+        return disk_io_count, disk_usage
 
     def get_net_info(self):
         "获取网络信息"
@@ -71,21 +72,168 @@ class SystemResource():
         return host_port
 
 
-if __name__ == '__main__':
-    sr = SystemResource()
-    cpu_info = sr.get_cpu_info()
-    virt_mem,swap_mem = sr.get_men_info()
-    disk_io,disk_usage = sr.get_disk_info()
-    net_argv,net_count = sr.get_net_info()
-    user_info = sr.get_user_info()
-    host_port = sr.get_port_info()
+class Info_Collect():
+    "信息集和器，将采集的信息集中在一起，方便客户端发送"
 
-    print("cpu_info:",cpu_info)
-    print("virt_mem:",virt_mem)
-    print("swap_mem:",swap_mem)
-    print("disk_io:",disk_io)
-    print("disk_usage:",disk_usage)
-    print("net_argv:",net_argv)
-    print("net_count:",net_count)
-    print("user_info:",user_info)
-    print("host_port:",host_port)
+    def __init__(self):
+        "类初始化"
+
+        sr = SystemResource()
+        cpu_info = sr.get_cpu_info()
+        virt_mem, swap_mem = sr.get_men_info()
+        disk_io, disk_usage = sr.get_disk_info()
+        net_argv, net_count = sr.get_net_info()
+        user_info = sr.get_user_info()
+        host_port = sr.get_port_info()
+        data = []
+        data.append(cpu_info)
+        data.append(virt_mem)
+        data.append(swap_mem)
+        data.append(disk_io)
+        data.append(disk_usage)
+        data.append(net_argv)
+        data.append(net_count)
+        data.append(user_info)
+        data.append(host_port)
+
+        self.data = tuple(data)
+
+
+class Info_Transform():
+    "信息转换，用于将收集的信息转换成可以通过网络发送的内容"
+
+    def __init__(self):
+        "类初始化"
+        pass
+
+    def cpu(self):
+        scputimes = []
+        sr = SystemResource()
+        scputimes.append(sr.get_cpu_info().user)
+        scputimes.append(sr.get_cpu_info().nice)
+        scputimes.append(sr.get_cpu_info().system)
+        scputimes.append(sr.get_cpu_info().idle)
+        scputimes.append(sr.get_cpu_info().iowait)
+        scputimes.append(sr.get_cpu_info().irq)
+        scputimes.append(sr.get_cpu_info().softirq)
+        scputimes.append(sr.get_cpu_info().steal)
+        scputimes.append(sr.get_cpu_info().guest)
+        scputimes.append(sr.get_cpu_info().guest_nice)
+        return scputimes
+
+    def mem(self):
+        svmem = []
+        sswap = []
+        sr = SystemResource()
+        virt, swap = sr.get_men_info()
+        svmem.append(virt.total)
+        svmem.append(virt.available)
+        svmem.append(virt.percent)
+        svmem.append(virt.used)
+        svmem.append(virt.free)
+        svmem.append(virt.active)
+        svmem.append(virt.inactive)
+        svmem.append(virt.buffers)
+        svmem.append(virt.cached)
+        svmem.append(virt.shared)
+
+        sswap.append(swap.total)
+        sswap.append(swap.used)
+        sswap.append(swap.free)
+        sswap.append(swap.percent)
+        sswap.append(swap.sin)
+        sswap.append(swap.sout)
+        return svmem, sswap
+
+    def disk(self):
+        sr = SystemResource()
+        disk_io, disk_usage = sr.get_disk_info()
+
+        sdiskio = []
+        sdiskusage = []
+
+        sdiskio.append(disk_io.read_count)
+        sdiskio.append(disk_io.write_count)
+        sdiskio.append(disk_io.read_bytes)
+        sdiskio.append(disk_io.write_bytes)
+        sdiskio.append(disk_io.read_time)
+        sdiskio.append(disk_io.write_time)
+        sdiskio.append(disk_io.read_merged_count)
+        sdiskio.append(disk_io.write_merged_count)
+        sdiskio.append(disk_io.busy_time)
+
+        sdiskusage.append(disk_usage.total)
+        sdiskusage.append(disk_usage.used)
+        sdiskusage.append(disk_usage.free)
+        sdiskusage.append(disk_usage.percent)
+        return sdiskio, sdiskusage
+
+    def net(self):
+        sr = SystemResource()
+        net_argv, net_count = sr.get_net_info()
+        print(net_argv)
+
+        print(net_count.keys())
+        print(net_count.items())
+        print(type(net_count))
+        print(net_count['lo'])
+        snetio = {}
+        total = []
+
+        total.append(net_argv.bytes_sent)
+        total.append(net_argv.bytes_recv)
+        total.append(net_argv.packets_sent)
+        total.append(net_argv.packets_recv)
+        total.append(net_argv.errin)
+        total.append(net_argv.errout)
+        total.append(net_argv.dropin)
+        total.append(net_argv.dropout)
+        snetio['total'] = total
+        print(snetio)
+        for k,v in net_count.items():
+            tmp=[]
+            tmp.append(v.bytes_sent)
+            tmp.append(v.bytes_recv)
+            tmp.append(v.packets_sent)
+            tmp.append(v.packets_recv)
+            tmp.append(v.errin)
+            tmp.append(v.errout)
+            tmp.append(v.dropin)
+            tmp.append(v.dropout)
+            
+
+        return snetio
+
+    def user_info(self):
+        sr = SystemResource()
+        sr.get_user_info()
+        print(sr.get_user_info())
+
+    def port_info(self):
+        pass
+
+
+if __name__ == '__main__':
+    Info_Transform().user_info()
+    Info_Transform().net()
+    Info_Transform().disk()
+    Info_Transform().mem()
+    Info_Transform().cpu()
+    # sr = SystemResource()
+    # cpu_info = sr.get_cpu_info()
+    # virt_mem, swap_mem = sr.get_men_info()
+    # disk_io, disk_usage = sr.get_disk_info()
+    # net_argv, net_count = sr.get_net_info()
+    # user_info = sr.get_user_info()
+    # host_port = sr.get_port_info()
+    #
+    # print(type(cpu_info))
+    # print("cpu_info:", cpu_info)
+    # print("virt_mem:", virt_mem)
+    # print("swap_mem:", swap_mem)
+    # print("disk_io:", disk_io)
+    # print("disk_usage:", disk_usage)
+    # print("net_argv:", net_argv)
+    # print("net_count:", net_count)
+    # print("user_info:", user_info)
+    # print("host_port:", host_port)
