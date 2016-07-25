@@ -11,9 +11,8 @@ class ReadConf():
 
     def __init__(self):
         "类初始化"
-    #def read_conf(self):
-        "读取配置文件"
 
+        "读取配置文件"
         cf = configparser.ConfigParser()
         cf.read("server.conf")
         self.port = cf.getint("server", "port")
