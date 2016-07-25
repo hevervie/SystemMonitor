@@ -7,7 +7,7 @@
 import threading
 from socket import *
 
-from Clinet.Cli_manage import ReadConf
+from Cli_manage import ReadConf
 
 PORT = ReadConf().port
 HOST = ReadConf().host
