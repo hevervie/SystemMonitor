@@ -30,7 +30,7 @@ class SystemResource():
 
     def get_men_info(self):
         "获取内存信息"
-
+        
         # 获取内存信息
         virt_mem_info = psutil.virtual_memory()  # 物理内存
         swap_mem_info = psutil.swap_memory()  # 虚拟内存
