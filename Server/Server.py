@@ -8,12 +8,15 @@ import threading
 from socket import *
 from time import ctime
 
-from Server.manage import ReadConf
+#from   manage import *
+import manage
 
-HOST = ReadConf().host
-PORT = ReadConf().port
-BUFSIZE = ReadConf().buf_size
-MAXLINE = ReadConf().max_len
+manage.ReadConf().read_conf()
+
+HOST = manage.ReadConf().host
+PORT = manage.ReadConf().port
+BUFSIZE = manage.ReadConf().buf_size
+MAXLINE = manage.ReadConf().max_len
 ADDR = (HOST,PORT)
 
 class MainThread(threading.Thread):
