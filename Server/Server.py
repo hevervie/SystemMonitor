@@ -8,7 +8,6 @@ import threading
 from socket import *
 from time import ctime
 
-
 from Ser_manage import ReadConf
 
 HOST = ReadConf().host
@@ -60,12 +59,27 @@ class ResponseThread(threading.Thread):
         '''
             线程要做的事
         '''
-        print('New process....')
-        while True:
-            data = self.tcpClinet.recv(BUFSIZE).decode()
-            if not data:
-                break
-            self.tcpClinet.send(('[ %s ] %s ' % (ctime(),data)).encode())
+        print('[ %s ]New process....' % ctime())
+        scputimes=()
+        #接受客户端述数据
+        data = self.tcpClinet.recv(BUFSIZE).decode()
+        #将客户端数据转换成列表
+        data=tuple(eval(data))
+        # print(data[0])
+        # print(data[1])
+        print(type(data))
+        print(data)
+
+        # print("cpu_info:", data[0])
+        # print("virt_mem:", data[1])
+        # print("swap_mem:", data[2])
+        # print("disk_io:", data[3])
+        # print("disk_usage:", data[4])
+        # print("net_argv:", data[5])
+        # print("net_count:", data[6])
+        # print("user_info:", data[7])
+        # print("host_port:", data[8])
+
         #退出后关闭连接
         self.tcpClinet.close()
 if __name__ == '__main__':
