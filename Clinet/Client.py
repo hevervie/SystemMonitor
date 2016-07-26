@@ -30,16 +30,16 @@ class Clinet(threading.Thread):
             tcpClinet = socket(AF_INET, SOCK_STREAM)
             tcpClinet.connect(ADDR)
             lc = Info_Collect()
+
+            # 将列表数据转转换成字符串
             data = lc.data.__str__()
-            print(type(data))
-            #将列表数据转转换成字符串
-            print(data)
+
             #将数据发送出去
             tcpClinet.send(data.encode())
             #关闭连接
             tcpClinet.close()
             #休眠十秒钟
-            sleep(10)
+            sleep(1)
 
 
 if __name__ == '__main__':

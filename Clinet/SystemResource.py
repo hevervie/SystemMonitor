@@ -30,7 +30,7 @@ class SystemResource():
 
     def get_men_info(self):
         "获取内存信息"
-        
+
         # 获取内存信息
         virt_mem_info = psutil.virtual_memory()  # 物理内存
         swap_mem_info = psutil.swap_memory()  # 虚拟内存
@@ -85,9 +85,7 @@ class Info_Collect():
         data.append(lt.net())
         data.append(lt.user())
         data.append(lt.port())
-
-        print(data)
-
+        self.data=tuple(data)
 
 class Info_Transform():
     "信息转换，用于将收集的信息转换成可以通过网络发送的内容"
