@@ -215,7 +215,7 @@ class Info_Transform():
 
 
 if __name__ == '__main__':
-    Info_Collect()
+    #Info_Collect()
     # Info_Transform().port()
     # Info_Transform().user()
     # Info_Transform().net()
@@ -240,3 +240,4 @@ if __name__ == '__main__':
     # print("net_count:", net_count)
     # print("user_info:", user_info)
     # print("host_port:", host_port)
+    print(psutil.cpu_percent(interval=0.1))
