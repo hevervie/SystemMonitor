@@ -11,5 +11,5 @@ class AnalysixData():
         self.addr = addr
         self.data = data
     def Print(self):
-        print(self.addr,"    CPU:",self.data[0][7],"Mem:",self.data[1][0][2],"Swap:",self.data[1][1][3])
+        print(self.addr,"    CPU:",self.data[0][6],"Mem:",self.data[1][0][2],"Swap:",self.data[1][1][3])
 

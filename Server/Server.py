@@ -9,6 +9,8 @@ from socket import *
 from time import ctime
 
 from Ser_manage import ReadConf
+from HandleInfo import AnalysixData
+
 
 HOST = ReadConf().host
 PORT = ReadConf().port
@@ -40,11 +42,11 @@ class MainThread(threading.Thread):
         #监听连接
         TcpMain.listen(MAXLINE)
         while (True):
-            print('服务器监听中......')
+           # print('服务器监听中......')
             tcpClinet, addr = TcpMain.accept()
             thread1=ResponseThread(addr,tcpClinet)
             thread1.start()
-            print('Connect from', addr)
+          #  print('Connect from', addr)
 
 
 class ResponseThread(threading.Thread):
@@ -65,10 +67,8 @@ class ResponseThread(threading.Thread):
         data = self.tcpClinet.recv(BUFSIZE).decode()
         #将客户端数据转换成列表
         data=tuple(eval(data))
-
-
-        print(type(data))
-        print(data)
+        ad = AnalysixData(self.addr,data)
+        ad.Print()
         #退出后关闭连接
         self.tcpClinet.close()
 if __name__ == '__main__':
