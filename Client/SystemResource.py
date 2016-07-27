@@ -241,3 +241,4 @@ if __name__ == '__main__':
     # print("user_info:", user_info)
     # print("host_port:", host_port)
     print(psutil.cpu_percent(interval=0.1))
+    print(psutil.cpu_times())
