@@ -18,6 +18,7 @@ ADDR = (HOST, PORT)
 
 
 class Clinet(threading.Thread):
+    "客户端，主要将信息发送给服务器"
     def __init__(self, threadID, threadName):
         threading.Thread.__init__(self)
         threading.threadID = threadID
