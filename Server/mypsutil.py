@@ -1,8 +1,10 @@
 #!/usr/bin/env python
-#-*- coding: UTF-8 -*-
+# -*- coding: UTF-8 -*-
 '''
     Created by zhoupan on 7/28/16.
 '''
+
+
 class scputimes():
     "cpu信息类，保存cpu相关信息"
 
@@ -86,7 +88,7 @@ class sdiskio():
 class snetio():
     "网络IO"
 
-    def __init__(self, data, name):
+    def __init__(self, name, data):
         "类初始化"
         self.name = name
         self.data = data
