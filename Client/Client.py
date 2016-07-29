@@ -8,8 +8,8 @@ import threading
 from socket import *
 from time import ctime,sleep
 
-from Cli_manage import *
-from SystemResource import *
+from Configure import *
+
 
 PORT = ReadConf().port
 HOST = ReadConf().host
@@ -17,7 +17,7 @@ BUFSIZE = ReadConf().buf_size
 ADDR = (HOST, PORT)
 
 
-class Clinet(threading.Thread):
+class Client(threading.Thread):
     "客户端，主要将信息发送给服务器"
     def __init__(self, threadID, threadName):
         threading.Thread.__init__(self)
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     # print(len(str(data)))
     # print(lc.data)
 
-    thread = Clinet(1, 'first')
+    thread = Client(1, 'first')
     thread.start()
 
 

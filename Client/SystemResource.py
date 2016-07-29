@@ -24,7 +24,6 @@ class SystemResource():
         "获取cpu的信息"
 
         # 获取CPU信息
-        # cpu_info = psutil.cpu_times(percpu=True)
         cpu_info = psutil.cpu_times()
         return cpu_info
 
@@ -72,29 +71,14 @@ class SystemResource():
         return host_port
 
 
-class Info_Collect():
+class Information():
     "信息集和器，将采集的信息集中在一起，方便客户端发送"
-
-    def __init__(self):
-        "类初始化"
-        data = []
-        lt = Info_Transform()
-        data.append(lt.cpu())
-        data.append(lt.mem())
-        data.append(lt.disk())
-        data.append(lt.net())
-        data.append(lt.user())
-        data.append(lt.port())
-        self.data=tuple(data)
-
-class Info_Transform():
-    "信息转换，用于将收集的信息转换成可以通过网络发送的内容"
 
     def __init__(self):
         "类初始化"
         pass
 
-    def cpu(self):
+    def trans_cpu_info(self):
         scputimes = []
         sr = SystemResource()
         scputimes.append(sr.get_cpu_info().user)
@@ -111,7 +95,7 @@ class Info_Transform():
         #将列表转换成原组
         return tuple(scputimes)
 
-    def mem(self):
+    def trans_mem_info(self):
         svmem = []
         sswap = []
         sr = SystemResource()
@@ -137,7 +121,7 @@ class Info_Transform():
         #将列表转换成原组
         return tuple(svmem), tuple(sswap)
 
-    def disk(self):
+    def trans_disk_info(self):
         sr = SystemResource()
         disk_io, disk_usage = sr.get_disk_info()
 
@@ -162,7 +146,7 @@ class Info_Transform():
         #将列表转换成原组
         return tuple(sdiskio), tuple(sdiskusage)
 
-    def net(self):
+    def trans_net_info(self):
         sr = SystemResource()
         net_argv, net_count = sr.get_net_info()
         snetio = {}
@@ -176,7 +160,7 @@ class Info_Transform():
         total.append(net_argv.errout)
         total.append(net_argv.dropin)
         total.append(net_argv.dropout)
-        snetio['total'] = total
+        snetio['total'] = tuple(total)
         for k, v in net_count.items():
             tmp=[]
             tmp.append(v.bytes_sent)
@@ -194,7 +178,7 @@ class Info_Transform():
         #字典不可转为原组，忽略
         return snetio
 
-    def user(self):
+    def trans_user_info(self):
         sr = SystemResource()
         user_info = sr.get_user_info()
         suser = []
@@ -208,37 +192,23 @@ class Info_Transform():
             suser.append(tuple(tmp))
         return tuple(suser)
 
-    def port(self):
+    def trans_port_info(self):
         sr = SystemResource()
         port = sr.get_port_info()
         return tuple(port)
 
+    def trans_all_info(self):
+        data = []
+        info = Information()
+        data.append(info.trans_cpu_info())
+        data.append(info.trans_mem_info())
+        data.append(info.trans_disk_info())
+        data.append(info.trans_net_info())
+        data.append(info.trans_user_info())
+        data.append(info.trans_port_info())
+        return tuple(data)
+
 
 if __name__ == '__main__':
-    #Info_Collect()
-    # Info_Transform().port()
-    # Info_Transform().user()
-    # Info_Transform().net()
-    # Info_Transform().disk()
-    # Info_Transform().mem()
-    # Info_Transform().cpu()
-    # sr = SystemResource()
-    # cpu_info = sr.get_cpu_info()
-    # virt_mem, swap_mem = sr.get_men_info()
-    # disk_io, disk_usage = sr.get_disk_info()
-    # net_argv, net_count = sr.get_net_info()
-    # user_info = sr.get_user_info()
-    # host_port = sr.get_port_info()
-    #
-    # print(type(cpu_info))
-    # print("cpu_info:", cpu_info)
-    # print("virt_mem:", virt_mem)
-    # print("swap_mem:", swap_mem)
-    # print("disk_io:", disk_io)
-    # print("disk_usage:", disk_usage)
-    # print("net_argv:", net_argv)
-    # print("net_count:", net_count)
-    # print("user_info:", user_info)
-    # print("host_port:", host_port)
-    print(psutil.cpu_percent(interval=0.1))
-    print(psutil.cpu_times())
+    info = Information()
+    print(info.trans_all_info())

@@ -19,14 +19,13 @@ MAXLINE = ReadConf().max_len
 ADDR = (HOST,PORT)
 
 class MainThread(threading.Thread):
-    def __init__(self, threadID, name, counter):
+    def __init__(self, threadID, name):
         '''
             做一些类初始化工作
         '''
         threading.Thread.__init__(self)
         threading.threadID = threadID
         threading.name = name
-        self.counter = counter
 
     def run(self):
         '''
@@ -72,5 +71,5 @@ class ResponseThread(threading.Thread):
         #退出后关闭连接
         self.tcpClinet.close()
 if __name__ == '__main__':
-    thread=MainThread(1,'main',1)
+    thread=MainThread(1,'main')
     thread.start()
