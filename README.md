@@ -13,7 +13,7 @@
 ## 网络拓扑结构图(1.0)：
 ![网络拓扑图](https://github.com/dreamer2018/SystemMonitor/blob/master/Document/%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91%E6%9E%B6%E6%9E%84-1.0%E7%89%88.png)
 
-## 逻辑架构图：
+## 逻辑架构图(1.0)：
 ![逻辑架构图](https://github.com/dreamer2018/SystemMonitor/blob/master/Document/%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84%E5%9B%BE-1.0.png)
 
 
