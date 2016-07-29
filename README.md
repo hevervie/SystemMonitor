@@ -17,4 +17,7 @@
 ## 逻辑架构图(1.0)：
 ![逻辑架构图](https://github.com/dreamer2018/SystemMonitor/blob/master/Document/%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84%E5%9B%BE-1.0.png)
 
+## 模块与类关系图(1.0)
+![模块与类关系](https://github.com/dreamer2018/SystemMonitor/blob/master/Document/%E6%A8%A1%E5%9D%97%E4%B8%8E%E7%B1%BB%E5%85%B3%E7%B3%BB-1.0.png)
+
 
