@@ -3,3 +3,5 @@
 """
     Created by zhoupan on 7/30/16.
 """
+s=(1,2)
+print(sum(s))
