@@ -25,19 +25,19 @@ class Client(threading.Thread):
         threading.thread_id = thread_id
         threading.name = thread_name
         # 端口
-        self.PORT = Configure.read_config('client.conf', 'server', 'port')
+        self.port = int(Configure().read_config('client.conf', 'server', 'port'))
         # IP
-        self.HOST = Configure.read_config('client.conf', 'server', 'host')
+        self.host = Configure().read_config('client.conf', 'server', 'host')
         # buffer
-        # self.BUF = Configure.read_config('client.conf', 'buffer', 'size')
+        # self.buf_size = Configure.read_config('client.conf', 'buffer', 'size')
         # sleep time
-        self.SLEEP = Configure.read_config('client.conf', 'client', 'sleep')
+        self.sleep_time = int(Configure().read_config('client.conf', 'client', 'sleep'))
 
     def run(self):
         """线程运行的方法，功能是每隔十秒钟，向服务器发送一下主机信息"""
         while True:
             tcpclinet = socket(AF_INET, SOCK_STREAM)
-            tcpclinet.connect((self.HOST, self.PORT))
+            tcpclinet.connect((self.host, self.port))
             info = Information()
             # 将列表数据转转换成字符串
             data = info.trans_all_info()
@@ -47,7 +47,7 @@ class Client(threading.Thread):
             # 关闭连接
             tcpclinet.close()
             # 休眠十秒钟
-            sleep(self.SLEEP)
+            sleep(self.sleep_time)
 
 
 if __name__ == '__main__':

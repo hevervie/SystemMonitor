@@ -44,5 +44,5 @@ class Configure():
 
 if __name__ == '__main__':
     c = Configure()
-    print(c.write_config('1.conf', {'client': {}, 'server': {'port': 8000, 'host': '192.168.30.2'}}))
-    print(c.read_config('1.conf', 'server', 'port'))
+  #  print(c.write_config('1.conf', {'client': {}, 'server': {'port': 8000, 'host': '192.168.30.2'}}))
+    print(c.read_config('client.conf', 'server', 'port'))
