@@ -8,15 +8,7 @@ import threading
 from socket import *
 from time import ctime
 
-from Ser_manage import ReadConf
-from HandleInfo import AnalysixData
 
-
-HOST = ReadConf().host
-PORT = ReadConf().port
-BUFSIZE = ReadConf().buf_size
-MAXLINE = ReadConf().max_len
-ADDR = (HOST,PORT)
 
 class MainThread(threading.Thread):
     def __init__(self, threadID, name):
