@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-'''
+"""
     Created by zhoupan on 7/28/16.
-'''
-
+"""
 
 class scputimes():
     "cpu信息类，保存cpu相关信息"
@@ -32,7 +31,7 @@ class svmem():
         self.data = data
         self.tatal = data[0]
         self.available = data[1]
-        self.percent = data[2]
+        self.precent = data[2]
         self.used = data[3]
         self.free = data[4]
         self.active = data[5]
@@ -51,7 +50,7 @@ class sswap():
         self.total = data[0]
         self.used = data[1]
         self.free = data[2]
-        self.percent = data[3]
+        self.precent = data[3]
         self.sin = data[4]
         self.sout = data[5]
 
@@ -65,7 +64,7 @@ class sdiskusage():
         self.total = data[0]
         self.used = data[1]
         self.free = data[2]
-        self.percent = data[3]
+        self.precent = data[3]
 
 
 class sdiskio():
@@ -87,7 +86,6 @@ class sdiskio():
 
 class snetio():
     "网络IO"
-
     def __init__(self, name, data):
         "类初始化"
         self.name = name
