@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-'''
+"""
     Created by zhoupan on 7/22/16.
-'''
+"""
 
 '''
     依赖包：psutil,subprocess,pip
@@ -14,21 +14,21 @@ BUF = 1025
 
 
 class SystemResource():
-    "获取系统资源，客户端主类"
+    """获取系统资源，客户端主类"""
 
     def __init__(self):
-        "类创建与初始化工作"
+        """类创建与初始化工作"""
         pass
 
     def get_cpu_info(self):
-        "获取cpu的信息"
+        """获取cpu的信息"""
 
         # 获取CPU信息
         cpu_info = psutil.cpu_times()
         return cpu_info
 
     def get_men_info(self):
-        "获取内存信息"
+        """获取内存信息"""
 
         # 获取内存信息
         virt_mem_info = psutil.virtual_memory()  # 物理内存
@@ -36,7 +36,7 @@ class SystemResource():
         return virt_mem_info, swap_mem_info
 
     def get_disk_info(self, mount_point="/"):
-        "获取磁盘占用率和"
+        """获取磁盘占用率和"""
 
         # 获取磁盘信息
         disk_io_count = psutil.disk_io_counters()
@@ -44,7 +44,7 @@ class SystemResource():
         return disk_io_count, disk_usage
 
     def get_net_info(self):
-        "获取网络信息"
+        """获取网络信息"""
 
         # 获取网络信息
         net_io_avrg = psutil.net_io_counters()
@@ -52,14 +52,14 @@ class SystemResource():
         return net_io_avrg, net_io_count
 
     def get_user_info(self):
-        "获取用户信息"
+        """获取用户信息"""
 
         # 获取登陆用户信息
         user_info = psutil.users()
         return user_info
 
     def get_port_info(self):
-        "获取主机端口"
+        """获取主机端口"""
 
         # 获取主机端口
         rtu_code, result = subprocess.getstatusoutput(
@@ -72,10 +72,10 @@ class SystemResource():
 
 
 class Information():
-    "信息集和器，将采集的信息集中在一起，方便客户端发送"
+    """信息集和器，将采集的信息集中在一起，方便客户端发送"""
 
     def __init__(self):
-        "类初始化"
+        """类初始化"""
         pass
 
     def trans_cpu_info(self):
@@ -92,10 +92,11 @@ class Information():
         scputimes.append(sr.get_cpu_info().guest)
         scputimes.append(sr.get_cpu_info().guest_nice)
 
-        #将列表转换成原组
+        # 将列表转换成原组
         return tuple(scputimes)
 
     def trans_mem_info(self):
+
         svmem = []
         sswap = []
         sr = SystemResource()
@@ -118,7 +119,7 @@ class Information():
         sswap.append(swap.sin)
         sswap.append(swap.sout)
 
-        #将列表转换成原组
+        # 将列表转换成原组
         return tuple(svmem), tuple(sswap)
 
     def trans_disk_info(self):
@@ -143,7 +144,7 @@ class Information():
         sdiskusage.append(disk_usage.free)
         sdiskusage.append(disk_usage.percent)
 
-        #将列表转换成原组
+        # 将列表转换成原组
         return tuple(sdiskio), tuple(sdiskusage)
 
     def trans_net_info(self):
@@ -162,7 +163,7 @@ class Information():
         total.append(net_argv.dropout)
         snetio['total'] = tuple(total)
         for k, v in net_count.items():
-            tmp=[]
+            tmp = []
             tmp.append(v.bytes_sent)
             tmp.append(v.bytes_recv)
             tmp.append(v.packets_sent)
@@ -172,10 +173,10 @@ class Information():
             tmp.append(v.dropin)
             tmp.append(v.dropout)
 
-            #列表转原组
+            # 列表转原组
             snetio[k] = tuple(tmp)
 
-        #字典不可转为原组，忽略
+        # 字典不可转为原组，忽略
         return snetio
 
     def trans_user_info(self):
