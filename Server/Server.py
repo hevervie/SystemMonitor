@@ -58,6 +58,7 @@ class ResponseThread(threading.Thread):
         # 将客户端数据转换成列表
         data = tuple(eval(data))
         print(self.addr, ":", data)
+
         # 退出后关闭连接
         self.tcp_clinet.close()
 
@@ -65,3 +66,4 @@ class ResponseThread(threading.Thread):
 if __name__ == '__main__':
     thread = MainThread(1, 'main')
     thread.start()
+

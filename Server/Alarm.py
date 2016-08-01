@@ -10,7 +10,7 @@ from email.mime.text import MIMEText
 from Configure import Configure
 
 
-class Alam():
+class Alarm():
     def __init__(self, mail):
         self.server = "smtp.mailgun.org"  # 设置服务器
         self.user = "ru@raydina.me"  # 用户名
