@@ -34,7 +34,7 @@ class Information():
 
     def get_diskusage_info(self):
         """获取磁盘使用情况"""
-        diskusage_info = sdiskusage(self, self.data[2][1])
+        diskusage_info = sdiskusage(self.data[2][1])
         return diskusage_info
 
     def get_netio_info(self):
@@ -60,14 +60,17 @@ class Information():
             user_info.append(user)
         # 登陆用户信息
         user_info = tuple(user_info)
+
         return user_info
 
     def get_port_info(self):
         """获取端口信息"""
-        port_info = port(self.data)
+        port_info = port(self.data[5])
+
         return port_info
 
     def get_total_info(self):
+        """获取所有的信息"""
         total = []
         total.append(self.get_cpu_info())
         total.append(self.get_svmem_info())
@@ -118,9 +121,25 @@ class InfoCompute():
 
     def get_diskio_precent(self):
         """获取磁盘IO使用率"""
-        # new_info = Information(self.new_data)
-        # return new_info.get_diskio_info()
-        pass
+        new_info = Information(self.new_data)
+        old_info = Information(self.new_data)
+
+        new_read = new_info.get_diskio_info().read_count
+        old_read = old_info.get_diskio_info().read_count
+
+        new_write = new_info.get_diskio_info().write_count
+        old_write = old_info.get_diskio_info().write_count
+
+        new_read_merg = new_info.get_diskio_info().read_merged_count
+        old_read_merg = old_info.get_diskio_info().read_merged_count
+
+        new_write_merg = new_info.get_diskio_info().write_merged_count
+        old_write_merg = old_info.get_diskio_info().write_merged_count
+        if new_write == old_write or new_read == old_read:
+            return 0.0
+        diskio_percent = (new_read_merg - old_read_merg) / (new_read - old_read) + (new_write_merg - old_write_merg) / (
+            new_write - old_write)
+        return round(diskio_percent, 2)
 
     def get_diskusage_precent(self):
         """获取磁盘使用率"""
@@ -138,28 +157,52 @@ class InfoCompute():
         new_recv = new_info.get_netio_info_by_name('total').bytes_recv
         old_recv = old_info.get_netio_info_by_name('total').bytes_recv
 
-        netio_precent = ((new_sent - old_sent)+(new_recv - old_recv)*8)/100/1024/1024*10
-        return netio_precent
+        netio_precent = ((new_sent - old_sent) + (new_recv - old_recv) * 8) / 100 / 1024 / 1024 * 10
+        return round(netio_precent, 2)
 
     def get_user(self):
         """获取用户列表"""
-        pass
+        new_info = Information(new_data)
+        old_info = Information(old_data)
+
+        new_user = []
+        old_user = []
+        user = []
+        for i in new_info.get_user_info():
+            if i.name not in new_user:
+                new_user.append(i.name)
+        for i in old_info.get_user_info():
+            if i.name not in old_user:
+                old_user.append(i.name)
+        for i in new_user:
+            if i not in old_user:
+                user.append(i)
+        return user
 
     def get_port(self):
         """获取端口列表"""
-        pass
+        new_info = Information(new_data)
+        old_info = Information(old_data)
+        new_port = new_info.get_port_info().data
+        old_port = old_info.get_port_info().data
+        port = []
+        for i in new_port:
+            if i not in old_port:
+                port.append(i)
+        return port
 
 
 if __name__ == '__main__':
-    old_data = "((6033.63, 5.02, 2211.69, 67127.99, 322.92, 0.0, 6.26, 0.0, 0.0, 0.0), ((7584006144, 3362381824, 55.7, 6291951616, 1292054528, 4186767360, 1552982016, 77074432, 1993252864, 548057088), (8589930496, 0, 8589930496, 0.0, 0, 0)), ((81923, 64877, 2200024576, 1875161088, 879576, 4848593, 1872, 46100, 536594), (42123788288, 9685172224, 32438616064, 23.0)), {'lo': (8395, 8395, 59, 59, 0, 0, 0, 0), 'virbr0-nic': (0, 0, 0, 0, 0, 0, 0, 0), 'virbr0': (0, 0, 0, 0, 0, 0, 0, 0), 'total': (17482152, 341779628, 165087, 314725, 0, 0, 0, 0), 'vmnet8': (0, 0, 30, 0, 0, 0, 0, 0), 'vmnet1': (0, 0, 28, 0, 0, 0, 0, 0), 'enp3s0': (17473757, 341771233, 164970, 314666, 0, 0, 0, 0)}, (('zhoupan', ':0', 'localhost', 1469834240.0), ('zhoupan', 'pts/0', 'localhost', 1469834624.0)), ('63342', '80', '8307', '53', '22', '631', '443', '6942', '8000', '902', '3306', '8307', '22', '631', '443', '902'))"
-    new_data = "((6139.85, 5.02, 2255.41, 67759.8, 324.04, 0.0, 6.42, 0.0, 0.0, 0.0), ((7584006144, 3344142336, 55.9, 6311165952, 1272840192, 4200693760, 1553850368, 77258752, 1994043392, 548839424), (8589930496, 0, 8589930496, 0.0, 0, 0)), ((81923, 65331, 2200024576, 1887920128, 879576, 4854058, 1872, 46318, 538100), (42123788288, 9685217280, 32438571008, 23.0)), {'vmnet1': (0, 0, 28, 0, 0, 0, 0, 0), 'vmnet8': (0, 0, 30, 0, 0, 0, 0, 0), 'virbr0-nic': (0, 0, 0, 0, 0, 0, 0, 0), 'virbr0': (0, 0, 0, 0, 0, 0, 0, 0), 'total': (17589325, 345702310, 166575, 318002, 0, 0, 0, 0), 'lo': (16259, 16259, 107, 107, 0, 0, 0, 0), 'enp3s0': (17573066, 345686051, 166410, 317895, 0, 0, 0, 0)}, (('zhoupan', ':0', 'localhost', 1469834240.0), ('zhoupan', 'pts/0', 'localhost', 1469834624.0)), ('63342', '80', '8307', '53', '22', '631', '443', '6942', '8000', '902', '3306', '8307', '22', '631', '443', '902'))"
+    old_data = "((6033.63, 5.02, 2211.69, 67127.99, 322.92, 0.0, 6.26, 0.0, 0.0, 0.0), ((7584006144, 3362381824, 55.7, 6291951616, 1292054528, 4186767360, 1552982016, 77074432, 1993252864, 548057088), (8589930496, 0, 8589930496, 0.0, 0, 0)), ((81923, 64877, 2200024576, 1875161088, 879576, 4848593, 1872, 46100, 536594), (42123788288, 9685172224, 32438616064, 23.0)), {'lo': (8395, 8395, 59, 59, 0, 0, 0, 0), 'virbr0-nic': (0, 0, 0, 0, 0, 0, 0, 0), 'virbr0': (0, 0, 0, 0, 0, 0, 0, 0), 'total': (17482152, 341779628, 165087, 314725, 0, 0, 0, 0), 'vmnet8': (0, 0, 30, 0, 0, 0, 0, 0), 'vmnet1': (0, 0, 28, 0, 0, 0, 0, 0), 'enp3s0': (17473757, 341771233, 164970, 314666, 0, 0, 0, 0)}, (('zhoupan', ':0', 'localhost', 1469834240.0), ('zhoupan', 'pts/0', 'localhost', 1469834624.0)), ('63342', '80', '8307' '902', '3306', '8307', '22', '631', '443', '902'))"
+    new_data = "((6139.85, 5.02, 2255.41, 67759.8, 324.04, 0.0, 6.42, 0.0, 0.0, 0.0), ((7584006144, 3344142336, 55.9, 6311165952, 1272840192, 4200693760, 1553850368, 77258752, 1994043392, 548839424), (8589930496, 0, 8589930496, 0.0, 0, 0)), ((81923, 65331, 2200024576, 1887920128, 879576, 4854058, 1872, 46318, 538100), (42123788288, 9685217280, 32438571008, 23.0)), {'vmnet1': (0, 0, 28, 0, 0, 0, 0, 0), 'vmnet8': (0, 0, 30, 0, 0, 0, 0, 0), 'virbr0-nic': (0, 0, 0, 0, 0, 0, 0, 0), 'virbr0': (0, 0, 0, 0, 0, 0, 0, 0), 'total': (17589325, 345702310, 166575, 318002, 0, 0, 0, 0), 'lo': (16259, 16259, 107, 107, 0, 0, 0, 0), 'enp3s0': (17573066, 345686051, 166410, 317895, 0, 0, 0, 0)}, (('zhoupan', ':0', 'localhost', 1469834240.0), ('root', 'pts/0', 'localhost', 1469834624.0)), ('63342', '80', '8307', '53', '22', '631', '443', '6942', '8000', '902', '3306', '8307', '22', '631', '443', '902'))"
     new_data = tuple(eval(new_data))
     old_data = tuple(eval(old_data))
     info = InfoCompute(new_data, old_data)
+    print(info.get_user())
+    print(info.get_port())
+    print(info.get_diskio_precent())
+    print(info.get_diskusage_precent())
     print(info.get_cpu_precent())
     print(info.get_svmem_precent())
     print(info.get_swap_precent())
     print(info.get_netio_precent())
-
-    # ins = Information(new_data)
-    # print(ins.get_netio_info_by_name('total').data)
