@@ -163,32 +163,33 @@ class InfoCompute():
     def get_user(self):
         """获取用户列表"""
         new_info = Information(new_data)
-        old_info = Information(old_data)
+        # old_info = Information(old_data)
 
-        new_user = []
-        old_user = []
+        # new_user = []
+        # old_user = []
+
         user = []
         for i in new_info.get_user_info():
-            if i.name not in new_user:
-                new_user.append(i.name)
-        for i in old_info.get_user_info():
-            if i.name not in old_user:
-                old_user.append(i.name)
-        for i in new_user:
-            if i not in old_user:
-                user.append(i)
+            if i not in user:
+                user.append(i.name)
+        # for i in old_info.get_user_info():
+        #     if i.name not in old_user:
+        #         old_user.append(i.name)
+        # for i in new_user:
+        #     if i not in old_user:
+        #         user.append(i)
         return user
 
     def get_port(self):
         """获取端口列表"""
         new_info = Information(new_data)
-        old_info = Information(old_data)
-        new_port = new_info.get_port_info().data
-        old_port = old_info.get_port_info().data
-        port = []
-        for i in new_port:
-            if i not in old_port:
-                port.append(i)
+        # old_info = Information(old_data)
+        port = new_info.get_port_info().data
+        # old_port = old_info.get_port_info().data
+        # port = []
+        # for i in new_port:
+        #     if i not in old_port:
+        #         port.append(i)
         return port
 
 
