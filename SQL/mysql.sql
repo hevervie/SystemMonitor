@@ -167,9 +167,9 @@ CREATE TABLE receive (
   swap_id      INT,
   diskio_id    INT,
   diskusage_id INT,
-  netio_id    INT,
-  user_id     INT,
-  port_id      INT
+  netio_type    INT,
+  user_type     INT,
+  port_type      INT
 );
 
 ALTER TABLE receive ADD CONSTRAINT client_fk FOREIGN KEY (client_id) REFERENCES client(id);
@@ -178,7 +178,8 @@ ALTER TABLE receive ADD CONSTRAINT svmem_fk FOREIGN KEY (svmem_id) REFERENCES sv
 ALTER TABLE receive ADD CONSTRAINT swap_fk FOREIGN KEY (swap_id) REFERENCES sswap(id);
 ALTER TABLE receive ADD CONSTRAINT diskio_fk FOREIGN KEY (diskio_id) REFERENCES sdiskio(id);
 ALTER TABLE receive ADD CONSTRAINT diskusage_fk FOREIGN KEY (diskusage_id) REFERENCES sdiskusage(id);
-ALTER TABLE receive ADD CONSTRAINT netio_fk FOREIGN KEY (netio_id) REFERENCES snetio(id);
+
+# ALTER TABLE receive ADD CONSTRAINT netio_fk FOREIGN KEY (netio_id) REFERENCES snetio(id);
 # ALTER TABLE receive ADD CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES suser(type);
 # ALTER TABLE receive ADD CONSTRAINT port_fk FOREIGN KEY (port_id) REFERENCES sport(type);
 
