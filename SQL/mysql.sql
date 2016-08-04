@@ -78,7 +78,7 @@ CREATE TABLE sswap (
 
 CREATE TABLE sdiskio (
   id                 INT PRIMARY KEY AUTO_INCREMENT,
-  device             VARCHAR(20),
+  device             VARCHAR(20),                       #预留
   read_count         LONG,
   write_count        LONG,
   read_bytes         LONG,
@@ -110,6 +110,7 @@ CREATE TABLE sdiskusage (
 CREATE TABLE snetio (
   id           INT AUTO_INCREMENT PRIMARY KEY,
   device       VARCHAR(20),
+  type         INT,
   bytes_sent   LONG,
   bytes_recv   LONG,
   packets_sent LONG,
@@ -149,7 +150,7 @@ CREATE TABLE sport (
 
 CREATE TABLE client (
   id   INT PRIMARY KEY AUTO_INCREMENT,
-  port CHAR(15)
+  host CHAR(15) UNICODE
 );
 
 
