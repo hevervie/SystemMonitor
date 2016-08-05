@@ -189,7 +189,7 @@ ALTER TABLE receive ADD CONSTRAINT diskusage_fk FOREIGN KEY (diskusage_id) REFER
 
 CREATE TABLE alarm (
   id        INT PRIMARY KEY AUTO_INCREMENT,
-  recv_id INT,
+  recv_id   INT,
   client_id INT,
   cpu       DOUBLE,
   svmem     DOUBLE,
@@ -199,14 +199,15 @@ CREATE TABLE alarm (
   snetio    DOUBLE,
   suser     VARCHAR(100),
   port      VARCHAR(100),
-  level     INT
+  level     INT,
+  message   VARCHAR(200)
 );
 
 ALTER TABLE alarm ADD CONSTRAINT alarm_client_fk FOREIGN KEY (client_id) REFERENCES client(id);
 ALTER TABLE alarm ADD CONSTRAINT alarm_recv_id FOREIGN KEY (recv_id) REFERENCES receive(id);
 
 /*=====================================================*/
-/*     table: strategy            告警策略              */
+/*     table: strategy            告警策略             */
 /*=====================================================*/
 
 CREATE TABLE strategy (
