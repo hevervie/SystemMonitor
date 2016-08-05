@@ -177,8 +177,8 @@ class Persistent():
                 pass
             else:
                 recv = result[0][0]
-                sql = "INSERT INTO alarm(recv_id,client_id,cpu,svmem,swap,diskio,diskusage,snetio,suser,port,level) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)" % (
-                    recv, index, data[0], data[1], data[2], data[3], data[4], data[5], data[6])
+                sql = "INSERT INTO alarm(recv_id,client_id,cpu,svmem,swap,diskio,diskusage,snetio,suser,port,level,message) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)" % (
+                    recv, index, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[6])
                 cur.execute(sql)
                 # 将运行结果提交
                 conn.commit()
