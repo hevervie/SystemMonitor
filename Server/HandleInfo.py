@@ -116,12 +116,12 @@ class InfoCompute():
     def get_svmem_precent(self):
         """获取内存使用率"""
         new_info = Information(self.new_data)
-        return round(new_info.get_svmem_info().precent,2)
+        return round(new_info.get_svmem_info().precent, 2)
 
     def get_swap_precent(self):
         """获取交换分区使用率"""
         new_info = Information(self.new_data)
-        return round(new_info.get_swap_info().precent,2)
+        return round(new_info.get_swap_info().precent, 2)
 
     def get_diskio_precent(self):
         """获取磁盘IO使用率"""
@@ -155,8 +155,7 @@ class InfoCompute():
     def get_diskusage_precent(self):
         """获取磁盘使用率"""
         new_info = Information(self.new_data)
-        return round(new_info.get_diskusage_info().precent,2)
-
+        return round(new_info.get_diskusage_info().precent, 2)
 
     def get_netio_precent(self):
         """获取网络IO使用率"""
@@ -181,49 +180,45 @@ class InfoCompute():
     def get_user(self):
         """获取用户列表"""
         new_info = Information(self.new_data)
-        # old_info = Information(old_data)
-
-        # new_user = []
-        # old_user = []
 
         user = []
         for i in new_info.get_user_info():
             if i not in user:
                 user.append(i.name)
-        # for i in old_info.get_user_info():
-        #     if i.name not in old_user:
-        #         old_user.append(i.name)
-        # for i in new_user:
-        #     if i not in old_user:
-        #         user.append(i)
-        return user
+        return tuple(user)
 
     def get_port(self):
         """获取端口列表"""
         new_info = Information(self.new_data)
-        # old_info = Information(old_data)
         port = new_info.get_port_info().data
-        # old_port = old_info.get_port_info().data
-        # port = []
-        # for i in new_port:
-        #     if i not in old_port:
-        #         port.append(i)
         return port
+
+    def get_all_precent(self):
+        """获取以上所有信息"""
+        data = []
+        data.append(self.get_cpu_precent())
+        data.append(self.get_svmem_precent())
+        data.append(self.get_swap_precent())
+        data.append(self.get_diskio_precent())
+        data.append(self.get_diskusage_precent())
+        data.append(self.get_netio_precent())
+        data.append(self.get_user())
+        data.append(self.get_port())
+        return tuple(data)
 
 
 if __name__ == '__main__':
     old_data = "((0,0,0, 0, 0, 0.0, 0, 0.0, 0.0, 0.0), ((0,0, 0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0.0, 0, 0)), ((0, 0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0)), {'total': (0, 0, 0, 0, 0, 0, 0, 0)}, (), ())"
-    # old_data = "((6033.63, 5.02, 2211.69, 67127.99, 322.92, 0.0, 6.26, 0.0, 0.0, 0.0), ((7584006144, 3362381824, 55.7, 6291951616, 1292054528, 4186767360, 1552982016, 77074432, 1993252864, 548057088), (8589930496, 0, 8589930496, 0.0, 0, 0)), ((81923, 64877, 2200024576, 1875161088, 879576, 4848593, 1872, 46100, 536594), (42123788288, 9685172224, 32438616064, 23.0)), {'lo': (8395, 8395, 59, 59, 0, 0, 0, 0), 'virbr0-nic': (0, 0, 0, 0, 0, 0, 0, 0), 'virbr0': (0, 0, 0, 0, 0, 0, 0, 0), 'total': (17482152, 341779628, 165087, 314725, 0, 0, 0, 0), 'vmnet8': (0, 0, 30, 0, 0, 0, 0, 0), 'vmnet1': (0, 0, 28, 0, 0, 0, 0, 0), 'enp3s0': (17473757, 341771233, 164970, 314666, 0, 0, 0, 0)}, (('zhoupan', ':0', 'localhost', 1469834240.0), ('zhoupan', 'pts/0', 'localhost', 1469834624.0)), ('63342', '80', '8307' '902', '3306', '8307', '22', '631', '443', '902'))"
-    # new_data = "((6139.85, 5.02,2255.41, 67759.8, 324.04, 0.0, 6.42, 0.0, 0.0, 0.0), ((7584006144, 3344142336, 55.9, 6311165952, 1272840192, 4200693760, 1553850368, 77258752, 1994043392, 548839424), (8589930496, 0, 8589930496, 0.0, 0, 0)), ((81923, 65331, 2200024576, 1887920128, 879576, 4854058, 1872, 46318, 538100), (42123788288, 9685217280, 32438571008, 23.0)), {'vmnet1': (0, 0, 28, 0, 0, 0, 0, 0), 'vmnet8': (0, 0, 30, 0, 0, 0, 0, 0), 'virbr0-nic': (0, 0, 0, 0, 0, 0, 0, 0), 'virbr0': (0, 0, 0, 0, 0, 0, 0, 0), 'total': (17589325, 345702310, 166575, 318002, 0, 0, 0, 0), 'lo': (16259, 16259, 107, 107, 0, 0, 0, 0), 'enp3s0': (17573066, 345686051, 166410, 317895, 0, 0, 0, 0)}, (('zhoupan', ':0', 'localhost', 1469834240.0), ('root', 'pts/0', 'localhost', 1469834624.0)), ('63342', '80', '8307', '53', '22', '631', '443', '6942', '8000', '902', '3306', '8307', '22', '631', '443', '902'))"
     new_data = "((1411.38, 5.03, 390.69, 17315.31, 202.76, 0.0, 2.68, 0.0, 0.0, 0.0), ((7584006144, 4612874240, 39.2, 4650770432, 2933235712, 3034529792, 1125998592, 65818624, 1613819904, 193273856), (8589930496, 0, 8589930496, 0.0, 0, 0)), ((93833, 16742, 2335180288, 534790144, 914777, 3631888, 1828, 12125, 417176), (42123788288, 10189336576, 31934451712, 24.2)), {'virbr0-nic': (0, 0, 0, 0, 0, 0, 0, 0), 'enp3s0': (5958339, 141404525, 66248, 120225, 0, 0, 0, 0), 'total': (6702872, 142149058, 70802, 124721, 0, 0, 0, 0), 'vmnet1': (0, 0, 29, 0, 0, 0, 0, 0), 'lo': (744533, 744533, 4496, 4496, 0, 0, 0, 0), 'virbr0': (0, 0, 0, 0, 0, 0, 0, 0), 'vmnet8': (0, 0, 29, 0, 0, 0, 0, 0)}, (('zhoupan', ':0', 'localhost', 1470268416.0),), ('63342', '80', '8307', '53', '22', '631', '443', '6942', '8000', '902', '3306', '8307', '22', '631', '443', '902'))"
     new_data = tuple(eval(new_data))
     old_data = tuple(eval(old_data))
-    info = InfoCompute(new_data, old_data)
+    info = InfoCompute(new_data, new_data)
     print(info.get_user())
     print(info.get_port())
-    print(type(info.get_diskio_precent()))
+    print(info.get_diskio_precent())
     print(info.get_diskusage_precent())
     print(info.get_cpu_precent())
-    print(type(info.get_svmem_precent()))
+    print(info.get_svmem_precent())
     print(info.get_swap_precent())
     print(info.get_netio_precent())
+    print(info.get_all_precent())
