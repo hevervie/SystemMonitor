@@ -12,6 +12,7 @@ from time import ctime
 
 from Configure import Configure
 from HandleInfo import InfoCompute
+from Alarm import Strategies,Alarm
 
 
 class MainThread(threading.Thread):
@@ -33,24 +34,31 @@ class MainThread(threading.Thread):
     def response(self, addr, tcp_client, buf_size):
         """新线程要做的事"""
 
-        print('[ %s ]New process....' % ctime())
+        # print('[ %s ]New process....' % ctime())
         # 接受客户端述数据
         data = tcp_client.recv(buf_size).decode()
         # 将客户端数据转换成列表
         data = tuple(eval(data))
 
         info = InfoCompute(data, self.old_data_dict[addr])
-
-        print("CPU：%f %%" % info.get_cpu_precent())
-        print("memory：%f %%" % info.get_svmem_precent())
-        print("swap： %f %%" % info.get_swap_precent())
-        print("diskio：%f %%" % info.get_diskio_precent())
-        print("diskusage：%f %%" % info.get_diskusage_precent())
-        print("netio：%f %%" % info.get_netio_precent())
-        print("user：%s" % info.get_user().__str__())
-        print("port：%s" % info.get_port().__str__())
+        #
+        # print("CPU：%f %%" % info.get_cpu_precent())
+        # print("memory：%f %%" % info.get_svmem_precent())
+        # print("swap： %f %%" % info.get_swap_precent())
+        # print("diskio：%f %%" % info.get_diskio_precent())
+        # print("diskusage：%f %%" % info.get_diskusage_precent())
+        # print("netio：%f %%" % info.get_netio_precent())
+        # print("user：%s" % info.get_user().__str__())
+        # print("port：%s" % info.get_port().__str__())
+        str = Strategies()
+        total,message = str.check_all_data(info.get_all_precent())
+        alarm = Alarm()
+        alarm.send_mail(total,message)
+        # print("total:",total)
+        # print("message:",message)
 
         self.old_data_dict[addr] = data
+
 
         # 退出后关闭连接
         tcp_client.close()
