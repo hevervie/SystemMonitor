@@ -65,10 +65,15 @@ class SystemResource():
         rtu_code, result = subprocess.getstatusoutput(
             "netstat -tln | awk \'BEGIN{ORS=\",\"}; NR>2{sub(\".*:\", \"\", $4); print $4}\'")
         host_port = result.split(',')
+        port = []
         for i, t in enumerate(host_port):
             if (t == ''):
                 host_port.pop(i)
-        return host_port
+            elif int(t) not in port:
+                port.append(int(t))
+            else:
+                pass
+        return port
 
 
 class Information():
