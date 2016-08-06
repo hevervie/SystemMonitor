@@ -139,8 +139,6 @@ class Persistent():
             cur.execute(sql)
             conn.commit()
         index.append(type)
-        print(index)
-
         # # receive
         sql = "INSERT INTO receive(client_id,cpu_id,svmem_id,swap_id,diskio_id,diskusage_id,netio_type,user_type,port_type) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)" % (
             index[0], index[1], index[2], index[3], index[4], index[5], index[6], index[7], index[8])
@@ -177,8 +175,8 @@ class Persistent():
                 pass
             else:
                 recv = result[0][0]
-                sql = "INSERT INTO alarm(recv_id,client_id,cpu,svmem,swap,diskio,diskusage,snetio,suser,port,level,message) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)" % (
-                    recv, index, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[6])
+                sql = "INSERT INTO alarm(recv_id,client_id,cpu,svmem,swap,diskio,diskusage,snetio,level,message) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\'%s\')" % (
+                    recv, index, data[0], data[1], data[2], data[3], data[4],data[5],data[8], data[9],)
                 cur.execute(sql)
                 # 将运行结果提交
                 conn.commit()
