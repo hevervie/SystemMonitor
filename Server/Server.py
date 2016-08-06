@@ -8,11 +8,11 @@
 import _thread
 import threading
 from socket import *
-from time import ctime
 
+from Alarm import Strategies, Alarm
 from Configure import Configure
 from HandleInfo import InfoCompute
-from Alarm import Strategies,Alarm
+from Persistent import Persistent
 
 
 class MainThread(threading.Thread):
@@ -34,32 +34,34 @@ class MainThread(threading.Thread):
     def response(self, addr, tcp_client, buf_size):
         """新线程要做的事"""
 
-        # print('[ %s ]New process....' % ctime())
         # 接受客户端述数据
         data = tcp_client.recv(buf_size).decode()
         # 将客户端数据转换成列表
         data = tuple(eval(data))
 
+        # 对数据进行计算
         info = InfoCompute(data, self.old_data_dict[addr])
-        #
-        # print("CPU：%f %%" % info.get_cpu_precent())
-        # print("memory：%f %%" % info.get_svmem_precent())
-        # print("swap： %f %%" % info.get_swap_precent())
-        # print("diskio：%f %%" % info.get_diskio_precent())
-        # print("diskusage：%f %%" % info.get_diskusage_precent())
-        # print("netio：%f %%" % info.get_netio_precent())
-        # print("user：%s" % info.get_user().__str__())
-        # print("port：%s" % info.get_port().__str__())
+        # 对策略进行check
         str = Strategies()
-        total,message = str.check_all_data(info.get_all_precent())
+        # 获取所有结果
+        data_precent = info.get_all_precent()
+        # 获取check的结果
+        total, message = str.check_all_data(data_precent)
+        # 告警
         alarm = Alarm()
-        alarm.send_mail(total,message)
-        # print("total:",total)
-        # print("message:",message)
+        # 发送邮件
+        alarm.send_mail(total, message)
+
+        data_precent = list(data_precent)
+        data_precent.append(total)
+        data_precent.append(message)
+        per = Persistent()
+        # 保存所有源数据
+        per.save_all_data(data, addr)
+        # 保存警告后的数据
+        per.save_alarm_data(data_precent, addr)
 
         self.old_data_dict[addr] = data
-
-
         # 退出后关闭连接
         tcp_client.close()
 
@@ -78,45 +80,10 @@ class MainThread(threading.Thread):
         while True:
             # print('服务器监听中......')
             tcp_clinet, addr = tcp_main.accept()
-            thread1 = threading.Thread()
-
-            # thread1 = ResponseThread(addr, tcp_clinet, self.old_data)
-            # thread1.start()
-
-            print('Connect from', addr)
-
             if addr[0] not in self.old_data_dict.keys():
                 self.old_data_dict[addr[0]] = self.init_data
 
             _thread.start_new_thread(self.response, (addr[0], tcp_clinet, self.buf_size))
-
-
-# class ResponseThread(threading.Thread):
-#     def __init__(self, addr, tcp_clinet, old_data):
-#         """作类初始化工作"""
-#         threading.Thread.__init__(self)
-#         self.addr = addr
-#         self.tcp_clinet = tcp_clinet
-#         cf = Configure()
-#         self.buf_size = int(cf.read_config('server.conf', 'buffer', 'size'))
-#         self.old_data = old_data
-#
-#     def run(self):
-#         """线程要做的事"""
-#         print('[ %s ]New process....' % ctime())
-#         # 接受客户端述数据
-#         data = self.tcp_clinet.recv(self.buf_size).decode()
-#         # 将客户端数据转换成列表
-#         data = tuple(eval(data))
-#
-#         print(self.old_data)
-#         print(self.addr, ":", data)
-#
-#         info = InfoCompute(data, self.old_data)
-#         print(info.get_cpu_precent())
-#         self.old_data = data
-#         # 退出后关闭连接
-#         self.tcp_clinet.close()
 
 
 if __name__ == '__main__':
