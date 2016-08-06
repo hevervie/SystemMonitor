@@ -3,6 +3,9 @@
 """
     Created by yangliru,zhoupan on 8/1/16.
 """
+import smtplib
+from email.header import Header
+from email.mime.text import MIMEText
 
 from Configure import Configure
 
@@ -22,26 +25,29 @@ class Alarm():
         match_data = []
         for (key, value) in self.mail.items():
             if int(key) <= level:
-                match_data.append(value)
-        return match_data
+                for i in value:
+                    match_data.append(i)
+        return tuple(match_data)
 
     def send_mail(self, level, ms):
         mail_tuple = self.send_list(level)
+        # print(mail_tuple)
+        # print(ms)
         for i in range(len(mail_tuple)):
-            print(mail_tuple[i])
-            print("message:\n%s " % ms)
-            # message = MIMEText('告警信息:%s' % ms, 'plain', 'utf-8')
-            # message['From'] = Header(u"服务器<%s>" % self.user)
-            # message['To'] = Header(u"用户 <%s>" % mail_tuple[i])
-            # message['Subject'] = Header(u"告警信息")
-            # try:
-            #     smtpObj = smtplib.SMTP()
-            #     smtpObj.connect(self.server, 25)  # 25 为 SMTP 端口号
-            #     smtpObj.login(self.user, self.passwd)
-            #     smtpObj.sendmail(self.user, mail_tuple[i], message.as_string())
-            #     print("邮件发送成功")
-            # except smtplib.SMTPException:
-            #     print("Error: 无法发送邮件")
+
+            # print(mail_tuple[i])
+            message = MIMEText('告警信息:%s' % ms, 'plain', 'utf-8')
+            message['From'] = Header(u"服务器<%s>" % self.user)
+            message['To'] = Header(u"用户 <%s>" % mail_tuple[i])
+            message['Subject'] = Header(u"告警信息")
+            try:
+                smtpObj = smtplib.SMTP()
+                smtpObj.connect(self.server, 25)  # 25 为 SMTP 端口号
+                smtpObj.login(self.user, self.passwd)
+                smtpObj.sendmail(self.user, mail_tuple[i], message.as_string())
+                print("邮件发送成功")
+            except smtplib.SMTPException:
+                print("Error: 无法发送邮件")
 
 
 class Strategies():
@@ -138,29 +144,34 @@ class Strategies():
         return total, message
 
 
+class Al():
+    def __init__(self):
+        """类初始化工作"""
+        self.server = "smtp.mailgun.org"  # 设置服务器
+        self.user = "ru@raydina.me"  # 用户名
+        self.passwd = "823264073"  # 口令
+
+    def send_mail(self, mail, ms):
+        message = MIMEText('告警信息:%s' % ms, 'plain', 'utf-8')
+        message['From'] = Header(u"服务器<%s>" % self.user)
+        message['To'] = Header(u"用户 <%s>" % mail)
+        message['Subject'] = Header(u"告警信息")
+        try:
+            smtpObj = smtplib.SMTP()
+            smtpObj.connect(self.server, 25)  # 25 为 SMTP 端口号
+            smtpObj.login(self.user, self.passwd)
+            smtpObj.sendmail(self.user, mail, message.as_string())
+            print("邮件发送成功")
+        except smtplib.SMTPException:
+            print("Error: 无法发送邮件")
+
+
 if __name__ == '__main__':
-    # data = {'1': 'zhoupans_mail@163.com', '2': 'zhoupan@xiyoulinux.org'}
-    # a = Alam(data, 2, '一号机器CPU使用率过高！')
-    # a.send_mail()
-    data = (0.0, 39.2, 0.0, 0.0, 24.2, 0.0, ['zhoupan'],
-            (63342, 80, 8307, 53, 22, 631, 443, 6942, 8000, 902, 3306, 8307, 631, 902))
-    s = Strategies()
-    total, message = s.check_all_data(data)
-    print(total)
-    print(message)
-    # print(s.check_cpu_data(80))
-    # print(s.check_cpu_data(91))
-    # print(s.check_svmem_data(40))
-    # print(s.check_svmem_data(93))
-    # print(s.check_swap_data(0))
-    # print(s.check_swap_data(11))
-    # print(s.check_diskio_data(80))
-    # print(s.check_diskio_data(94))
-    # print(s.check_diskusage_data(40))
-    # print(s.check_diskusage_data(71))
-    # print(s.check_netio_data(20))
-    # print(s.check_netio_data(91))
-    # print(s.check_user_data(('zhoupan', 'root', 'ubuntu',)))
-    # print(s.check_user_data(('zhoupan',)))
-    # print(s.check_port_data((80, 8000, 22, 3306, 90,)))
-    # print(s.check_port_data((80, 8000, 22, 3306,)))
+    # data = (0.0, 39.2, 0.0, 0.0, 24.2, 0.0, ['zhoupan'],
+    #         (63342, 80, 8307, 53, 22, 631, 443, 6942, 8000, 902, 3306, 8307, 631, 902))
+    # s = Strategies()
+    # total, message = s.check_all_data(data)
+    # print(total)
+    # print(message)
+    a = Al()
+    a.send_mail('zhoupans_mail@163.com','hello')
