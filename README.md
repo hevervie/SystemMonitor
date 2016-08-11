@@ -1,21 +1,73 @@
-# SystemMonitor
-### 分布式集群监控系统
-> python开发的一个基于分布式的集群监控系统，C/S架构
+# 分布式集群运营管理系统
+#### 设计说明
 
-主要监控的系统属性有：
-   - 内存使用率
-   - CPU占用率
-   - 磁盘I/O
-   - 磁盘使用率
-   - 外网延迟
-   - 主机启动的端口信息
-   - 在线用户
-   
-## 网络拓扑结构图(1.0)：
-![网络拓扑图](https://github.com/dreamer2018/SystemMonitor/blob/master/Document/%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91%E6%9E%B6%E6%9E%84-1.0%E7%89%88.png)
+> **名称**：分布式集群运营管理系统
 
-## 逻辑架构图(1.0)：
-![逻辑架构图](https://github.com/dreamer2018/SystemMonitor/blob/master/Document/%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84%E5%9B%BE-1.0.png)
+> **英文名**：SystemMonitor
+> 
+> **Logo**：
 
-## 模块与类关系图(1.0)
-![模块与类关系](https://github.com/dreamer2018/SystemMonitor/blob/master/Document/%E6%A8%A1%E5%9D%97%E4%B8%8E%E7%B1%BB%E5%85%B3%E7%B3%BB-1.0.png)
+![这里写图片描述](http://img.blog.csdn.net/20160811161035299)
+
+> **物理架构**：C/S架构，即客户端，服务器型架构
+
+> **开发语言**：Python3.4，Django1.8.x
+
+> **开发平台**：CentOS 7.2
+
+> **最新版本**：v0.1
+
+> **项目源码**：[https://github.com/dreamer2018/SystemMonitor](https://github.com/dreamer2018/SystemMonitor)
+
+> **主要功能简述**：
+
+**客户端：**
+
+获取主机的系统资源，主要包括：
+
+-   内存使用率
+-  CPU占用率
+-  磁盘I/O
+- 磁盘空间使用率
+- 网络延迟
+- 主机端口
+- 在线用户信息
+
+客户端收集这些信息，并将这些信息发送至服务器
+
+**服务器端：**
+
+获取到客户端数据后，进行处理计算，策略匹配，对于异常数据通过发送邮件的方式进行告警
+
+> **逻辑架构**：
+
+ **基础逻辑架构图(1.0版)**：
+ 
+![这里写图片描述](http://img.blog.csdn.net/20160811161216752)
+
+ **模块-类对应图(1.0版)**
+ 
+ ![这里写图片描述](http://img.blog.csdn.net/20160811161240378)
+
+> **网络架构**：
+
+**网络拓扑架构图(1.0版)：**
+
+![这里写图片描述](http://img.blog.csdn.net/20160811161252003)
+
+> **开发接口(0.1版)**：
+
+![这里写图片描述](http://img.blog.csdn.net/20160811161353473)
+![这里写图片描述](http://img.blog.csdn.net/20160811161412067)
+![这里写图片描述](http://img.blog.csdn.net/20160811161421739)
+![这里写图片描述](http://img.blog.csdn.net/20160811161430005)
+![这里写图片描述](http://img.blog.csdn.net/20160811161440193)
+![这里写图片描述](http://img.blog.csdn.net/20160811161450800)
+![这里写图片描述](http://img.blog.csdn.net/20160811161525944)
+![这里写图片描述](http://img.blog.csdn.net/20160811161534832)
+![这里写图片描述](http://img.blog.csdn.net/20160811161554582)
+![这里写图片描述](http://img.blog.csdn.net/20160811161603711)
+![这里写图片描述](http://img.blog.csdn.net/20160811161612633)
+![这里写图片描述](http://img.blog.csdn.net/20160811161620332)
+
+
