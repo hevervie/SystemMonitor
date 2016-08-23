@@ -26,7 +26,11 @@ class MainThread(threading.Thread):
         self.port = int(cf.read_config('server.conf', 'server', 'port'))
         self.max_line = int(cf.read_config('server.conf', 'server', 'max_line'))
         self.buf_size = int(cf.read_config('server.conf', 'buffer', 'size'))
+        # 保存历史源数据
         self.old_data_dict = {}
+        # 保存历史警告数据
+        self.old_alarm_dict = {}
+
         self.init_data = (
             (0, 0, 0, 0, 0, 0.0, 0, 0.0, 0.0, 0.0), ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0.0, 0, 0)),
             ((0, 0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0)), {'total': (0, 0, 0, 0, 0, 0, 0, 0)}, (), ())
@@ -46,21 +50,31 @@ class MainThread(threading.Thread):
         # 获取所有结果
         data_precent = info.get_all_precent()
         # 获取check的结果
-        total, message = str.check_all_data(data_precent)
+        total, message = str.check_all_data(data_precent, self.old_alarm_dict[addr])
         # 告警
         alarm = Alarm()
         # 发送邮件
-        alarm.send_mail(total, message)
 
+        sign = alarm.send_mail(total, message)
+        if sign:
+            if self.old_alarm_dict.has_key():
+                for i, v in enumerate(self.old_alarm_dict[addr]):
+                    if v >= sign:
+                        self.old_alarm_dict[addr][i] = 0
+        # 将元组转换成列表
         data_precent = list(data_precent)
+
+        # 将结果保存到列表里面
         data_precent.append(total)
         data_precent.append(message)
+
         per = Persistent()
         # 保存所有源数据
         per.save_all_data(data, addr)
+
         # 保存警告后的数据
         per.save_alarm_data(data_precent, addr)
-
+        self.old_alarm_dict[addr] = total
         self.old_data_dict[addr] = data
         # 退出后关闭连接
         tcp_client.close()
@@ -78,7 +92,7 @@ class MainThread(threading.Thread):
         tcp_main.listen(self.max_line)
 
         while True:
-            # print('服务器监听中......')
+            print('服务器监听中......')
             tcp_clinet, addr = tcp_main.accept()
             if addr[0] not in self.old_data_dict.keys():
                 self.old_data_dict[addr[0]] = self.init_data

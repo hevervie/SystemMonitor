@@ -21,33 +21,62 @@ class Alarm():
         self.passwd = "823264073"  # 口令
         self.mail = eval(dict)  # 告警用户等级字典
 
-    def send_list(self, level):
+    def send_list(self, total):
         match_data = []
+        m = max(total)
+        level = 0
         for (key, value) in self.mail.items():
-            if int(key) <= level:
+            if int(key) <= m:
                 for i in value:
                     match_data.append(i)
-        return tuple(match_data)
+            if int(key) > level:
+                level = int(key)
+        return level, tuple(match_data)
 
-    def send_mail(self, level, ms):
-        mail_tuple = self.send_list(level)
+    def send_mail(self, total, ms):
+        level, mail_tuple = self.send_list(total)
         # print(mail_tuple)
         # print(ms)
+        sign = 0
         for i in range(len(mail_tuple)):
+            print(mail_tuple[i], end=":")
+            print(ms)
+            sign = level
 
-            # print(mail_tuple[i])
-            message = MIMEText('告警信息:%s' % ms, 'plain', 'utf-8')
-            message['From'] = Header(u"服务器<%s>" % self.user)
-            message['To'] = Header(u"用户 <%s>" % mail_tuple[i])
-            message['Subject'] = Header(u"告警信息")
-            try:
-                smtpObj = smtplib.SMTP()
-                smtpObj.connect(self.server, 25)  # 25 为 SMTP 端口号
-                smtpObj.login(self.user, self.passwd)
-                smtpObj.sendmail(self.user, mail_tuple[i], message.as_string())
-                print("邮件发送成功")
-            except smtplib.SMTPException:
-                print("Error: 无法发送邮件")
+        return sign
+        # print(mail_tuple[i])
+        # message = MIMEText('告警信息:%s' % ms, 'plain', 'utf-8')
+        # message['From'] = Header(u"服务器<%s>" % self.user)
+        # message['To'] = Header(u"用户 <%s>" % mail_tuple[i])
+        # message['Subject'] = Header(u"告警信息")
+        # try:
+        #     smtpObj = smtplib.SMTP()
+        #     smtpObj.connect(self.server, 25)  # 25 为 SMTP 端口号
+        #     smtpObj.login(self.user, self.passwd)
+        #     smtpObj.sendmail(self.user, mail_tuple[i], message.as_string())
+        #     print("邮件发送成功")
+        # except smtplib.SMTPException:
+        #     print("Error: 无法发送邮件")
+
+        # def send_mail(self, total, ms):
+        #     mail_tuple = self.send_list(total)
+        #     # print(mail_tuple)
+        #     # print(ms)
+        #     for i in range(len(mail_tuple)):
+        #
+        #         # print(mail_tuple[i])
+        #         message = MIMEText('告警信息:%s' % ms, 'plain', 'utf-8')
+        #         message['From'] = Header(u"服务器<%s>" % self.user)
+        #         message['To'] = Header(u"用户 <%s>" % mail_tuple[i])
+        #         message['Subject'] = Header(u"告警信息")
+        #         try:
+        #             smtpObj = smtplib.SMTP()
+        #             smtpObj.connect(self.server, 25)  # 25 为 SMTP 端口号
+        #             smtpObj.login(self.user, self.passwd)
+        #             smtpObj.sendmail(self.user, mail_tuple[i], message.as_string())
+        #             print("邮件发送成功")
+        #         except smtplib.SMTPException:
+        #             print("Error: 无法发送邮件")
 
 
 class Strategies():
@@ -128,7 +157,7 @@ class Strategies():
         else:
             return 0, "端口开启正常"
 
-    def check_all_data(self, data):
+    def check_all_data(self, data, old_data):
         """检测所有信息，并返回结果"""
         cpu, cpu_message = self.check_cpu_data(data[0])
         svmem, svmem_message = self.check_svmem_data(data[1])
@@ -138,32 +167,20 @@ class Strategies():
         netio, netio_message = self.check_netio_data(data[5])
         user, user_message = self.check_user_data(data[6])
         port, port_message = self.check_port_data(data[7])
-        total = cpu + svmem + swap + diskio + diskusage + netio + user + port
+        total = []
+        # 将所有数据保存下来
+        total.append(cpu+old_data[0])
+        total.append(svmem+old_data[1])
+        total.append(swap+old_data[2])
+        total.append(diskio+old_data[3])
+        total.append(diskusage+old_data[4])
+        total.append(netio+old_data[5])
+        total.append(user+old_data[6])
+        total.append(port+old_data[7])
         message = cpu_message + '\n' + svmem_message + '\n' + swap_message + '\n' + diskio_message + '\n' + diskusage_message + \
                   '\n' + netio_message + '\n' + user_message + '\n' + port_message + '\n'
+
         return total, message
-
-
-class Al():
-    def __init__(self):
-        """类初始化工作"""
-        self.server = "smtp.mailgun.org"  # 设置服务器
-        self.user = "ru@raydina.me"  # 用户名
-        self.passwd = "823264073"  # 口令
-
-    def send_mail(self, mail, ms):
-        message = MIMEText('告警信息:%s' % ms, 'plain', 'utf-8')
-        message['From'] = Header(u"服务器<%s>" % self.user)
-        message['To'] = Header(u"用户 <%s>" % mail)
-        message['Subject'] = Header(u"告警信息")
-        try:
-            smtpObj = smtplib.SMTP()
-            smtpObj.connect(self.server, 25)  # 25 为 SMTP 端口号
-            smtpObj.login(self.user, self.passwd)
-            smtpObj.sendmail(self.user, mail, message.as_string())
-            print("邮件发送成功")
-        except smtplib.SMTPException:
-            print("Error: 无法发送邮件")
 
 
 if __name__ == '__main__':
@@ -173,5 +190,5 @@ if __name__ == '__main__':
     # total, message = s.check_all_data(data)
     # print(total)
     # print(message)
-    a = Al()
-    a.send_mail('zhoupans_mail@163.com','hello')
+    a = Alarm()
+    a.send_mail('zhoupans_mail@163.com', 'hello')
