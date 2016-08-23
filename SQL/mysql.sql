@@ -225,6 +225,8 @@ CREATE TABLE user (
   name VARCHAR(255)
 );
 
+INSERT INTO user(name) VALUES ('root');
+
 /*=====================================================*/
 /*     table: port            合法端口列表              */
 /*=====================================================*/
@@ -233,3 +235,4 @@ CREATE TABLE port (
   id   INT AUTO_INCREMENT PRIMARY KEY,
   port INT
 );
+
