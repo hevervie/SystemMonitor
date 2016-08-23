@@ -29,8 +29,8 @@ class Alarm():
             if int(key) <= m:
                 for i in value:
                     match_data.append(i)
-            if int(key) > level:
-                level = int(key)
+                if int(key) > level:
+                    level = int(key)
         return level, tuple(match_data)
 
     def send_mail(self, total, ms):
@@ -39,7 +39,7 @@ class Alarm():
         # print(ms)
         sign = 0
         for i in range(len(mail_tuple)):
-            print(mail_tuple[i], end=":")
+            print(mail_tuple[i])
             print(ms)
             sign = level
 
@@ -137,7 +137,7 @@ class Strategies():
             if i not in self.user:
                 rtu += str(i)
                 rtu += ','
-                sign = 4
+                sign = 2
 
         if sign:
             return sign, rtu
@@ -151,7 +151,7 @@ class Strategies():
             if i not in self.port:
                 rtu += str(i)
                 rtu += ','
-                sign = 4
+                sign = 1
         if sign:
             return sign, rtu
         else:

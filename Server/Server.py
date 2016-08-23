@@ -56,16 +56,16 @@ class MainThread(threading.Thread):
         # 发送邮件
 
         sign = alarm.send_mail(total, message)
+        print("sign: %s " % sign)
         if sign:
-            if self.old_alarm_dict.has_key():
-                for i, v in enumerate(self.old_alarm_dict[addr]):
-                    if v >= sign:
-                        self.old_alarm_dict[addr][i] = 0
+            total = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            print("------------------")
+
         # 将元组转换成列表
         data_precent = list(data_precent)
 
         # 将结果保存到列表里面
-        data_precent.append(total)
+        data_precent.append(sign)
         data_precent.append(message)
 
         per = Persistent()
@@ -90,12 +90,12 @@ class MainThread(threading.Thread):
         tcp_main.bind((self.host, self.port))
         # 监听连接
         tcp_main.listen(self.max_line)
-
+        print('服务器监听中......')
         while True:
-            print('服务器监听中......')
             tcp_clinet, addr = tcp_main.accept()
             if addr[0] not in self.old_data_dict.keys():
                 self.old_data_dict[addr[0]] = self.init_data
+                self.old_alarm_dict[addr[0]] = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
             _thread.start_new_thread(self.response, (addr[0], tcp_clinet, self.buf_size))
 
