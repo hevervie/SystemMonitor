@@ -45,18 +45,23 @@ class MainThread(threading.Thread):
 
         # 对数据进行计算
         info = InfoCompute(data, self.old_data_dict[addr])
-        # 对策略进行check
-        str = Strategies()
+
         # 获取所有结果
         data_precent = info.get_all_precent()
+
+        # 策略类
+        str = Strategies()
         # 获取check的结果
         total, message = str.check_all_data(data_precent, self.old_alarm_dict[addr])
         # 告警
         alarm = Alarm()
-        # 发送邮件
-
+        # 对数据进行检测，如果超出阈值，则就开始告警
+        # sign : 0则表示不进行报警，1则表示告警的级别
         sign = alarm.send_mail(total, message)
-        print("sign: %s " % sign)
+
+        print("%s's sign: %d " % (addr, sign))
+
+        # 告警过后，将历史数据清空
         if sign:
             total = [0, 0, 0, 0, 0, 0, 0, 0, 0]
             print("------------------")
@@ -92,11 +97,13 @@ class MainThread(threading.Thread):
         tcp_main.listen(self.max_line)
         print('服务器监听中......')
         while True:
+            # 循环接受客户端的连接
             tcp_clinet, addr = tcp_main.accept()
+            # 如果历史数据字典里面没有当前客户段的记录，则就新创建一个，并赋予初始值
             if addr[0] not in self.old_data_dict.keys():
                 self.old_data_dict[addr[0]] = self.init_data
                 self.old_alarm_dict[addr[0]] = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-
+            # 创建新的线程，用于处理连接后的后续操作
             _thread.start_new_thread(self.response, (addr[0], tcp_clinet, self.buf_size))
 
 
