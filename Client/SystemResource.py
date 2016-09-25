@@ -9,6 +9,7 @@
 '''
 import psutil
 import subprocess
+import simplejson
 
 BUF = 1025
 
@@ -25,7 +26,7 @@ class SystemResource():
 
         # 获取CPU信息
         cpu_info = psutil.cpu_times()
-        return cpu_info
+        return simplejson.dumps(cpu_info)
 
     def get_men_info(self):
         """获取内存信息"""
@@ -33,7 +34,7 @@ class SystemResource():
         # 获取内存信息
         virt_mem_info = psutil.virtual_memory()  # 物理内存
         swap_mem_info = psutil.swap_memory()  # 虚拟内存
-        return virt_mem_info, swap_mem_info
+        return simplejson.dumps(virt_mem_info), simplejson.dumps(swap_mem_info)
 
     def get_disk_info(self, mount_point="/"):
         """获取磁盘占用率和"""
@@ -41,7 +42,7 @@ class SystemResource():
         # 获取磁盘信息
         disk_io_count = psutil.disk_io_counters()
         disk_usage = psutil.disk_usage(mount_point)
-        return disk_io_count, disk_usage
+        return simplejson.dumps(disk_io_count), simplejson.dumps(disk_usage)
 
     def get_net_info(self):
         """获取网络信息"""
@@ -49,18 +50,24 @@ class SystemResource():
         # 获取网络信息
         net_io_avrg = psutil.net_io_counters()
         net_io_count = psutil.net_io_counters(pernic=True)
-        return net_io_avrg, net_io_count
+        return simplejson.dumps(net_io_avrg), simplejson.dumps(net_io_count)
 
     def get_user_info(self):
         """获取用户信息"""
 
         # 获取登陆用户信息
         user_info = psutil.users()
-        return user_info
+        return simplejson.dumps(user_info)
+
+    def get_process_info(self):
+        """获取进程信息"""
+        process_info = psutil.Process()
+        psutil.pids()
+
+        return process_info
 
     def get_port_info(self):
         """获取主机端口"""
-
         # 获取主机端口
         rtu_code, result = subprocess.getstatusoutput(
             "netstat -tln | awk \'BEGIN{ORS=\",\"}; NR>2{sub(\".*:\", \"\", $4); print $4}\'")
@@ -206,15 +213,32 @@ class Information():
     def trans_all_info(self):
         data = []
         info = Information()
-        data.append(info.trans_cpu_info())
-        data.append(info.trans_mem_info())
-        data.append(info.trans_disk_info())
-        data.append(info.trans_net_info())
-        data.append(info.trans_user_info())
-        data.append(info.trans_port_info())
-        return tuple(data)
+        # data.append(info.trans_cpu_info())
+        # data.append(info.trans_mem_info())
+        # data.append(info.trans_disk_info())
+        # data.append(info.trans_net_info())
+        # data.append(info.trans_user_info())
+        # data.append(info.trans_port_info())
+        data = {
+            'cpu': info.trans_cpu_info(),
+            'mem': info.trans_mem_info(),
+            'disk': info.trans_disk_info(),
+            'net': info.trans_net_info(),
+            'user': info.trans_user_info(),
+            'port': info.trans_port_info(),
+        }
+        return data
 
 
 if __name__ == '__main__':
-    info = Information()
-    print(info.trans_all_info())
+    # # info = Information()
+    # # print(info.trans_all_info())
+    # # print(info.trans_port_info())
+    # sr = SystemResource()
+    # # print(sr.get_cpu_info())
+    # print(sr.get_user_info())
+    # print(sr.get_process_info())
+    pids = psutil.pids()
+    for i in pids:
+        p = psutil.Process(i)
+        print(p.name(),p.exe(),p.cwd())
