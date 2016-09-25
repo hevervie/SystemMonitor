@@ -7,8 +7,9 @@
 '''
     依赖包：psutil,subprocess,pip
 '''
-import psutil
 import subprocess
+
+import psutil
 import simplejson
 
 BUF = 1025
@@ -26,7 +27,7 @@ class SystemResource():
 
         # 获取CPU信息
         cpu_info = psutil.cpu_times()
-        return simplejson.dumps(cpu_info)
+        return cpu_info
 
     def get_men_info(self):
         """获取内存信息"""
@@ -34,7 +35,7 @@ class SystemResource():
         # 获取内存信息
         virt_mem_info = psutil.virtual_memory()  # 物理内存
         swap_mem_info = psutil.swap_memory()  # 虚拟内存
-        return simplejson.dumps(virt_mem_info), simplejson.dumps(swap_mem_info)
+        return virt_mem_info, swap_mem_info
 
     def get_disk_info(self, mount_point="/"):
         """获取磁盘占用率和"""
@@ -42,7 +43,7 @@ class SystemResource():
         # 获取磁盘信息
         disk_io_count = psutil.disk_io_counters()
         disk_usage = psutil.disk_usage(mount_point)
-        return simplejson.dumps(disk_io_count), simplejson.dumps(disk_usage)
+        return disk_io_count, disk_usage
 
     def get_net_info(self):
         """获取网络信息"""
@@ -50,21 +51,14 @@ class SystemResource():
         # 获取网络信息
         net_io_avrg = psutil.net_io_counters()
         net_io_count = psutil.net_io_counters(pernic=True)
-        return simplejson.dumps(net_io_avrg), simplejson.dumps(net_io_count)
+        return net_io_avrg, net_io_count
 
     def get_user_info(self):
         """获取用户信息"""
 
         # 获取登陆用户信息
         user_info = psutil.users()
-        return simplejson.dumps(user_info)
-
-    def get_process_info(self):
-        """获取进程信息"""
-        process_info = psutil.Process()
-        psutil.pids()
-
-        return process_info
+        return user_info
 
     def get_port_info(self):
         """获取主机端口"""
@@ -91,134 +85,67 @@ class Information():
         pass
 
     def trans_cpu_info(self):
-        scputimes = []
+        """转换得到的cpu信息"""
         sr = SystemResource()
-        scputimes.append(sr.get_cpu_info().user)
-        scputimes.append(sr.get_cpu_info().nice)
-        scputimes.append(sr.get_cpu_info().system)
-        scputimes.append(sr.get_cpu_info().idle)
-        scputimes.append(sr.get_cpu_info().iowait)
-        scputimes.append(sr.get_cpu_info().irq)
-        scputimes.append(sr.get_cpu_info().softirq)
-        scputimes.append(sr.get_cpu_info().steal)
-        scputimes.append(sr.get_cpu_info().guest)
-        scputimes.append(sr.get_cpu_info().guest_nice)
-
+        scputimes = sr.get_cpu_info()
         # 将列表转换成原组
-        return tuple(scputimes)
+        return simplejson.dumps(scputimes)
 
     def trans_mem_info(self):
-
-        svmem = []
-        sswap = []
+        """转换得到的memory信息"""
         sr = SystemResource()
-        virt, swap = sr.get_men_info()
-        svmem.append(virt.total)
-        svmem.append(virt.available)
-        svmem.append(virt.percent)
-        svmem.append(virt.used)
-        svmem.append(virt.free)
-        svmem.append(virt.active)
-        svmem.append(virt.inactive)
-        svmem.append(virt.buffers)
-        svmem.append(virt.cached)
-        svmem.append(virt.shared)
-
-        sswap.append(swap.total)
-        sswap.append(swap.used)
-        sswap.append(swap.free)
-        sswap.append(swap.percent)
-        sswap.append(swap.sin)
-        sswap.append(swap.sout)
-
+        svmem, sswap = sr.get_men_info()
         # 将列表转换成原组
-        return tuple(svmem), tuple(sswap)
+        mem = {
+            'svmem': svmem,
+            'sswap': sswap,
+        }
+        return simplejson.dumps(mem)
 
     def trans_disk_info(self):
+        """转换得到的硬盘信息"""
         sr = SystemResource()
         disk_io, disk_usage = sr.get_disk_info()
 
-        sdiskio = []
-        sdiskusage = []
-
-        sdiskio.append(disk_io.read_count)
-        sdiskio.append(disk_io.write_count)
-        sdiskio.append(disk_io.read_bytes)
-        sdiskio.append(disk_io.write_bytes)
-        sdiskio.append(disk_io.read_time)
-        sdiskio.append(disk_io.write_time)
-        sdiskio.append(disk_io.read_merged_count)
-        sdiskio.append(disk_io.write_merged_count)
-        sdiskio.append(disk_io.busy_time)
-
-        sdiskusage.append(disk_usage.total)
-        sdiskusage.append(disk_usage.used)
-        sdiskusage.append(disk_usage.free)
-        sdiskusage.append(disk_usage.percent)
+        disk_info = {
+            'disk_io': disk_io,
+            'disk_usage': disk_usage,
+        }
 
         # 将列表转换成原组
-        return tuple(sdiskio), tuple(sdiskusage)
+        return simplejson.dumps(disk_info)
 
     def trans_net_info(self):
+        """转换得到的网络信息"""
+
         sr = SystemResource()
         net_argv, net_count = sr.get_net_info()
-        snetio = {}
-        total = []
 
-        total.append(net_argv.bytes_sent)
-        total.append(net_argv.bytes_recv)
-        total.append(net_argv.packets_sent)
-        total.append(net_argv.packets_recv)
-        total.append(net_argv.errin)
-        total.append(net_argv.errout)
-        total.append(net_argv.dropin)
-        total.append(net_argv.dropout)
-        snetio['total'] = tuple(total)
-        for k, v in net_count.items():
-            tmp = []
-            tmp.append(v.bytes_sent)
-            tmp.append(v.bytes_recv)
-            tmp.append(v.packets_sent)
-            tmp.append(v.packets_recv)
-            tmp.append(v.errin)
-            tmp.append(v.errout)
-            tmp.append(v.dropin)
-            tmp.append(v.dropout)
-
-            # 列表转原组
-            snetio[k] = tuple(tmp)
-
-        # 字典不可转为原组，忽略
-        return snetio
+        net_info = {
+            'net_argv': net_argv,
+            'net_count': net_count,
+        }
+        return simplejson.dumps(net_info)
 
     def trans_user_info(self):
+        """转换得到的用户信息"""
         sr = SystemResource()
         user_info = sr.get_user_info()
-        suser = []
-        for i in range(0, len(user_info), 1):
-            tmp = []
-            tmp.append(user_info[i].name)
-            tmp.append(user_info[i].terminal)
-            tmp.append(user_info[i].host)
-            tmp.append(user_info[i].started)
-
-            suser.append(tuple(tmp))
-        return tuple(suser)
+        return simplejson.dumps(user_info)
 
     def trans_port_info(self):
+        """转换得到的端口信息"""
         sr = SystemResource()
         port = sr.get_port_info()
-        return tuple(port)
+        port_info = {
+            'port': port
+        }
+        return simplejson.dumps(port_info)
 
-    def trans_all_info(self):
-        data = []
+    def return_all_info(self):
+        """获取所有信息"""
+
         info = Information()
-        # data.append(info.trans_cpu_info())
-        # data.append(info.trans_mem_info())
-        # data.append(info.trans_disk_info())
-        # data.append(info.trans_net_info())
-        # data.append(info.trans_user_info())
-        # data.append(info.trans_port_info())
         data = {
             'cpu': info.trans_cpu_info(),
             'mem': info.trans_mem_info(),
@@ -227,18 +154,15 @@ class Information():
             'user': info.trans_user_info(),
             'port': info.trans_port_info(),
         }
-        return data
+        return simplejson.dumps(data)
 
 
 if __name__ == '__main__':
-    # # info = Information()
-    # # print(info.trans_all_info())
-    # # print(info.trans_port_info())
-    # sr = SystemResource()
-    # # print(sr.get_cpu_info())
-    # print(sr.get_user_info())
-    # print(sr.get_process_info())
-    pids = psutil.pids()
-    for i in pids:
-        p = psutil.Process(i)
-        print(p.name(),p.exe(),p.cwd())
+    info = Information()
+    print(info.trans_user_info())
+    print(info.trans_port_info())
+    print(info.trans_disk_info())
+    print(info.trans_net_info())
+    print(info.trans_port_info())
+    print(info.return_all_info())
+    print(simplejson.loads(info.return_all_info()))
