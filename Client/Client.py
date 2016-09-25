@@ -40,7 +40,7 @@ class Client(threading.Thread):
             tcpclinet.connect((self.host, self.port))
             info = Information()
             # 将列表数据转转换成字符串
-            data = info.trans_all_info()
+            data = info.get_all_info()
             data = data.__str__()
             # 将数据发送出去
             tcpclinet.send(data.encode())
@@ -48,7 +48,6 @@ class Client(threading.Thread):
             tcpclinet.close()
             # 休眠十秒钟
             sleep(self.sleep_time)
-
 
 if __name__ == '__main__':
     thread = Client(1, 'first')
