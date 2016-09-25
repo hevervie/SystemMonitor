@@ -12,7 +12,7 @@ class Information():
     def __init__(self, data):
         self.data = data
 
-    def get_cpu_info(self):
+    def select_cpu_info(self):
         """获取CPU信息"""
         cpu_info = scputimes(self.data[0])
         return cpu_info
