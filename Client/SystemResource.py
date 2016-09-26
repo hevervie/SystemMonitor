@@ -35,7 +35,14 @@ class SystemResource():
         # 获取内存信息
         virt_mem_info = psutil.virtual_memory()  # 物理内存
         swap_mem_info = psutil.swap_memory()  # 虚拟内存
-        return virt_mem_info, swap_mem_info
+
+        # 以字典方式返回数据
+        mem = {
+            'svmem': virt_mem_info,
+            'sswap': swap_mem_info,
+        }
+
+        return mem
 
     def get_disk_info(self, mount_point="/"):
         """获取磁盘占用率和"""
@@ -43,7 +50,14 @@ class SystemResource():
         # 获取磁盘信息
         disk_io_count = psutil.disk_io_counters()
         disk_usage = psutil.disk_usage(mount_point)
-        return disk_io_count, disk_usage
+
+        # 以字典方式返回数据
+        disk = {
+            'disk_io': disk_io_count,
+            'disk_usage': disk_usage,
+        }
+
+        return disk
 
     def get_net_info(self):
         """获取网络信息"""
@@ -51,7 +65,13 @@ class SystemResource():
         # 获取网络信息
         net_io_avrg = psutil.net_io_counters()
         net_io_count = psutil.net_io_counters(pernic=True)
-        return net_io_avrg, net_io_count
+
+        # 以字典方式返回数据
+        net={
+            'net_avrg': net_io_avrg,
+            'net_count': net_io_count,
+        }
+        return net
 
     def get_user_info(self):
         """获取用户信息"""
@@ -76,93 +96,24 @@ class SystemResource():
                 pass
         return port
 
-
-class Information():
-    """信息集和器，将采集的信息集中在一起，方便客户端发送"""
-
-    def __init__(self):
-        """类初始化"""
-        pass
-
-    def trans_cpu_info(self):
-        """转换得到的cpu信息"""
-        sr = SystemResource()
-        scputimes = sr.get_cpu_info()
-        # 将列表转换成原组
-        return simplejson.dumps(scputimes)
-
-    def trans_mem_info(self):
-        """转换得到的memory信息"""
-        sr = SystemResource()
-        svmem, sswap = sr.get_men_info()
-        # 将列表转换成原组
-        mem = {
-            'svmem': svmem,
-            'sswap': sswap,
-        }
-        return simplejson.dumps(mem)
-
-    def trans_disk_info(self):
-        """转换得到的硬盘信息"""
-        sr = SystemResource()
-        disk_io, disk_usage = sr.get_disk_info()
-
-        disk_info = {
-            'disk_io': disk_io,
-            'disk_usage': disk_usage,
-        }
-
-        # 将列表转换成原组
-        return simplejson.dumps(disk_info)
-
-    def trans_net_info(self):
-        """转换得到的网络信息"""
-
-        sr = SystemResource()
-        net_argv, net_count = sr.get_net_info()
-
-        net_info = {
-            'net_argv': net_argv,
-            'net_count': net_count,
-        }
-        return simplejson.dumps(net_info)
-
-    def trans_user_info(self):
-        """转换得到的用户信息"""
-        sr = SystemResource()
-        user_info = sr.get_user_info()
-        return simplejson.dumps(user_info)
-
-    def trans_port_info(self):
-        """转换得到的端口信息"""
-        sr = SystemResource()
-        port = sr.get_port_info()
-        port_info = {
-            'port': port
-        }
-        return simplejson.dumps(port_info)
-
     def return_all_info(self):
-        """获取所有信息"""
+        """返回所有信息"""
 
-        info = Information()
+        sr = SystemResource()
         data = {
-            'cpu': info.trans_cpu_info(),
-            'mem': info.trans_mem_info(),
-            'disk': info.trans_disk_info(),
-            'net': info.trans_net_info(),
-            'user': info.trans_user_info(),
-            'port': info.trans_port_info(),
+            'cpu': sr.get_cpu_info(),
+            'mem': sr.get_men_info(),
+            'disk': sr.get_net_info(),
+            'net': sr.get_disk_info(),
+            'user': sr.get_user_info(),
+            'port': sr.get_port_info()
         }
+
+        # 返回所有数据
         return simplejson.dumps(data)
 
 
 if __name__ == '__main__':
-    info = Information()
-    print(info.trans_user_info())
-    print(info.trans_port_info())
-    print(info.trans_disk_info())
-    print(info.trans_net_info())
-    print(info.trans_port_info())
-    print(info.return_all_info())
-    print(simplejson.loads(info.return_all_info()))
+    sr = SystemResource()
+    print(sr.return_all_info())
+    print(simplejson.loads(sr.return_all_info()))
