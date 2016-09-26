@@ -117,3 +117,4 @@ if __name__ == '__main__':
     sr = SystemResource()
     print(sr.return_all_info())
     print(simplejson.loads(sr.return_all_info()))
+    print(sr.get_net_info())

@@ -4,84 +4,62 @@
     Created by zhoupan on 7/25/16.
 """
 from mypsutil import scputimes, svmem, sswap, sdiskio, sdiskusage, snetio, suser, port
+import simplejson
 
 
 class Information():
     """数据解析类，用于将发来的数据解析成原本数据"""
 
     def __init__(self, data):
-        self.data = data
+        self.data = simplejson.loads(data)
 
     def select_cpu_info(self):
         """获取CPU信息"""
-        cpu_info = scputimes(self.data[0])
+        cpu_info = self.data['cpu']
         return cpu_info
 
-    def get_svmem_info(self):
+    def select_svmem_info(self):
         """获取物理内存信息"""
-        svmem_info = svmem(self.data[1][0])
+        svmem_info = self.data['mem']['svmem']
         return svmem_info
 
-    def get_swap_info(self):
+    def select_swap_info(self):
         """获取虚拟内存信息"""
-        swap_info = sswap(self.data[1][1])
+        swap_info = self.data['mem']['sswap']
         return swap_info
 
-    def get_diskio_info(self):
+    def select_diskio_info(self):
         """获取磁盘IO信息"""
-        diskio_info = sdiskio(self.data[2][0])
+        diskio_info = self.data['disk']['disk_io']
         return diskio_info
 
-    def get_diskusage_info(self):
+    def select_diskusage_info(self):
         """获取磁盘使用情况"""
-        diskusage_info = sdiskusage(self.data[2][1])
+        diskusage_info = self.data['disk']['disk_usage']
         return diskusage_info
 
-    def get_netio_info(self):
+    def select_netio_info(self):
         """获取网络IO情况"""
-        netio_info = []
-        for k, v in self.data[3].items():
-            net = snetio(k, v)
-            netio_info.append(net)
-        # 网络IO信息
-        netio_info = tuple(netio_info)
+        netio_info = self.data['net']['net_count']
         return netio_info
 
-    def get_netio_info_by_name(self, name):
+    def select_netio_info_by_name(self, name):
         """通过网口名获取网络信息"""
-        total_net = snetio(name, self.data[3][name])
+
+        total_net = self.data['net']['net_avrg']
         return total_net
 
-    def get_user_info(self):
+    def select_user_info(self):
         """获取用户登陆情况"""
-        user_info = []
-        for i in range(len(self.data[4])):
-            user = suser(self.data[4][i])
-            user_info.append(user)
-        # 登陆用户信息
-        user_info = tuple(user_info)
 
+        user_info = self.data['user']
         return user_info
 
-    def get_port_info(self):
+    def select_port_info(self):
         """获取端口信息"""
-        port_info = port(self.data[5])
 
+        port_info = self.data['port']
         return port_info
-
-    def get_total_info(self):
-        """获取所有的信息"""
-        total = []
-        total.append(self.get_cpu_info())
-        total.append(self.get_svmem_info())
-        total.append(self.get_swap_info())
-        total.append(self.get_diskio_info())
-        total.append(self.get_diskusage_info())
-        total.append(self.get_netio_info())
-        total.append(self.get_user_info())
-        total.append(self.get_port_info())
-        total = tuple(total)
-        return total
 
 
 class InfoCompute():
@@ -98,12 +76,23 @@ class InfoCompute():
         new_info = Information(self.new_data)
         old_info = Information(self.old_data)
 
-        new_total = sum(new_info.get_cpu_info().data)
-        old_total = sum(old_info.get_cpu_info().data)
+        new_total = 0.0
+        old_total = 0.0
 
-        new_free = new_info.get_cpu_info().idle
-        old_free = old_info.get_cpu_info().idle
+        # 计算出cpu各个参数总和
+        data = new_info.select_cpu_info()
+        for k in data.values:
+            new_total += data[k]
+
+        data = old_info.select_cpu_info()
+        for k in data.values:
+            old_total += data[k]
+
+        new_free = new_info.select_cpu_info()['idle']
+        old_free = old_info.select_cpu_info()['idle']
+
         cpu_precent = 0.0
+
         try:
             cpu_precent = (1 - (new_free - old_free) / (new_total - old_total)) * 100
         except ZeroDivisionError:
@@ -116,31 +105,32 @@ class InfoCompute():
     def get_svmem_precent(self):
         """获取内存使用率"""
         new_info = Information(self.new_data)
-        return round(new_info.get_svmem_info().precent, 2)
+        return round(new_info.select_svmem_info().precent, 2)
 
     def get_swap_precent(self):
         """获取交换分区使用率"""
         new_info = Information(self.new_data)
-        return round(new_info.get_swap_info().precent, 2)
+        return round(new_info.select_swap_info().precent, 2)
 
     def get_diskio_precent(self):
         """获取磁盘IO使用率"""
         new_info = Information(self.new_data)
         old_info = Information(self.new_data)
 
-        new_read = new_info.get_diskio_info().read_count
-        old_read = old_info.get_diskio_info().read_count
+        new_read = new_info.select_diskio_info()['read_count']
+        old_read = old_info.select_diskio_info()['read_count']
 
-        new_write = new_info.get_diskio_info().write_count
-        old_write = old_info.get_diskio_info().write_count
+        new_write = new_info.select_diskio_info()['write_count']
+        old_write = old_info.select_diskio_info()['write_count']
 
-        new_read_merg = new_info.get_diskio_info().read_merged_count
-        old_read_merg = old_info.get_diskio_info().read_merged_count
+        new_read_merg = new_info.select_diskio_info()['read_merged_count']
+        old_read_merg = old_info.select_diskio_info()['read_merged_count']
 
-        new_write_merg = new_info.get_diskio_info().write_merged_count
-        old_write_merg = old_info.get_diskio_info().write_merged_count
+        new_write_merg = new_info.select_diskio_info()['write_merged_count']
+        old_write_merg = old_info.select_diskio_info()['write_merged_count']
 
         diskio_percent = 0.0
+
         try:
             diskio_percent = (new_read_merg - old_read_merg) / (new_read - old_read) + (
                                                                                            new_write_merg - old_write_merg) / (
@@ -155,15 +145,15 @@ class InfoCompute():
     def get_diskusage_precent(self):
         """获取磁盘使用率"""
         new_info = Information(self.new_data)
-        return round(new_info.get_diskusage_info().precent, 2)
+        return round(new_info.select_diskusage_info()['precent'], 2)
 
     def get_netio_precent(self):
         """获取网络IO使用率"""
         new_info = Information(self.new_data)
         old_info = Information(self.old_data)
 
-        new_sent = new_info.get_netio_info_by_name('total').bytes_sent
-        old_sent = old_info.get_netio_info_by_name('total').bytes_sent
+        new_sent = new_info.select_netio_info_by_name('total').bytes_sent
+        old_sent = old_info.select_netio_info_by_name('total').bytes_sent
 
         new_recv = new_info.get_netio_info_by_name('total').bytes_recv
         old_recv = old_info.get_netio_info_by_name('total').bytes_recv
