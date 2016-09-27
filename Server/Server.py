@@ -7,11 +7,12 @@
 
 import _thread
 import threading
+import simplejson
 from socket import *
 
 from Alarm import Strategies, Alarm
 from Configure import Configure
-from HandleInfo import InfoCompute
+from HandleInfo import InfoCompute,Information
 from Persistent import Persistent
 
 
@@ -21,6 +22,8 @@ class MainThread(threading.Thread):
         threading.Thread.__init__(self)
         threading.threadID = thread_id
         threading.name = name
+
+        # 读取配置文件
         cf = Configure()
         self.host = cf.read_config('server.conf', 'server', 'host')
         self.port = int(cf.read_config('server.conf', 'server', 'port'))
@@ -31,9 +34,38 @@ class MainThread(threading.Thread):
         # 保存历史警告数据
         self.old_alarm_dict = {}
 
-        self.init_data = (
-            (0, 0, 0, 0, 0, 0.0, 0, 0.0, 0.0, 0.0), ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0.0, 0, 0)),
-            ((0, 0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0)), {'total': (0, 0, 0, 0, 0, 0, 0, 0)}, (), ())
+        self.init_data = {
+            "cpu":
+                {"user": 0, "nice": 0, "system": 0, "idle": 0, "iowait": 0, "irq": 0.0,
+                 "softirq": 0, "steal": 0.0, "guest": 0.0, "guest_nice": 0.0
+            },
+
+            "mem": {
+                "sswap": {"total": 0, "used": 0, "free": 0, "percent": 0.0, "sin": 0, "sout": 0},
+                "svmem": {"total": 0, "available": 0, "percent": 0.0, "used": 0, "free": 0, "active": 0,
+                          "inactive": 0, "buffers": 0, "cached": 0, "shared": 0
+                          }
+            },
+
+            "net": {
+                "net_avrg": {"bytes_sent": 0, "bytes_recv": 0, "packets_sent": 0, "packets_recv": 0, "errin": 0,
+                             "errout": 0, "dropin": 0, "dropout": 0},
+                "net_count": {
+                    }
+            },
+
+            "user": [{"name": "zhoupan", "terminal": ":0", "host": "localhost", "started": 0.0}
+            ],
+
+            "disk": {
+                "disk_io": {"read_count": 0, "write_count": 0, "read_bytes": 0,
+                            "write_bytes": 0, "read_time": 0, "write_time": 0,
+                            "read_merged_count": 0, "write_merged_count": 0, "busy_time": 0},
+                "disk_usage": {"total": 0, "used": 0, "free": 0, "percent": 0}
+            },
+
+            "port": []
+        }
 
     def response(self, addr, tcp_client, buf_size):
         """新线程要做的事"""
@@ -41,45 +73,58 @@ class MainThread(threading.Thread):
         # 接受客户端述数据
         data = tcp_client.recv(buf_size).decode()
         # 将客户端数据转换成列表
-        data = tuple(eval(data))
+
+        data = simplejson.loads(data)
 
         # 对数据进行计算
-        info = InfoCompute(data, self.old_data_dict[addr])
+        # info = InfoCompute(data, self.old_data_dict[addr])
 
-        # 获取所有结果
-        data_precent = info.get_all_precent()
+        info = Information(data)
+        print("CPU:        ", info.select_cpu_info())
+        print("mem:        ", info.select_svmem_info())
+        print("swap:       ", info.select_swap_info())
+        print("net_count:  ", info.select_net_count_info())
+        print("net_avrg:   ", info.select_net_avrg_info())
+        print("disk_io:    ", info.select_diskio_info())
+        print("disk_usage: ", info.select_diskusage_info())
+        print("port:       ", info.select_port_info())
+        print("user:       ", info.select_user_info())
 
-        # 策略类
-        str = Strategies()
-        # 获取check的结果
-        total, message = str.check_all_data(data_precent, self.old_alarm_dict[addr])
-        # 告警
-        alarm = Alarm()
-        # 对数据进行检测，如果超出阈值，则就开始告警
-        # sign : 0则表示不进行报警，1则表示告警的级别
-        sign = alarm.send_mail(total, message)
 
-        print("%s's sign: %d " % (addr, sign))
-
-        # 告警过后，将历史数据清空
-        if sign:
-            total = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-            print("------------------")
-
-        # 将元组转换成列表
-        data_precent = list(data_precent)
-
-        # 将结果保存到列表里面
-        data_precent.append(sign)
-        data_precent.append(message)
-
-        per = Persistent()
-        # 保存所有源数据
-        per.save_all_data(data, addr)
-
-        # 保存警告后的数据
-        per.save_alarm_data(data_precent, addr)
-        self.old_alarm_dict[addr] = total
+        # # 获取所有结果
+        # data_precent = info.get_all_precent()
+        #
+        # # 策略类
+        # str = Strategies()
+        # # 获取check的结果
+        # total, message = str.check_all_data(data_precent, self.old_alarm_dict[addr])
+        # # 告警
+        # alarm = Alarm()
+        # # 对数据进行检测，如果超出阈值，则就开始告警
+        # # sign : 0则表示不进行报警，1则表示告警的级别
+        # sign = alarm.send_mail(total, message)
+        #
+        # print("%s's sign: %d " % (addr, sign))
+        #
+        # # 告警过后，将历史数据清空
+        # if sign:
+        #     total = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        #     print("------------------")
+        #
+        # # 将元组转换成列表
+        # data_precent = list(data_precent)
+        #
+        # # 将结果保存到列表里面
+        # data_precent.append(sign)
+        # data_precent.append(message)
+        #
+        # per = Persistent()
+        # # 保存所有源数据
+        # per.save_all_data(data, addr)
+        #
+        # # 保存警告后的数据
+        # per.save_alarm_data(data_precent, addr)
+        # self.old_alarm_dict[addr] = total
         self.old_data_dict[addr] = data
         # 退出后关闭连接
         tcp_client.close()
@@ -102,7 +147,7 @@ class MainThread(threading.Thread):
             # 如果历史数据字典里面没有当前客户段的记录，则就新创建一个，并赋予初始值
             if addr[0] not in self.old_data_dict.keys():
                 self.old_data_dict[addr[0]] = self.init_data
-                self.old_alarm_dict[addr[0]] = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                # self.old_alarm_dict[addr[0]] = [0, 0, 0, 0, 0, 0, 0, 0, 0]
             # 创建新的线程，用于处理连接后的后续操作
             _thread.start_new_thread(self.response, (addr[0], tcp_clinet, self.buf_size))
 

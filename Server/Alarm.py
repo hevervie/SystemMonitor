@@ -159,24 +159,29 @@ class Strategies():
 
     def check_all_data(self, data, old_data):
         """检测所有信息，并返回结果"""
-        cpu, cpu_message = self.check_cpu_data(data[0])
-        svmem, svmem_message = self.check_svmem_data(data[1])
-        swap, swap_message = self.check_swap_data(data[2])
-        diskio, diskio_message = self.check_diskio_data(data[3])
-        diskusage, diskusage_message = self.check_diskusage_data(data[4])
-        netio, netio_message = self.check_netio_data(data[5])
-        user, user_message = self.check_user_data(data[6])
-        port, port_message = self.check_port_data(data[7])
-        total = []
+
+        # 对各项数据进行检测，然后返回结果
+        cpu, cpu_message = self.check_cpu_data(data['cpu'])
+        svmem, svmem_message = self.check_svmem_data(data['svmem'])
+        swap, swap_message = self.check_swap_data(data['sswap'])
+        diskio, diskio_message = self.check_diskio_data(data['disk_io'])
+        diskusage, diskusage_message = self.check_diskusage_data(data['disk_usage'])
+        netio, netio_message = self.check_netio_data(data['net_avrg'])
+        user, user_message = self.check_user_data(data['user'])
+        port, port_message = self.check_port_data(data['port'])
+
         # 将所有数据保存下来
-        total.append(cpu+old_data[0])
-        total.append(svmem+old_data[1])
-        total.append(swap+old_data[2])
-        total.append(diskio+old_data[3])
-        total.append(diskusage+old_data[4])
-        total.append(netio+old_data[5])
-        total.append(user+old_data[6])
-        total.append(port+old_data[7])
+
+        total = {
+            'cpu': cpu + old_data['cpu'],
+            'svmem': svmem + old_data['svmem'],
+            'sswap': swap + old_data['sswap'],
+            'disk_io': diskio + old_data['disk_io'],
+            'disk_usage': diskusage + old_data['disk_usage'],
+            'net_avrg': netio + old_data['net_avrg'],
+            'user': user + old_data['user'],
+            'port': port + old_data['port']
+        }
         message = cpu_message + '\n' + svmem_message + '\n' + swap_message + '\n' + diskio_message + '\n' + diskusage_message + \
                   '\n' + netio_message + '\n' + user_message + '\n' + port_message + '\n'
 

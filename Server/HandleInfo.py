@@ -193,6 +193,21 @@ class InfoCompute():
         port = new_info.select_port_info()
         return port
 
+    def return_all_precent(self):
+        """返回计算的所有信息"""
+
+        precent = {
+            'cpu': self.compute_cpu_precent(),
+            'svmem': self.compute_svmem_precent(),
+            'sswap': self.compute_swap_precent(),
+            'disk_io': self.compute_diskio_precent(),
+            'disk_usage': self.compute_diskusage_precent(),
+            'net_avrg': self.compute_net_avrg_precent(),
+            'user': self.get_user(),
+            'port': self.get_port(),
+        }
+        return precent
+
 
 if __name__ == '__main__':
     new_data = {
@@ -279,11 +294,12 @@ if __name__ == '__main__':
     print("port:       ", info.select_port_info())
     print("user:       ", info.select_user_info())
     ic = InfoCompute(new_data, old_data)
-    print("CPU:        ", ic.compute_cpu_precent())
-    print("mem:        ", ic.compute_svmem_precent())
-    print("swap:       ", ic.compute_swap_precent())
-    print("disk_io:    ", ic.compute_diskio_precent())
-    print("disk_usage：", ic.compute_diskusage_precent())
-    print("net_avrg:   ", ic.compute_net_avrg_precent())
-    print("user:       ", ic.get_user())
-    print("port:       ", ic.get_port())
+    print(ic.return_all_precent())
+    # print("CPU:        ", ic.compute_cpu_precent())
+    # print("mem:        ", ic.compute_svmem_precent())
+    # print("swap:       ", ic.compute_swap_precent())
+    # print("disk_io:    ", ic.compute_diskio_precent())
+    # print("disk_usage：", ic.compute_diskusage_precent())
+    # print("net_avrg:   ", ic.compute_net_avrg_precent())
+    # print("user:       ", ic.get_user())
+    # print("port:       ", ic.get_port())

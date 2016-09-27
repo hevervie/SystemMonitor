@@ -48,48 +48,50 @@ class Persistent():
         else:
             index.append(result[0][1])
 
-        # scputimes
-        d = data[0]
+        d = data['cpu']
         sql = "INSERT INTO scputimes(user,nice,system,idle,iowait,irq,softirq,steal,guest,guest_nice) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
-            d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9])
+            d['user'], d['nice'], d['system'], d['idle'], d['iowait'], d['irq'], d['softirq'], d['steal'], d['guest'],
+            d['guest_nice'])
         cur.execute(sql)
         index.append(conn.insert_id())
         conn.commit()
 
         # svmem
-        d = data[1][0]
+        d = data['svmem']
         sql = "INSERT INTO svmem(total,available,precent,used,free,active,inactive,buffers,cached,shared) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
-            d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9])
+            d['total'], d['available'], d['precent'], d['used'], d['free'], d['active'], d['inactive'], d['buffers'],
+            d['cached'], d['shared'])
         cur.execute(sql)
         index.append(conn.insert_id())
         conn.commit()
 
         # sswap
-        d = data[1][1]
+        d = data['sswap']
         sql = "INSERT INTO sswap(total,used,free,precent,sin,sout) VALUES (%s,%s,%s,%s,%s,%s);" % (
-            d[0], d[1], d[2], d[3], d[4], d[5])
+            d['total'], d['used'], d['free'], d['precent'], d['sin'], d['sout'])
         cur.execute(sql)
         index.append(conn.insert_id())
         conn.commit()
 
         # sdiskio
-        d = data[2][0]
+        d = data['disk_io']
         sql = "INSERT INTO sdiskio(read_count,write_count,read_bytes,write_bytes,read_time,write_time,read_merged_count,write_merged_count,busy_time) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
-            d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8])
+            d['read_count'], d['write_count'], d['read_bytes'], d['write_bytes'], d['read_time'], d['write_time'],
+            d['read_merged_count'], d['write_merged_count'], d['busy_time'])
         cur.execute(sql)
         index.append(conn.insert_id())
         conn.commit()
 
         # sdiskusage
-        d = data[2][1]
+        d = data['disk_usage']
         sql = "INSERT INTO sdiskusage(point,total,used,free,precent) VALUES (\'%s\',%s,%s,%s,%s);" % (
-            "/", d[0], d[1], d[2], d[3])
+            "/", d['point'], d['total'], d['free'], d['precent'])
         cur.execute(sql)
         index.append(conn.insert_id())
         conn.commit()
 
         # snetio
-        d = data[3]
+        d = data['net_avrg']
         # 获取type最大值
         sql = "select Max(type) from snetio;"
         cur.execute(sql)
