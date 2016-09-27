@@ -57,7 +57,7 @@ class Persistent():
         conn.commit()
 
         # svmem
-        d = data['svmem']
+        d = data['mem']['svmem']
         sql = "INSERT INTO svmem(total,available,precent,used,free,active,inactive,buffers,cached,shared) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
             d['total'], d['available'], d['precent'], d['used'], d['free'], d['active'], d['inactive'], d['buffers'],
             d['cached'], d['shared'])
@@ -66,7 +66,7 @@ class Persistent():
         conn.commit()
 
         # sswap
-        d = data['sswap']
+        d = data['mem']['sswap']
         sql = "INSERT INTO sswap(total,used,free,precent,sin,sout) VALUES (%s,%s,%s,%s,%s,%s);" % (
             d['total'], d['used'], d['free'], d['precent'], d['sin'], d['sout'])
         cur.execute(sql)
@@ -74,7 +74,7 @@ class Persistent():
         conn.commit()
 
         # sdiskio
-        d = data['disk_io']
+        d = data['disk']['disk_io']
         sql = "INSERT INTO sdiskio(read_count,write_count,read_bytes,write_bytes,read_time,write_time,read_merged_count,write_merged_count,busy_time) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
             d['read_count'], d['write_count'], d['read_bytes'], d['write_bytes'], d['read_time'], d['write_time'],
             d['read_merged_count'], d['write_merged_count'], d['busy_time'])
@@ -83,7 +83,7 @@ class Persistent():
         conn.commit()
 
         # sdiskusage
-        d = data['disk_usage']
+        d = data['disk']['disk_usage']
         sql = "INSERT INTO sdiskusage(point,total,used,free,precent) VALUES (\'%s\',%s,%s,%s,%s);" % (
             "/", d['point'], d['total'], d['free'], d['precent'])
         cur.execute(sql)
@@ -91,7 +91,7 @@ class Persistent():
         conn.commit()
 
         # snetio
-        d = data['net_avrg']
+        d = data['net']['net_avrg']
         # 获取type最大值
         sql = "select Max(type) from snetio;"
         cur.execute(sql)
@@ -101,6 +101,7 @@ class Persistent():
             type = 1
         else:
             type = result[0][0] + 1
+
         for k, v in d.items():
             sql = "INSERT INTO snetio(device,type,bytes_sent,bytes_recv,packets_sent,packets_recv,errin,errout,dropin,dropout) VALUES (\'%s\',%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
                 k, type, v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7])

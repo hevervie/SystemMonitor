@@ -212,7 +212,8 @@ class InfoCompute():
 if __name__ == '__main__':
     new_data = {
         "cpu": {"user": 1523.03, "nice": 6.29, "system": 3336.07, "idle": 14321.45, "iowait": 451.6, "irq": 0.0,
-                "softirq": 35.61, "steal": 0.0, "guest": 0.0, "guest_nice": 0.0}, "mem": {
+                "softirq": 35.61, "steal": 0.0, "guest": 0.0, "guest_nice": 0.0},
+        "mem": {
             "sswap": {"total": 7784624128, "used": 6225920, "free": 7778398208, "percent": 0.1, "sin": 770048,
                       "sout": 6688768},
             "svmem": {"total": 7583969280, "available": 4755673088, "percent": 37.3, "used": 7452553216,
@@ -263,21 +264,17 @@ if __name__ == '__main__':
                 "enp3s0": {"bytes_sent": 892208763, "bytes_recv": 3137862868, "packets_sent": 2373332,
                            "packets_recv": 2851497, "errin": 0, "errout": 0, "dropin": 0, "dropout": 0},
                 "lo": {"bytes_sent": 9441323, "bytes_recv": 9441323, "packets_sent": 1425, "packets_recv": 1425,
-                       "errin": 0,
-                       "errout": 0, "dropin": 0, "dropout": 0},
+                       "errin": 0, "errout": 0, "dropin": 0, "dropout": 0},
                 "vmnet8": {"bytes_sent": 0, "bytes_recv": 0, "packets_sent": 28, "packets_recv": 29, "errin": 0,
                            "errout": 0, "dropin": 0, "dropout": 0},
                 "vmnet1": {"bytes_sent": 0, "bytes_recv": 0, "packets_sent": 28, "packets_recv": 0, "errin": 0,
-                           "errout": 0,
-                           "dropin": 0, "dropout": 0},
+                           "errout": 0, "dropin": 0, "dropout": 0},
                 "virbr0-nic": {"bytes_sent": 0, "bytes_recv": 0, "packets_sent": 0, "packets_recv": 0, "errin": 0,
                                "errout": 0, "dropin": 0, "dropout": 0},
                 "virbr0": {"bytes_sent": 0, "bytes_recv": 0, "packets_sent": 0, "packets_recv": 0, "errin": 0,
-                           "errout": 0,
-                           "dropin": 0, "dropout": 0}}, "net_avrg": {"bytes_sent": 901650086, "bytes_recv": 3147304191,
-                                                                     "packets_sent": 2374813, "packets_recv": 2852951,
-                                                                     "errin": 0, "errout": 0, "dropin": 0,
-                                                                     "dropout": 0}},
+                           "errout": 0, "dropin": 0, "dropout": 0}},
+            "net_avrg": {"bytes_sent": 901650086, "bytes_recv": 3147304191, "packets_sent": 2374813,
+                         "packets_recv": 2852951, "errin": 0, "errout": 0, "dropin": 0, "dropout": 0}},
         "disk": {
             "disk_usage": {"total": 53660876800, "used": 14018088960, "free": 39642787840, "percent": 26.1},
             "disk_io": {"read_count": 304907, "write_count": 126004, "read_bytes": 13035374080,
