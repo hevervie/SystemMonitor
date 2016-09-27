@@ -4,14 +4,11 @@
     Created by zhoupan on 7/25/16.
 """
 
-import simplejson
-
 
 class Information():
     """数据解析类，用于将发来的数据解析成原本数据"""
 
     def __init__(self, data):
-        # self.data = simplejson.loads(data)
         self.data = data
 
     def select_cpu_info(self):
@@ -196,6 +193,7 @@ class InfoCompute():
         port = new_info.select_port_info()
         return port
 
+
 if __name__ == '__main__':
     new_data = {
         "cpu": {"user": 1523.03, "nice": 6.29, "system": 3336.07, "idle": 14321.45, "iowait": 451.6, "irq": 0.0,
@@ -287,5 +285,5 @@ if __name__ == '__main__':
     print("disk_io:    ", ic.compute_diskio_precent())
     print("disk_usage：", ic.compute_diskusage_precent())
     print("net_avrg:   ", ic.compute_net_avrg_precent())
-    print("user:       ",ic.get_user())
+    print("user:       ", ic.get_user())
     print("port:       ", ic.get_port())
