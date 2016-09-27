@@ -3,7 +3,7 @@
 """
     Created by zhoupan on 7/25/16.
 """
-from mypsutil import scputimes, svmem, sswap, sdiskio, sdiskusage, snetio, suser, port
+
 import simplejson
 
 
@@ -42,12 +42,6 @@ class Information():
         """获取网络IO情况"""
         netio_info = self.data['net']['net_count']
         return netio_info
-
-    def select_netio_info_by_name(self, name):
-        """通过网口名获取网络信息"""
-
-        total_net = self.data['net']['net_avrg']
-        return total_net
 
     def select_user_info(self):
         """获取用户登陆情况"""
@@ -152,11 +146,11 @@ class InfoCompute():
         new_info = Information(self.new_data)
         old_info = Information(self.old_data)
 
-        new_sent = new_info.select_netio_info_by_name('total').bytes_sent
-        old_sent = old_info.select_netio_info_by_name('total').bytes_sent
+        new_sent = new_info.select_netio_info()['total'].bytes_sent
+        old_sent = old_info.select_netio_info()['total'].bytes_sent
 
-        new_recv = new_info.get_netio_info_by_name('total').bytes_recv
-        old_recv = old_info.get_netio_info_by_name('total').bytes_recv
+        new_recv = new_info.select_netio_info()['total'].bytes_recv
+        old_recv = old_info.select_netio_info()['total'].bytes_recv
         netio_precent = 0.0
         try:
             netio_precent = ((new_sent - old_sent) + (new_recv - old_recv) * 8) / 100 / 1024 / 1024 * 10
@@ -172,7 +166,7 @@ class InfoCompute():
         new_info = Information(self.new_data)
 
         user = []
-        for i in new_info.get_user_info():
+        for i in new_info.select_user_info():
             if i not in user:
                 user.append(i.name)
         return tuple(user)
@@ -180,7 +174,7 @@ class InfoCompute():
     def get_port(self):
         """获取端口列表"""
         new_info = Information(self.new_data)
-        port = new_info.get_port_info().data
+        port = new_info.select_port_info().data
         return port
 
     def get_all_precent(self):
@@ -198,17 +192,4 @@ class InfoCompute():
 
 
 if __name__ == '__main__':
-    old_data = "((0,0,0, 0, 0, 0.0, 0, 0.0, 0.0, 0.0), ((0,0, 0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0.0, 0, 0)), ((0, 0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0)), {'total': (0, 0, 0, 0, 0, 0, 0, 0)}, (), ())"
-    new_data = "((1411.38, 5.03, 390.69, 17315.31, 202.76, 0.0, 2.68, 0.0, 0.0, 0.0), ((7584006144, 4612874240, 39.2, 4650770432, 2933235712, 3034529792, 1125998592, 65818624, 1613819904, 193273856), (8589930496, 0, 8589930496, 0.0, 0, 0)), ((93833, 16742, 2335180288, 534790144, 914777, 3631888, 1828, 12125, 417176), (42123788288, 10189336576, 31934451712, 24.2)), {'virbr0-nic': (0, 0, 0, 0, 0, 0, 0, 0), 'enp3s0': (5958339, 141404525, 66248, 120225, 0, 0, 0, 0), 'total': (6702872, 142149058, 70802, 124721, 0, 0, 0, 0), 'vmnet1': (0, 0, 29, 0, 0, 0, 0, 0), 'lo': (744533, 744533, 4496, 4496, 0, 0, 0, 0), 'virbr0': (0, 0, 0, 0, 0, 0, 0, 0), 'vmnet8': (0, 0, 29, 0, 0, 0, 0, 0)}, (('zhoupan', ':0', 'localhost', 1470268416.0),), ('63342', '80', '8307', '53', '22', '631', '443', '6942', '8000', '902', '3306', '8307', '22', '631', '443', '902'))"
-    new_data = tuple(eval(new_data))
-    old_data = tuple(eval(old_data))
-    info = InfoCompute(new_data, new_data)
-    print(info.get_user())
-    print(info.get_port())
-    print(info.get_diskio_precent())
-    print(info.get_diskusage_precent())
-    print(info.get_cpu_precent())
-    print(info.get_svmem_precent())
-    print(info.get_swap_precent())
-    print(info.get_netio_precent())
-    print(info.get_all_precent())
+    pass
