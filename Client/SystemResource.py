@@ -103,8 +103,8 @@ class SystemResource():
         data = {
             'cpu': sr.get_cpu_info(),
             'mem': sr.get_men_info(),
-            'disk': sr.get_net_info(),
-            'net': sr.get_disk_info(),
+            'net': sr.get_net_info(),
+            'disk': sr.get_disk_info(),
             'user': sr.get_user_info(),
             'port': sr.get_port_info()
         }
@@ -115,6 +115,7 @@ class SystemResource():
 
 if __name__ == '__main__':
     sr = SystemResource()
-    print(sr.return_all_info())
-    print(simplejson.loads(sr.return_all_info()))
-    print(sr.get_net_info())
+    # print(sr.return_all_info())
+    # print(simplejson.loads(sr.return_all_info()))
+    # print(sr.get_net_info())
+    print(sr.return_all_info().__str__())
