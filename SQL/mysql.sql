@@ -48,7 +48,7 @@ CREATE TABLE svmem (
   id        INT PRIMARY KEY AUTO_INCREMENT,
   total     LONG,
   available LONG,
-  precent   DOUBLE,
+  percent   DOUBLE,
   used      LONG,
   free      LONG,
   active    LONG,
@@ -67,7 +67,7 @@ CREATE TABLE sswap (
   total   LONG,
   used    LONG,
   free    LONG,
-  precent DOUBLE,
+  percent DOUBLE,
   sin     INT,
   sout    INT
 );
@@ -100,7 +100,7 @@ CREATE TABLE sdiskusage (
   total   LONG,
   used    LONG,
   free    LONG,
-  precent DOUBLE
+  percent DOUBLE
 );
 
 /*=====================================================*/
@@ -175,7 +175,7 @@ CREATE TABLE receive (
 ALTER TABLE receive ADD CONSTRAINT client_fk FOREIGN KEY (client_id) REFERENCES client(id);
 ALTER TABLE receive ADD CONSTRAINT cpu_fk FOREIGN KEY (cpu_id) REFERENCES scputimes(id);
 ALTER TABLE receive ADD CONSTRAINT svmem_fk FOREIGN KEY (svmem_id) REFERENCES svmem(id);
-ALTER TABLE receive ADD CONSTRAINT swap_fk FOREIGN KEY (swap_id) REFERENCES sswap(id);
+ALTER TABLE receive ADD CONSTRAINT swap_fk FOREIGN KEY (sswap_id) REFERENCES sswap(id);
 ALTER TABLE receive ADD CONSTRAINT diskio_fk FOREIGN KEY (diskio_id) REFERENCES sdiskio(id);
 ALTER TABLE receive ADD CONSTRAINT diskusage_fk FOREIGN KEY (diskusage_id) REFERENCES sdiskusage(id);
 
