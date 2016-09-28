@@ -66,6 +66,16 @@ class MainThread(threading.Thread):
 
             "port": []
         }
+        self.init_alarm = {
+            'cpu': 0,
+            'svmem': 0,
+            'sswap': 0,
+            'disk_io': 0,
+            'disk_usage': 0,
+            'net_avrg': 0,
+            'user': 0,
+            'port': 0,
+        }
 
     def response(self, addr, tcp_client, buf_size):
         """新线程要做的事"""
@@ -79,18 +89,6 @@ class MainThread(threading.Thread):
         # 对数据进行计算
         info = InfoCompute(data, self.old_data_dict[addr])
 
-        # info = Information(data)
-        # print("CPU:        ", info.select_cpu_info())
-        # print("mem:        ", info.select_svmem_info())
-        # print("swap:       ", info.select_swap_info())
-        # print("net_count:  ", info.select_net_count_info())
-        # print("net_avrg:   ", info.select_net_avrg_info())
-        # print("disk_io:    ", info.select_diskio_info())
-        # print("disk_usage: ", info.select_diskusage_info())
-        # print("port:       ", info.select_port_info())
-        # print("user:       ", info.select_user_info())
-
-
         # 获取所有结果
         data_precent = info.return_all_precent()
 
@@ -98,6 +96,7 @@ class MainThread(threading.Thread):
         str = Strategies()
         # 获取check的结果
         total, message = str.check_all_data(data_precent, self.old_alarm_dict[addr])
+
         # 告警
         alarm = Alarm()
         # 对数据进行检测，如果超出阈值，则就开始告警
@@ -108,7 +107,7 @@ class MainThread(threading.Thread):
 
         # 告警过后，将历史数据清空
         if sign:
-            total = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            total = self.init_alarm
             print("------------------")
 
         # 将结果保存到列表里面
@@ -144,7 +143,7 @@ class MainThread(threading.Thread):
             # 如果历史数据字典里面没有当前客户段的记录，则就新创建一个，并赋予初始值
             if addr[0] not in self.old_data_dict.keys():
                 self.old_data_dict[addr[0]] = self.init_data
-                self.old_alarm_dict[addr[0]] = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                self.old_alarm_dict[addr[0]] = self.init_alarm
             # 创建新的线程，用于处理连接后的后续操作
             _thread.start_new_thread(self.response, (addr[0], tcp_clinet, self.buf_size))
 

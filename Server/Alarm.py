@@ -23,7 +23,12 @@ class Alarm():
 
     def send_list(self, total):
         match_data = []
-        m = max(total)
+        m = 0
+
+        # 找出警告信息中最大的报警记录
+        for item in total:
+            if m < total[item]:
+                m = total[item]
         level = 0
         for (key, value) in self.mail.items():
             if int(key) <= m:
@@ -35,8 +40,6 @@ class Alarm():
 
     def send_mail(self, total, ms):
         level, mail_tuple = self.send_list(total)
-        # print(mail_tuple)
-        # print(ms)
         sign = 0
         for i in range(len(mail_tuple)):
             print(mail_tuple[i])

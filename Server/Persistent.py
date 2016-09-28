@@ -58,8 +58,8 @@ class Persistent():
 
         # svmem
         d = data['mem']['svmem']
-        sql = "INSERT INTO svmem(total,available,precent,used,free,active,inactive,buffers,cached,shared) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
-            d['total'], d['available'], d['precent'], d['used'], d['free'], d['active'], d['inactive'], d['buffers'],
+        sql = "INSERT INTO svmem(total,available,percent,used,free,active,inactive,buffers,cached,shared) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
+            d['total'], d['available'], d['percent'], d['used'], d['free'], d['active'], d['inactive'], d['buffers'],
             d['cached'], d['shared'])
         cur.execute(sql)
         index['svmem_id'] = conn.insert_id()
@@ -67,8 +67,8 @@ class Persistent():
 
         # sswap
         d = data['mem']['sswap']
-        sql = "INSERT INTO sswap(total,used,free,precent,sin,sout) VALUES (%s,%s,%s,%s,%s,%s);" % (
-            d['total'], d['used'], d['free'], d['precent'], d['sin'], d['sout'])
+        sql = "INSERT INTO sswap(total,used,free,percent,sin,sout) VALUES (%s,%s,%s,%s,%s,%s);" % (
+            d['total'], d['used'], d['free'], d['percent'], d['sin'], d['sout'])
         cur.execute(sql)
         index['sswap_id'] = conn.insert_id()
         conn.commit()
@@ -84,8 +84,8 @@ class Persistent():
 
         # sdiskusage
         d = data['disk']['disk_usage']
-        sql = "INSERT INTO sdiskusage(point,total,used,free,precent) VALUES (\'%s\',%s,%s,%s,%s);" % (
-            "/", d['point'], d['total'], d['free'], d['precent'])
+        sql = "INSERT INTO sdiskusage(point,total,used,free,percent) VALUES (\'%s\',%s,%s,%s,%s);" % (
+            "/", d['total'], d['used'], d['free'], d['percent'])
         cur.execute(sql)
         index['diskusage_id'] = conn.insert_id()
         conn.commit()
@@ -132,7 +132,7 @@ class Persistent():
         d = data['user']
         for v in d:
             sql = "INSERT INTO suser(type,name,terminal,host,started) VALUES (%s,\'%s\',\'%s\',\'%s\',%s);" % (
-                type, d[v]['name'], d[v]['terminal'], d[v]['host'], d[v]['started'])
+                type, v['name'], v['terminal'], v['host'], v['started'])
             cur.execute(sql)
             conn.commit()
         index['user_type'] = type
@@ -191,11 +191,12 @@ class Persistent():
             else:
                 recv = result[0][0]
                 sql = "INSERT INTO alarm(recv_id,client_id,cpu,svmem,swap,diskio,diskusage,snetio,level,message) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\'%s\')" % (
-                    recv, index, data['cpu'], data['svmem'], data['swap'], data['diskio'], data['diskusage'],
-                    data['snetio'], data['level'], data['message'],)
+                    recv, index, data['cpu'], data['svmem'], data['sswap'], data['disk_io'], data['disk_usage'],
+                    data['net_avrg'], data['level'], data['message'],)
                 cur.execute(sql)
                 # 将运行结果提交
                 conn.commit()
+
 
 if __name__ == '__main__':
     data = ((1411.38, 5.03, 390.69, 17315.31, 202.76, 0.0, 2.68, 0.0, 0.0, 0.0), (
@@ -208,8 +209,6 @@ if __name__ == '__main__':
              'lo': (744533, 744533, 4496, 4496, 0, 0, 0, 0), 'virbr0': (0, 0, 0, 0, 0, 0, 0, 0),
              'vmnet8': (0, 0, 29, 0, 0, 0, 0, 0)}, (('zhoupan', ':0', 'localhost', 1470268416.0),), (
                 '63342', '80', '8307', '53', '22', '631', '443', '6942', '8000', '902', '3306', '8307', '22', '631',
-                '443',
-                '902'))
+                '443', '902'))
     p = Persistent()
-    # p.save_all_data(data, '192.168.30.8')
     p.save_alarm_data(data, '192.168.30.8')
