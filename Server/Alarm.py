@@ -101,37 +101,43 @@ class Strategies():
         if cpu_percent > self.cpu_percent:
             return 1, "CPU使用率过高"
         else:
-            return 0, "CPU使用率正常"
+            # return 0, "CPU使用率正常"
+            return 0, ""
 
     def check_svmem_data(self, svmem_precent):
         if svmem_precent > self.svmem_precent:
             return 1, "内存使用率过高"
         else:
-            return 0, "内存使用率正常"
+            # return 0, "内存使用率正常"
+            return 0, ""
 
     def check_swap_data(self, swap_precent):
         if swap_precent > self.swap_precent:
             return 1, "交换分区使用率过高，内存不足"
         else:
-            return 0, "交换分区使用率正常"
+            # return 0, "交换分区使用率正常"
+            return 0, ""
 
     def check_diskio_data(self, diskio_precent):
         if diskio_precent > self.diskio_precent:
             return 1, "磁盘IO过高"
         else:
-            return 0, "磁盘IO正常"
+            # return 0, "磁盘IO正常"
+            return 0, ""
 
     def check_diskusage_data(self, diskusage_precent):
         if diskusage_precent > self.diskusage_precent:
             return 2, " 磁盘空间不足"
         else:
-            return 0, "磁盘空间充足"
+            # return 0, "磁盘空间充足"
+            return 0, ""
 
     def check_netio_data(self, netio_precent):
         if netio_precent > self.netio_precent:
             return 1, "网络IO率过高"
         else:
-            return 0, "网络IO正常"
+            # return 0, "网络IO正常"
+            return 0, ""
 
     def check_user_data(self, user):
         rtu = "以下用户非法登录："
@@ -145,7 +151,8 @@ class Strategies():
         if sign:
             return sign, rtu
         else:
-            return 0, "登录用户正常"
+            # return 0, "登录用户正常"
+            return 0, ""
 
     def check_port_data(self, port):
         rtu = "以下端口非法开启："
@@ -158,7 +165,8 @@ class Strategies():
         if sign:
             return sign, rtu
         else:
-            return 0, "端口开启正常"
+            # return 0, "端口开启正常"
+            return 0, ""
 
     def check_all_data(self, data, old_data):
         """检测所有信息，并返回结果"""
@@ -185,8 +193,31 @@ class Strategies():
             'user': user + old_data['user'],
             'port': port + old_data['port']
         }
-        message = cpu_message + '\n' + svmem_message + '\n' + swap_message + '\n' + diskio_message + '\n' + diskusage_message + \
-                  '\n' + netio_message + '\n' + user_message + '\n' + port_message + '\n'
+        message = ""
+        if cpu:
+            message += cpu_message
+            message += " "
+        if svmem:
+            message += svmem_message
+            message += " "
+        if swap:
+            message += svmem_message
+            message += " "
+        if diskio:
+            message += diskio_message
+            message += " "
+        if diskusage:
+            message += diskusage_message
+            message += " "
+        if netio:
+            message += netio_message
+            message += " "
+        if user:
+            message += user_message
+            message += " "
+        if port:
+            message += port_message
+            message += " "
 
         return total, message
 

@@ -197,8 +197,6 @@ CREATE TABLE alarm (
   diskio    DOUBLE,
   diskusage DOUBLE,
   snetio    DOUBLE,
-  suser     VARCHAR(100),
-  port      VARCHAR(100),
   level     INT,
   message   VARCHAR(200)
 );
