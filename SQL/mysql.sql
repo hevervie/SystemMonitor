@@ -128,7 +128,7 @@ CREATE TABLE snetio (
 CREATE TABLE suser (
   id       INT AUTO_INCREMENT PRIMARY KEY,
   type     INT,                               /*用户类型，用于在receive表中引入*/
-  user     VARCHAR(20),
+  name     VARCHAR(20),
   terminal VARCHAR(20),
   host     CHAR(15),
   started  DOUBLE
@@ -164,7 +164,7 @@ CREATE TABLE receive (
   client_id    INT,
   cpu_id       INT,
   svmem_id     INT,
-  swap_id      INT,
+  sswap_id      INT,
   diskio_id    INT,
   diskusage_id INT,
   netio_type    INT,
