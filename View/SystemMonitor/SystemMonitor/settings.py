@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '!9m9u+@0s63@_f8zx22eug)h-yr&!nb6ybtle7b2bm0@q8p+c^'
+SECRET_KEY = '=bq&(vi%1)+np=1i@*b4eeufb8$=4fm_@y*lkkq=ds&%=2nv^2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -75,8 +75,10 @@ WSGI_APPLICATION = 'SystemMonitor.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'SystemMonitor',
+        'USER':'root',
+        'PASSWORD':'root',
     }
 }
 
