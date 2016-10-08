@@ -29,7 +29,7 @@ class Persistent():
 
         # client 客户端列表
         # 找出客户端是否存在
-        sql = "SELECT count(id),id FROM client WHERE host = \'%s\';" % addr
+        sql = "SELECT count(id),id FROM informations_client WHERE host = \'%s\';" % addr
 
         # 执行sql语句
         cur.execute(sql)
@@ -39,7 +39,7 @@ class Persistent():
         # 如果此客户端不存在
         if result[0][0] == 0:
             # 新建新的客户端数据
-            sql = "INSERT INTO client(host) VALUES (\'%s\');" % addr
+            sql = "INSERT INTO informations_client(host) VALUES (\'%s\');" % addr
             cur.execute(sql)
             # 将运行结果提交
             index['client_id'] = conn.insert_id()
@@ -49,7 +49,7 @@ class Persistent():
             index['client_id'] = result[0][1]
 
         d = data['cpu']
-        sql = "INSERT INTO scputimes(user,nice,system,idle,iowait,irq,softirq,steal,guest,guest_nice) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
+        sql = "INSERT INTO informations_scputimes(user,nice,system,idle,iowait,irq,softirq,steal,guest,guest_nice) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
             d['user'], d['nice'], d['system'], d['idle'], d['iowait'], d['irq'], d['softirq'], d['steal'], d['guest'],
             d['guest_nice'])
         cur.execute(sql)
@@ -58,7 +58,7 @@ class Persistent():
 
         # svmem
         d = data['mem']['svmem']
-        sql = "INSERT INTO svmem(total,available,percent,used,free,active,inactive,buffers,cached,shared) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
+        sql = "INSERT INTO informations_svmem(total,available,percent,used,free,active,inactive,buffers,cached,shared) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
             d['total'], d['available'], d['percent'], d['used'], d['free'], d['active'], d['inactive'], d['buffers'],
             d['cached'], d['shared'])
         cur.execute(sql)
@@ -67,7 +67,7 @@ class Persistent():
 
         # sswap
         d = data['mem']['sswap']
-        sql = "INSERT INTO sswap(total,used,free,percent,sin,sout) VALUES (%s,%s,%s,%s,%s,%s);" % (
+        sql = "INSERT INTO informations_sswap(total,used,free,percent,sin,sout) VALUES (%s,%s,%s,%s,%s,%s);" % (
             d['total'], d['used'], d['free'], d['percent'], d['sin'], d['sout'])
         cur.execute(sql)
         index['sswap_id'] = conn.insert_id()
@@ -75,7 +75,7 @@ class Persistent():
 
         # sdiskio
         d = data['disk']['disk_io']
-        sql = "INSERT INTO sdiskio(read_count,write_count,read_bytes,write_bytes,read_time,write_time,read_merged_count,write_merged_count,busy_time) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
+        sql = "INSERT INTO informations_sdiskio(read_count,write_count,read_bytes,write_bytes,read_time,write_time,read_merged_count,write_merged_count,busy_time) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
             d['read_count'], d['write_count'], d['read_bytes'], d['write_bytes'], d['read_time'], d['write_time'],
             d['read_merged_count'], d['write_merged_count'], d['busy_time'])
         cur.execute(sql)
@@ -84,7 +84,7 @@ class Persistent():
 
         # sdiskusage
         d = data['disk']['disk_usage']
-        sql = "INSERT INTO sdiskusage(point,total,used,free,percent) VALUES (\'%s\',%s,%s,%s,%s);" % (
+        sql = "INSERT INTO informations_sdiskusage(point,total,used,free,percent) VALUES (\'%s\',%s,%s,%s,%s);" % (
             "/", d['total'], d['used'], d['free'], d['percent'])
         cur.execute(sql)
         index['diskusage_id'] = conn.insert_id()
@@ -93,7 +93,7 @@ class Persistent():
         # snetio
 
         # 获取type最大值
-        sql = "select Max(type) from snetio;"
+        sql = "select Max(type) from informations_snetio;"
         cur.execute(sql)
         result = cur.fetchall()
         type = 0
@@ -103,7 +103,7 @@ class Persistent():
             type = result[0][0] + 1
 
         d = data['net']['net_avrg']
-        sql = "INSERT INTO snetio(device,type,bytes_sent,bytes_recv,packets_sent,packets_recv,errin,errout,dropin,dropout) VALUES (\'%s\',%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
+        sql = "INSERT INTO informations_snetio(device,type,bytes_sent,bytes_recv,packets_sent,packets_recv,errin,errout,dropin,dropout) VALUES (\'%s\',%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
             "net_avrg", type, d['bytes_sent'], d['bytes_recv'], d['packets_sent'], d['packets_recv'], d['errin'],
             d['errout'], d['dropin'], d['dropout'])
         cur.execute(sql)
@@ -111,7 +111,7 @@ class Persistent():
 
         d = data['net']['net_count']
         for k, v in d.items():
-            sql = "INSERT INTO snetio(device,type,bytes_sent,bytes_recv,packets_sent,packets_recv,errin,errout,dropin,dropout) VALUES (\'%s\',%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
+            sql = "INSERT INTO informations_snetio(device,type,bytes_sent,bytes_recv,packets_sent,packets_recv,errin,errout,dropin,dropout) VALUES (\'%s\',%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
                 k, type, v['bytes_sent'], v['bytes_recv'], v['packets_sent'], v['packets_recv'], v['errin'],
                 v['errout'], v['dropin'], v['dropout'])
             cur.execute(sql)
@@ -120,7 +120,7 @@ class Persistent():
         # suser
 
         # 获取type最大值
-        sql = "select Max(type) from suser;"
+        sql = "select Max(type) from informations_suser;"
         cur.execute(sql)
         result = cur.fetchall()
         type = 0
@@ -131,7 +131,7 @@ class Persistent():
 
         d = data['user']
         for v in d:
-            sql = "INSERT INTO suser(type,name,terminal,host,started) VALUES (%s,\'%s\',\'%s\',\'%s\',%s);" % (
+            sql = "INSERT INTO informations_suser(type,name,terminal,host,started) VALUES (%s,\'%s\',\'%s\',\'%s\',%s);" % (
                 type, v['name'], v['terminal'], v['host'], v['started'])
             cur.execute(sql)
             conn.commit()
@@ -140,7 +140,7 @@ class Persistent():
         # sport
         d = data['port']
         # 获取type最大值
-        sql = "select Max(type) from sport;"
+        sql = "select Max(type) from informations_sport;"
         type = 0
         cur.execute(sql)
         result = cur.fetchall()
@@ -149,12 +149,12 @@ class Persistent():
         else:
             type = result[0][0] + 1
         for v in d:
-            sql = "INSERT INTO sport(type,port) VALUES (%s,%s)" % (type, v)
+            sql = "INSERT INTO informations_sport(type,port) VALUES (%s,%s)" % (type, v)
             cur.execute(sql)
             conn.commit()
         index['port_type'] = type
         # # receive
-        sql = "INSERT INTO receive(client_id,cpu_id,svmem_id,sswap_id,diskio_id,diskusage_id,netio_type,user_type,port_type) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)" % (
+        sql = "INSERT INTO informations_receive(client_id,cpu_id,svmem_id,sswap_id,diskio_id,diskusage_id,netio_type,user_type,port_type) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)" % (
             index['client_id'], index['cpu_id'], index['svmem_id'], index['sswap_id'], index['diskio_id'],
             index['diskusage_id'], index['netio_type'], index['user_type'], index['port_type'])
         cur.execute(sql)
@@ -171,26 +171,26 @@ class Persistent():
         cur = conn.cursor()
 
         # 找出客户端
-        sql = "SELECT count(id),id FROM client WHERE host = \'%s\';" % addr
+        sql = "SELECT count(id),id FROM informations_client WHERE host = \'%s\';" % addr
         cur.execute(sql)
         result = cur.fetchall()
         if result[0][0] == 0:
             # 新建新的客户端数据
-            sql = "INSERT INTO client(host) VALUES (\'%s\');" % addr
+            sql = "INSERT INTO informations_client(host) VALUES (\'%s\');" % addr
             cur.execute(sql)
             # 将运行结果提交
             conn.commit()
         else:
             index = result[0][1]
             # 找出数据的id
-            sql = "SELECT max(id),id FROM receive WHERE client_id = %s " % (index)
+            sql = "SELECT max(id),id FROM informations_receive WHERE client_id = %s " % (index)
             cur.execute(sql)
             result = cur.fetchall()
             if result[0][0] == None or result[0][0] == 0:
                 pass
             else:
                 recv = result[0][0]
-                sql = "INSERT INTO alarm(recv_id,client_id,cpu,svmem,swap,diskio,diskusage,snetio,level,message) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\'%s\')" % (
+                sql = "INSERT INTO informations_alarm(recv_id,client_id,cpu,svmem,swap,diskio,diskusage,snetio,level,message) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\'%s\')" % (
                     recv, index, data['cpu'], data['svmem'], data['sswap'], data['disk_io'], data['disk_usage'],
                     data['net_avrg'], data['level'], data['message'],)
                 cur.execute(sql)
