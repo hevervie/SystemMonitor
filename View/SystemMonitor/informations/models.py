@@ -13,7 +13,7 @@ class scputimes(models.Model):
     system = models.DecimalField(max_digits=16, decimal_places=2)
     idle = models.DecimalField(max_digits=16, decimal_places=2)
     iowait = models.DecimalField(max_digits=16, decimal_places=2)
-    irp = models.DecimalField(max_digits=16, decimal_places=2)
+    irq = models.DecimalField(max_digits=16, decimal_places=2)
     softirq = models.DecimalField(max_digits=16, decimal_places=2)
     steal = models.DecimalField(max_digits=16, decimal_places=2)
     guest = models.DecimalField(max_digits=16, decimal_places=2)
