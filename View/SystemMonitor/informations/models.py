@@ -55,7 +55,7 @@ class sswap(models.Model):
 
 
 class sdiskio(models.Model):
-    device = models.CharField(max_length=20, blank=True)
+    device = models.CharField(max_length=20, blank=True, null=True)
     read_count = models.BigIntegerField()
     write_count = models.BigIntegerField()
     read_bytes = models.BigIntegerField()
