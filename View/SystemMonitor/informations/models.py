@@ -19,6 +19,9 @@ class scputimes(models.Model):
     guest = models.DecimalField(max_digits=16, decimal_places=2)
     guest_nice = models.DecimalField(max_digits=16, decimal_places=2)
 
+    def __unicode__(self):
+        return self.id
+
 
 # /*=====================================================*/
 # /*     table: svmem            物理内存信息             */
@@ -35,6 +38,9 @@ class svmem(models.Model):
     cached = models.BigIntegerField()
     shared = models.BigIntegerField()
 
+    def __unicode__(self):
+        return self.id
+
 
 # /*=====================================================*/
 # /*     table: sswap            虚拟内存信息             */
@@ -47,6 +53,9 @@ class sswap(models.Model):
     percent = models.DecimalField(max_digits=16, decimal_places=2)
     sin = models.IntegerField()
     sout = models.IntegerField()
+
+    def __unicode__(self):
+        return self.id
 
 
 # /*=====================================================*/
@@ -66,6 +75,9 @@ class sdiskio(models.Model):
     write_merged_count = models.BigIntegerField()
     busy_time = models.BigIntegerField()
 
+    def __unicode__(self):
+        return self.id
+
 
 # /*=====================================================*/
 # /*     table: sdiskusage            磁盘分区使用率      */
@@ -77,6 +89,9 @@ class sdiskusage(models.Model):
     used = models.BigIntegerField()
     free = models.BigIntegerField()
     percent = models.DecimalField(max_digits=16, decimal_places=2)
+
+    def __unicode__(self):
+        return self.id
 
 
 # /*=====================================================*/
@@ -95,6 +110,9 @@ class snetio(models.Model):
     dropin = models.BigIntegerField()
     dropout = models.BigIntegerField()
 
+    def __unicode__(self):
+        return self.id
+
 
 # /*=====================================================*/
 # /*     table: suser            用户信息                */
@@ -107,6 +125,9 @@ class suser(models.Model):
     host = models.CharField(max_length=15)
     started = models.DecimalField(max_digits=16, decimal_places=2)
 
+    def __unicode__(self):
+        return self.id
+
 
 # /*=====================================================*/
 # /*     table: sport            端口信息                 */
@@ -116,6 +137,9 @@ class sport(models.Model):
     type = models.IntegerField()
     port = models.IntegerField()
 
+    def __unicode__(self):
+        return self.id
+
 
 # /*=====================================================*/
 # /*     table:client             客户端列表              */
@@ -123,6 +147,9 @@ class sport(models.Model):
 
 class client(models.Model):
     host = models.CharField(max_length=15, unique=True)
+
+    def __unicode__(self):
+        return self.host
 
 
 # /*=====================================================*/
@@ -139,6 +166,9 @@ class receive(models.Model):
     netio_type = models.IntegerField()
     user_type = models.IntegerField()
     port_type = models.IntegerField()
+
+    def __unicode__(self):
+        return self.id
 
 
 # /*=====================================================*/
@@ -157,6 +187,9 @@ class alarm(models.Model):
     level = models.IntegerField()
     message = models.CharField(max_length=200)
 
+    def __unicode__(self):
+        return self.id-0
+
 
 # /*=====================================================*/
 # /*     table: strategy            告警策略             */
@@ -166,6 +199,9 @@ class strategy(models.Model):
     type = models.CharField(max_length=20)
     argv = models.IntegerField()
 
+    def __unicode__(self):
+        return self.type
+
 
 # /*=====================================================*/
 # /*     table: user            合法用户列表              */
@@ -174,6 +210,9 @@ class strategy(models.Model):
 class user(models.Model):
     name = models.CharField(max_length=255)
 
+    def __unicode__(self):
+        return self.name
+
 
 # /*=====================================================*/
 # /*     table: port            合法端口列表              */
@@ -181,3 +220,6 @@ class user(models.Model):
 
 class port(models.Model):
     port = models.IntegerField()
+
+    def __unicode__(self):
+        return self.port
