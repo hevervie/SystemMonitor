@@ -23,3 +23,12 @@ urlpatterns = [
     url(r'^$', index),
     url(r'^login/$', user_login)
 ]
+login = [
+    url(r'^root/$', login_root),
+    url(r'^root/passwd/$', login_passwd),
+    url(r'^root/manage', login_manage),
+    url(r'^root/add', login_add),
+    url(r'^root/alter', login_alter),
+]
+
+urlpatterns += login
