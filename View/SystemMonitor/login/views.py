@@ -9,7 +9,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 
 def index(request):
     render = {
-        'url': '..'
+        'url': '.'
     }
     return render_to_response('login.html', render, context_instance=RequestContext(request))
 
@@ -22,7 +22,6 @@ def user_login(request):
         password = request.POST['password']
 
         rtu, message = login().verification(username, password)
-        print(rtu, message)
         if rtu > 0:
             request.session['username'] = username
             return HttpResponseRedirect('/root/')
