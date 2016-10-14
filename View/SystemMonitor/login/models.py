@@ -67,7 +67,7 @@ class login(models.Model):
     def verification(self, username, password):
         """用户名密码验证函数"""
         try:
-            passwd = login.objects.get(id=user.objects.get(user_mun=username)).passwd
+            passwd = login.objects.get(id=user.objects.get(user_num=username).id).passwd
             print(passwd)
             if passwd == password:
                 return 1, 'success'

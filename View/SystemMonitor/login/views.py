@@ -47,7 +47,6 @@ def login_passwd(request):
 
 
 def login_root(request):
-
     return login_base(request, 'root/index.html', {})
 
 
@@ -57,15 +56,33 @@ def login_add(request):
         name = request.POST['name']
         type = request.POST['type']
         email = request.POST['email']
-        u = user()
 
-        if u.is_num_exist(num) == 0:
-            u.user_add(num, type, name, email)
-            message = num + "添加成功！"
-            return render_to_response('root/add.html', {'message': message}, context_instance=RequestContext(request))
+        if len(num) < 8 or len(num.strip()) < 8:
+            message = "工号长度错误，须为8位数字！"
+        elif len(name) < 1 or len(name) > 20:
+            message = "姓名过长或过短！"
+        elif type != 1 or type != 2:
+            message = "角色类型不合法！"
+        elif len(email) < 1:
+            message = "邮箱不能为空！"
         else:
-            message = num + "已存在，请重试！"
-            return render_to_response('root/add.html', {'message': message}, context_instance=RequestContext(request))
+            u = user()
+            if u.is_num_exist(num) == 0:
+                u.user_add(num, type, name, email)
+                message = num + "添加成功！"
+                return render_to_response('root/add.html', {'message': message},
+                                          context_instance=RequestContext(request))
+            else:
+                message = num + "已存在，请重试！"
+                return render_to_response('root/add.html', {'message': message},
+                                          context_instance=RequestContext(request))
+        render = {
+            'message': message,
+            'num': num,
+            'name': name,
+            'email': email,
+        }
+        return render_to_response('root/add.html', render, context_instance=RequestContext(request))
     else:
         return render_to_response('root/add.html', {}, context_instance=RequestContext(request))
 
@@ -79,5 +96,4 @@ def login_alter(request):
 
 
 def test(request):
-    user().user_add('04143153', 1, 'ZhouPan', 'zhoupan@xiyoulinux.org')
     return HttpResponse('success')
