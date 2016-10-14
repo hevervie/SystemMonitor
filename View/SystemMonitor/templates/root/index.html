@@ -1,0 +1,21 @@
+{% extends "root/base.html" %}
+{% block common_operation %}
+    <li><a href="/root/manage"><i class="icon-font">&#xe063;</i>用户管理</a></li>
+    <li><a href="/root/alter/"><i class="icon-font">&#xe014;</i>用户变更</a></li>
+{% endblock %}
+{% block extra_operation %}
+    <li><a href="/root/passwd"><i class="icon-font">&#xe065;</i>密码修改</a></li>
+{% endblock %}
+{% block main %}
+        <div class="result-wrap">
+            <div class="result-title">
+                <h1>欢迎来到用户管理界面</h1>
+            </div>
+            <div class="result-content">
+                <div class="short-wrap">
+                    <p>当前系统高级系统管理员共有：<strong>{{ high_manager }}</strong>名.</p><br/>
+                    <p>当前系统一般运维人员共有：<strong>{{ common_manager }}</strong>名.</p>
+                </div>
+            </div>
+        </div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "root/index.html" %}
+{% block main %}
+    <div class="crumb-wrap">
+        <div class="crumb-list"><i class="icon-font"></i><a href="/root/">首页</a><span
+                class="crumb-step">&gt;</span><span class="crumb-name">用户管理</span></div>
+    </div>
+    <div class="result-wrap">
+        <div class="result-title">
+            <div class="result-list">
+                <a href="/root/add/"><i class="icon-font"></i>添加</a>
+            </div>
+        </div>
+        <div class="result-content" id="fid">
+            <table class="result-tab" width="100%" id="tableid" cellpadding="0" cellspacing="0">
+                <tr>
+                    <th>ID</th>
+                    <th>工号</th>
+                    <th>姓名</th>
+                    <th>email</th>
+                    <th>操作</th>
+            </table>
+            <div class="list-page" style="margin-left: 85%"> 共条</div>
+        </div>
+    </div>
+{% endblock %}

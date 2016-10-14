@@ -1,0 +1,39 @@
+{% extends "root/index.html" %}
+{% block main %}
+    <div class="crumb-wrap">
+        <div class="crumb-list">
+            <i class="icon-font"></i>
+            <a href="/root/">首页</a>
+            <span class="crumb-step">&gt;</span>
+            <span>用户变更</span>
+        </div>
+    </div>
+    <div class="result-wrap">
+        <div class="result-content">
+            <form action="/root/alter/" method="post" id="myform" name="myform" enctype="multipart/form-data">
+                <table class="insert-tab" width="100%" id="fid" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr>
+                        <th width="120"><i class="require-red">*</i>原始类型：</th>
+                        <td>
+                            <input class="common-text required" id="old" name="old_passwd" size="20" value=""
+                                   type="password">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><i class="require-red">*</i>新类型：</th>
+                        <td>
+                            <input class="common-text required" id="new" name="new_passwd" size="20" value=""
+                                   type="password">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <br>
+                <input id="subid" class="btn btn-primary btn6 mr10" value="提交" type="submit" style="margin-left: 6%;">
+                <input class="btn btn6" onclick="self.location='index.php'" value="返回" type="button"
+                       style="margin-left: 2%;">
+            </form>
+        </div>
+    </div>
+{% endblock %}
