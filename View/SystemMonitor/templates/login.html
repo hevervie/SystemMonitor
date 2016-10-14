@@ -7,24 +7,27 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- CSS -->
-    <!--<link rel='stylesheet' href='http://fonts.googleapis.com/css?family=PT+Sans:400,700'>-->
-    <link rel="stylesheet" href="../static/css/reset.css">
-    <link rel="stylesheet" href="../static/css/supersized.css">
-    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="{{ url }}/static/css/reset.css">
+    <link rel="stylesheet" href="{{ url }}/static/css/supersized.css">
+    <link rel="stylesheet" href="{{ url }}/static/css/style.css">
 </head>
 <body>
-<script src="../static/js/jquery-1.8.2.min.js"></script>
-<script src="../static/js/supersized.3.2.7.min.js"></script>
-<script src="../static/js/supersized-init.js"></script>
-<script src="../static/js/scripts.js"></script>
+
 <div class="page-container">
     <h1>Login</h1>
-    <form action="#" method="POST" id="form1">
+    <form action="/login/" method="POST" id="form1">{% csrf_token %}
         <input type="text" name="username" class="Username" placeholder="Username">
         <input type="password" name="password" class="Password" placeholder="Password">
         <button type="submit">Sign in</button>
+        <br/>
+        <br/>
+        {{ message }}
     </form>
 </div>
+<script src="{{ url }}/static/js/jquery-1.8.2.min.js"></script>
+<script src="{{ url }}/static/js/supersized.3.2.7.min.js"></script>
+<script src="{{ url }}/static/js/supersized-init.js"></script>
+<script src="{{ url }}/static/js/scripts.js"></script>
 </body>
 </html>
 
