@@ -1,39 +1,54 @@
 {% extends "root/index.html" %}
 {% block main %}
     <div class="crumb-wrap">
-        <div class="crumb-list">
-            <i class="icon-font"></i>
-            <a href="/root/">首页</a>
-            <span class="crumb-step">&gt;</span>
-            <span>用户变更</span>
-        </div>
+        <div class="crumb-list"><i class="icon-font"></i><a href="/root/">首页</a><span class="crumb-step">&gt;</span><a
+                class="crumb-name" href="/root/manage/">用户管理</a><span
+                class="crumb-step">&gt;</span><span>添加用户</span></div>
     </div>
     <div class="result-wrap">
         <div class="result-content">
-            <form action="/root/alter/" method="post" id="myform" name="myform" enctype="multipart/form-data">
+            <form action="/root/add/" method="post" id="myform" name="myform">{% csrf_token %}
                 <table class="insert-tab" width="100%" id="fid" cellpadding="0" cellspacing="0">
                     <tbody>
                     <tr>
-                        <th width="120"><i class="require-red">*</i>原始类型：</th>
+                        <th><i class="require-red">*</i>工号：</th>
                         <td>
-                            <input class="common-text required" id="old" name="old_passwd" size="20" value=""
-                                   type="password">
+                            <input class="common-text required" id="title" name="num" size="20" value="{{ num }}" type="text" placeholder="8位数字">
                         </td>
                     </tr>
                     <tr>
-                        <th><i class="require-red">*</i>新类型：</th>
+                        <th><i class="require-red">*</i>姓名：</th>
                         <td>
-                            <input class="common-text required" id="new" name="new_passwd" size="20" value=""
-                                   type="password">
+                            <input class="common-text required" id="title" name="name" size="20" value="{{ name }}" type="text" placeholder="小于20个字符">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><i class="require-red">*</i>角色类型：</th>
+                        <td>
+                            <select name="type">
+                                <option value=1>普通运维</option>
+                                <option value=2>系统管理员</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><i class="require-red">*</i>邮箱地址：</th>
+                        <td>
+                            <input class="common-text required" id="price" name="email" size="20" value="{{ email }}" type="email" placeholder="E-mail">
                         </td>
                     </tr>
                     </tbody>
                 </table>
                 <br>
-                <input id="subid" class="btn btn-primary btn6 mr10" value="提交" type="submit" style="margin-left: 6%;">
-                <input class="btn btn6" onclick="self.location='index.php'" value="返回" type="button"
-                       style="margin-left: 2%;">
+                <input id="subid" class="btn btn-primary btn6 mr10" value="提交" type="submit" style="margin-left: 29%">
+                <input class="btn btn6" onclick="self.location='/root/'" value="返回" type="button">
             </form>
         </div>
     </div>
+    <div class="result-wrap">
+        <div class="result-content" id="fid">
+            {{ message }}
+        </div>
+    </div>
 {% endblock %}
+
