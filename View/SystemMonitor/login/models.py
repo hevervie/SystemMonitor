@@ -44,13 +44,27 @@ class user(models.Model):
         )
         l.save()
 
+    def user_alter(self, user_id, user_num, user_type, user_name, user_email):
+        try:
+            u = user.objects.get(id=user_id)
+            u.user_num = user_num
+            u.user_type = user_type
+            u.name = user_name
+            u.email = user_email
+            u.save()
+            return 1, "success"
+        except user.DoesNotExist as d:
+            return 0, str(d)
+        except Exception as e:
+            return 0, str(e)
+
     def is_num_exist(self, num):
         try:
             u = user.objects.get(user_num=num)
         except user.DoesNotExist:
             return 0
         else:
-            return 1
+            return u.id
 
     def get_all_user(self):
         u = user.objects.all()
@@ -105,3 +119,17 @@ class login(models.Model):
             return -2, m
         except Exception as e:
             return -3, e
+
+    def get_login_by_user_id(self, user_id):
+        try:
+            return 1, login.objects.get(user_id=user_id)
+        except Exception as e:
+            return 0, e
+
+    def passwd_alter(self, user_id, passwd):
+        rtu, l = login().get_login_by_user_id(user_id)
+        if rtu == 1:
+            l.passwd = passwd
+            return 1, "success"
+        else:
+            return 0, str(l)
