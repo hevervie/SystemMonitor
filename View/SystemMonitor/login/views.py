@@ -54,14 +54,14 @@ def login_add(request):
     if request.POST:
         num = request.POST['num']
         name = request.POST['name']
-        type = request.POST['type']
+        type = int(request.POST['type'])
         email = request.POST['email']
-
+        print(type)
         if len(num) < 8 or len(num.strip()) < 8:
             message = "工号长度错误，须为8位数字！"
         elif len(name) < 1 or len(name) > 20:
             message = "姓名过长或过短！"
-        elif type != 1 or type != 2:
+        elif type != 1 and type != 2:
             message = "角色类型不合法！"
         elif len(email) < 1:
             message = "邮箱不能为空！"
@@ -88,11 +88,39 @@ def login_add(request):
 
 
 def login_manage(request):
-    return login_base(request, 'root/manage.html', {})
+    message = ""
+    if request.POST:
+        user_id = int(request.POST['id'])
+        sign, message = user().delete_user_by_id(user_id)
+        print(sign, message)
+        if sign == 1:
+            message = "删除成功！"
+        else:
+            message += "删除失败:"
+    else:
+        pass
+    u = user().get_all_user()
+    return render_to_response('root/manage.html',
+                              {'user': u, 'type1': '一般运维', 'type2': '系统管理员', 'message': message, 'count': len(u)},
+                              context_instance=RequestContext(request))
 
 
 def login_alter(request):
-    return login_base(request, 'root/alter.html', {})
+    render = {}
+    if request.POST:
+
+        user_id = request.POST['id']
+        u = user().get_user_by_id(user_id)
+        if u:
+            render = {
+                'num': u.user_num,
+                'user_type': u.user_type,
+                'name': u.name,
+                'email': u.email,
+            }
+    else:
+        pass
+    return render_to_response('root/alter.html', render, context_instance=RequestContext(request))
 
 
 def test(request):

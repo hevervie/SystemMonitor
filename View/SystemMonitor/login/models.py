@@ -52,6 +52,32 @@ class user(models.Model):
         else:
             return 1
 
+    def get_all_user(self):
+        u = user.objects.all()
+        return u
+
+    def get_user_by_id(self, user_id):
+        try:
+            u = user.objects.get(id=user_id)
+            return u
+        except Exception:
+            pass
+
+    def delete_user_by_id(self, user_id):
+        message = ""
+        sign = -1
+        try:
+            login.objects.get(user_id=user_id).delete()
+            user.objects.get(id=user_id).delete()
+        except Exception as e:
+            message = str(e)
+            sign = 0
+        else:
+            message = "success"
+            sign = 1
+        finally:
+            return sign, message
+
 
 # /*=====================================================*/
 # /*     table: login            用户登录                */
