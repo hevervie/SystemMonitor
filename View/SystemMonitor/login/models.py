@@ -108,7 +108,6 @@ class login(models.Model):
         """用户名密码验证函数"""
         try:
             passwd = login.objects.get(id=user.objects.get(user_num=username).id).passwd
-            print(passwd)
             if passwd == password:
                 return 1, 'success'
             else:
@@ -126,10 +125,14 @@ class login(models.Model):
         except Exception as e:
             return 0, e
 
-    def passwd_alter(self, user_id, passwd):
+    def passwd_alter(self, user_id, new_passwd, old_passwd):
         rtu, l = login().get_login_by_user_id(user_id)
         if rtu == 1:
-            l.passwd = passwd
-            return 1, "success"
+            if l.passwd == old_passwd:
+                l.passwd = new_passwd
+                l.save()
+                return 1, "success"
+            else:
+                return 0, '原始密码错误！'
         else:
             return 0, str(l)
