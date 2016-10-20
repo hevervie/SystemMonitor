@@ -16,19 +16,12 @@ class user(models.Model):
     def __unicode__(self):
         return self.user_id
 
-    def get_type_num(self):
-        all_user = self.objects.all()
-        type_1 = 0
-        type_2 = 0
-        type_3 = 0
-        for i in all_user:
-            if i.user_type == 1:
-                type_1 += 1
-            elif i.user_type == 2:
-                type_2 += 1
-            else:
-                type_3 += 1
-        return type_1, type_2, type_3
+    def get_type_by_id(self, user_id):
+        try:
+            type = user.objects.get(id=user_id).user_type
+            return type
+        except user.DoesNotExist:
+            pass
 
     def user_add(self, user_num, user_type, user_name, user_email):
         u = user(
@@ -77,6 +70,13 @@ class user(models.Model):
         except Exception:
             pass
 
+    def get_user_number_by_type(self, user_type):
+        try:
+            u = user.objects.filter(user_type=user_type)
+            return len(u)
+        except user.DoesNotExist:
+            return 0
+
     def delete_user_by_id(self, user_id):
         message = ""
         sign = -1
@@ -107,9 +107,10 @@ class login(models.Model):
     def verification(self, username, password):
         """用户名密码验证函数"""
         try:
-            passwd = login.objects.get(id=user.objects.get(user_num=username).id).passwd
+            user_id = user.objects.get(user_num=username).id
+            passwd = login.objects.get(id=user_id).passwd
             if passwd == password:
-                return 1, 'success'
+                return user_id, 'success'
             else:
                 return 0, 'username or password error!'
         except login.DoesNotExist as d:  # 如果不存在,则会抛出DoesNotExist异常
