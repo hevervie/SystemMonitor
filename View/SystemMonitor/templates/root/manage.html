@@ -23,31 +23,32 @@
                     <th class="tc">操作</th>
                 </tr>
                 {% for u in user %}
-                    <tr>
-                        <td class="tc">{{ u.id }}</td>
-                        <td class="tc">{{ u.user_num }}</td>
-                        <td class="tc">{{ u.name }}</td>
-                        <td class="tc">{{ u.email }}</td>
-                        {% if u.user_type == 1 %}
-                            <td class="tc">{{ type1 }}</td>
-                        {% else %}
-                            <td class="tc">{{ type2 }}</td>
-                        {% endif %}
-                        <td class="tc">
-                            <form action="/root/alter/" method="post">{% csrf_token %}
-                                <input value="{{ u.id }}" type="hidden" name="id">
-                                <input class="btn btn-primary btn2" type="submit" value="修改">
-                            </form>
+                    {% if u.user_type != 0 %}
+                        <tr>
+                            <td class="tc">{{ u.id }}</td>
+                            <td class="tc">{{ u.user_num }}</td>
+                            <td class="tc">{{ u.name }}</td>
+                            <td class="tc">{{ u.email }}</td>
+                            {% if u.user_type == 1 %}
+                                <td class="tc">{{ type1 }}</td>
+                            {% else %}
+                                <td class="tc">{{ type2 }}</td>
+                            {% endif %}
+                            <td class="tc">
+                                <form action="/root/alter/" method="post">{% csrf_token %}
+                                    <input value="{{ u.id }}" type="hidden" name="id">
+                                    <input class="btn btn-primary btn2" type="submit" value="修改">
+                                </form>
 
-                        </td>
-                        <td class="tc">
-                            <form action="/root/manage/" method="post">{% csrf_token %}
-                                <input value="{{ u.id }}" type="hidden" name="id">
-                                <input class="btn btn-primary btn2" type="submit" value="删除">
-                            </form>
-
-                        </td>
-                    </tr>
+                            </td>
+                            <td class="tc">
+                                <form action="/root/manage/" method="post">{% csrf_token %}
+                                    <input value="{{ u.id }}" type="hidden" name="id">
+                                    <input class="btn btn-primary btn2" type="submit" value="删除">
+                                </form>
+                            </td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
