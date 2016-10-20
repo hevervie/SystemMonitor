@@ -23,12 +23,20 @@ def user_login(request):
 
         rtu, message = login().verification(username, password)
         if rtu > 0:
+            type = user().get_type_by_id(rtu)
             request.session['username'] = username
-            return HttpResponseRedirect('/root/')
+            if type == 0:
+                return HttpResponseRedirect('/root/')
+            elif type == 1:
+                return HttpResponseRedirect('/employee/')
+            elif type == 2:
+                return HttpResponseRedirect('//sysadm/')
+            else:
+                return HttpResponse("Error")
         elif rtu <= 0:
             render = {
                 'url': '..',
-                'message': 'username or password not incorrect!'
+                'message': '用户名或密码错误！'
             }
             return render_to_response('login.html', render, context_instance=RequestContext(request))
     else:
@@ -59,13 +67,15 @@ def login_passwd(request):
                 return render_to_response('root/passwd.html', {'message': user_num + "密码修改成功！"},
                                           context_instance=RequestContext(request))
             else:
-                return render_to_response('root/passwd.html', {'message': "密码修改失败！"+message},
+                return render_to_response('root/passwd.html', {'message': "密码修改失败！" + message},
                                           context_instance=RequestContext(request))
     return render_to_response('root/passwd.html', {}, context_instance=RequestContext(request))
 
 
 def login_root(request):
-    return login_base(request, 'root/index.html', {})
+    type_1 = user().get_user_number_by_type(1)
+    type_2 = user().get_user_number_by_type(2)
+    return login_base(request, 'root/index.html', {'high_manager': type_1, 'common_manager': type_2})
 
 
 def login_add(request):
@@ -109,16 +119,20 @@ def login_manage(request):
     if request.POST:
         user_id = int(request.POST['id'])
         sign, message = user().delete_user_by_id(user_id)
-        print(sign, message)
+        u = user().get_all_user()
         if sign == 1:
             message = "删除成功！"
         else:
-            message += "删除失败:"
+            message = "删除失败:"
+        return render_to_response('root/manage.html',
+                                  {'user': u, 'type1': '一般运维', 'type2': '系统管理员', 'message': message,
+                                   'count': len(u) - 1},
+                                  context_instance=RequestContext(request))
     else:
         pass
         u = user().get_all_user()
         return render_to_response('root/manage.html',
-                                  {'user': u, 'type1': '一般运维', 'type2': '系统管理员', 'message': message, 'count': len(u)},
+                                  {'user': u, 'type1': '一般运维', 'type2': '系统管理员', 'message': message, 'count': len(u)-1},
                                   context_instance=RequestContext(request))
 
 
