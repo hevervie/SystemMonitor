@@ -31,4 +31,8 @@ login = [
     url(r'^root/alter', login_alter),
 ]
 
+informations = [
+    url(r'^sysadm/$', adm_index),
+]
+
 urlpatterns += login
