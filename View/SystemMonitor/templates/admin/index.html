@@ -1,10 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "root/base.html" %}
+{% block common_operation %}
+    <li><a href="/root/manage/"><i class="icon-font">&#xe063;</i>监控告警</a></li>
+    <li><a href="/root/alter/"><i class="icon-font">&#xe014;</i>服务器管理</a></li>
+    <li><a href="/root/alter/"><i class="icon-font">&#xe014;</i>服务器信息详情</a></li>
+    <li><a href="/root/alter/"><i class="icon-font">&#xe014;</i>告警策略配置</a></li>
+{% endblock %}
+{% block extra_operation %}
+    <li><a href="/root/alter/"><i class="icon-font">&#xe014;</i>告警人员管理</a></li>
+    <li><a href="/root/passwd/"><i class="icon-font">&#xe065;</i>密码修改</a></li>
+{% endblock %}
+{% block main %}
+    <div class="result-wrap">
+        <div class="result-title">
+            <h1>欢迎来到用户管理界面</h1>
+        </div>
+        <div class="result-content">
+            <div class="short-wrap">
+                <p>当前系统高级系统管理员共有：<strong>{{ high_manager }}</strong>名.</p><br/>
+            </div>
+        </div>
+    </div>
+{% endblock %}
