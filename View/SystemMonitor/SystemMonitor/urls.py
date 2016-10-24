@@ -19,7 +19,7 @@ from login.views import *
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^test/$', test),
+    url(r'^test/$', ajax_test),
     url(r'^$', index),
     url(r'^login/$', user_login)
 ]

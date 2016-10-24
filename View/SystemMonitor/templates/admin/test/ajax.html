@@ -5,9 +5,23 @@
     <title>Title</title>
 </head>
 <body>
-
-
+<div class="data">
+    {% for i in data %}
+        <div class="item">{{ i }}</div>
+    {% endfor %}
+</div>
 
 <script src="/static/js/jquery-1.8.2.min.js"></script>
+<script>
+    function Print() {
+        var element = document.getElementsByClassName("item");
+        for (var i = 0; i < element.length; i++) {
+            var it = element[i];
+            var json = it.innerHTML;
+            alert(json);
+        }
+    }
+    window.onload = Print();
+</script>
 </body>
 </html>
