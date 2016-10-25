@@ -132,7 +132,8 @@ def login_manage(request):
         pass
         u = user().get_all_user()
         return render_to_response('root/manage.html',
-                                  {'user': u, 'type1': '一般运维', 'type2': '系统管理员', 'message': message, 'count': len(u)-1},
+                                  {'user': u, 'type1': '一般运维', 'type2': '系统管理员', 'message': message,
+                                   'count': len(u) - 1},
                                   context_instance=RequestContext(request))
 
 
