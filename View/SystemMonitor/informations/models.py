@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 
 # Create your models here.
@@ -157,6 +158,8 @@ class client(models.Model):
 # /*=====================================================*/
 
 class receive(models.Model):
+    datetime = models.DateTimeField(auto_now=True)
+    # time = models.DateTimeField(auto_now=True)
     client_id = models.IntegerField()
     cpu_id = models.IntegerField()
     svmem_id = models.IntegerField()

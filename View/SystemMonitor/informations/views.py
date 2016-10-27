@@ -10,10 +10,11 @@ def adm_index(request):
 
 
 def ajax_test(request):
-    cpu = scputimes.objects.all()[0:9]
+    # cpu = scputimes.objects.all()[0:9]
+    mem = svmem.objects.all()[0:9]
     data = []
-    for item in cpu:
-        d = {'user': item.user, 'nice': item.nice, 'system': item.system, 'guest': item.guest}
+    for item in mem:
+        d = {'percent': item.percent}
         data.append(simplejson.dumps(d))
     render = {
         'data': data
