@@ -152,6 +152,9 @@ class client(models.Model):
     def __unicode__(self):
         return self.host
 
+    def get_host_number(self):
+        return client.objects.count()
+
 
 # /*=====================================================*/
 # /*     table: receive            接收到的信息           */

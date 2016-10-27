@@ -36,3 +36,4 @@ informations = [
 ]
 
 urlpatterns += login
+urlpatterns += informations
