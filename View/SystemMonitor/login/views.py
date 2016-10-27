@@ -30,7 +30,7 @@ def user_login(request):
             elif type == 1:
                 return HttpResponseRedirect('/employee/')
             elif type == 2:
-                return HttpResponseRedirect('//sysadm/')
+                return HttpResponseRedirect('/sysadm/')
             else:
                 return HttpResponse("Error")
         elif rtu <= 0:
