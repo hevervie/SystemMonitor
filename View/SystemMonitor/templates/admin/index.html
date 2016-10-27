@@ -1,4 +1,4 @@
-{% extends "root/base.html" %}
+{% extends "admin/base.html" %}
 {% block common_operation %}
     <li><a href="/root/manage/"><i class="icon-font">&#xe063;</i>监控告警</a></li>
     <li><a href="/root/alter/"><i class="icon-font">&#xe014;</i>服务器管理</a></li>
@@ -12,11 +12,13 @@
 {% block main %}
     <div class="result-wrap">
         <div class="result-title">
-            <h1>欢迎来到用户管理界面</h1>
+            <h1>欢迎来到集群监控管理界面</h1>
         </div>
         <div class="result-content">
             <div class="short-wrap">
-                <p>当前系统高级系统管理员共有：<strong>{{ high_manager }}</strong>名.</p><br/>
+                <p>当前正在监测的主机共有：<strong>{{ number }}</strong> 个.</p><br/>
+                <p style="color: red">高危主机：<strong>{{ number }}</strong> 个，请及时处理！</p><br/>
+                <p style="color: #da4f49">监控告警：<strong>{{ number }}</strong> 个，请及时处理！</p><br/>
             </div>
         </div>
     </div>
