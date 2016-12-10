@@ -15,11 +15,14 @@ DROP TABLE IF EXISTS snetio;      /*网络IO信息*/
 DROP TABLE IF EXISTS suser;       /*在线用户信息*/
 DROP TABLE IF EXISTS sport;       /*端口信息*/
 DROP TABLE IF EXISTS client;     /*客户端信息*/
-DROP TABLE IF EXISTS receive;     /*接收的数据*/
-DROP TABLE IF EXISTS alarm;       /*警告*/
+
 DROP TABLE IF EXISTS strategy;    /*告警策略*/
 DROP TABLE IF EXISTS user;        /*合法用户*/
 DROP TABLE IF EXISTS port;        /*合法端口*/
+
+DROP TABLE IF EXISTS receive;     /*接收的数据*/ /*Time*/
+DROP TABLE IF EXISTS alarm;       /*警告*/
+
 
 
 /*=====================================================*/
@@ -39,9 +42,7 @@ CREATE TABLE scputimes (
   guest      DOUBLE,
   guest_nice DOUBLE
 );
-/*
 
- */
 /*=====================================================*/
 /*     table: svmem            物理内存信息             */
 /*=====================================================*/
@@ -61,7 +62,7 @@ CREATE TABLE svmem (
 );
 
 /*=====================================================*/
-/*     table: sswap            虚拟内存信息             */
+/*     table: sswap            虚拟内存信息              */
 /*=====================================================*/
 
 CREATE TABLE sswap (
@@ -163,6 +164,7 @@ CREATE TABLE client (
 
 CREATE TABLE receive (
   id           INT PRIMARY KEY AUTO_INCREMENT,
+  datetime DATE DEFAULT CURRENT_DATE,
   client_id    INT,
   cpu_id       INT,
   svmem_id     INT,
