@@ -18,155 +18,154 @@ Base = declarative_base()
 class Scputimes(Base):
     __tablename__ = 'scputimes'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user = Column(DECIMAL(16, 2))
-    nice = Column(DECIMAL(16, 2))
-    system = Column(DECIMAL(16, 2))
-    idle = Column(DECIMAL(16, 2))
-    iowait = Column(DECIMAL(16, 2))
-    irq = Column(DECIMAL(16, 2))
-    softirq = Column(DECIMAL(16, 2))
-    steal = Column(DECIMAL(16, 2))
-    guest = Column(DECIMAL(16, 2))
-    guest_nice = Column(DECIMAL(16, 2))
+    user = Column(DECIMAL(16, 2), nullable=False)
+    nice = Column(DECIMAL(16, 2), nullable=False)
+    system = Column(DECIMAL(16, 2), nullable=False)
+    idle = Column(DECIMAL(16, 2), nullable=False)
+    iowait = Column(DECIMAL(16, 2), nullable=False)
+    irq = Column(DECIMAL(16, 2), nullable=False)
+    softirq = Column(DECIMAL(16, 2), nullable=False)
+    steal = Column(DECIMAL(16, 2), nullable=False)
+    guest = Column(DECIMAL(16, 2), nullable=False)
+    guest_nice = Column(DECIMAL(16, 2), nullable=False)
 
 
 class Svmem(Base):
     __tablename__ = 'svmem'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    total = Column(BIGINT)
-    available = Column(BIGINT)
-    percent = Column(DECIMAL(16, 2))
-    used = Column(BIGINT)
-    free = Column(BIGINT)
-    active = Column(BIGINT)
-    inactive = Column(BIGINT)
-    buffers = Column(BIGINT)
-    cached = Column(BIGINT)
-    shared = Column(BIGINT)
+    total = Column(BIGINT, nullable=False)
+    available = Column(BIGINT, nullable=False)
+    percent = Column(DECIMAL(16, 2), nullable=False)
+    used = Column(BIGINT, nullable=False)
+    free = Column(BIGINT, nullable=False)
+    active = Column(BIGINT, nullable=False)
+    inactive = Column(BIGINT, nullable=False)
+    buffers = Column(BIGINT, nullable=False)
+    cached = Column(BIGINT, nullable=False)
+    shared = Column(BIGINT, nullable=False)
 
 
 class Sswap(Base):
     __tablename__ = 'sswap'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    total = Column(BIGINT)
-    used = Column(BIGINT)
-    free = Column(BIGINT)
-    percent = Column(DECIMAL(16, 2))
-    sin = Column(Integer)
-    sout = Column(Integer)
+    total = Column(BIGINT, nullable=False)
+    used = Column(BIGINT, nullable=False)
+    free = Column(BIGINT, nullable=False)
+    percent = Column(DECIMAL(16, 2), nullable=False)
+    sin = Column(Integer, nullable=False)
+    sout = Column(Integer, nullable=False)
 
 
 class Sdiskio(Base):
     __tablename__ = 'sdiskio'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    device = Column(VARCHAR(20))
-    read_count = Column(BIGINT)
-    write_count = Column(BIGINT)
-    read_bytes = Column(BIGINT)
-    write_bytes = Column(BIGINT)
-    read_time = Column(BIGINT)
-    write_time = Column(BIGINT)
-    read_merged_count = Column(BIGINT)
-    write_merged_count = Column(BIGINT)
-    busy_time = Column(BIGINT)
+    device = Column(VARCHAR(20), nullable=False)
+    read_count = Column(BIGINT, nullable=False)
+    write_count = Column(BIGINT, nullable=False)
+    read_bytes = Column(BIGINT, nullable=False)
+    write_bytes = Column(BIGINT, nullable=False)
+    read_time = Column(BIGINT, nullable=False)
+    write_time = Column(BIGINT, nullable=False)
+    read_merged_count = Column(BIGINT, nullable=False)
+    write_merged_count = Column(BIGINT, nullable=False)
+    busy_time = Column(BIGINT, nullable=False)
 
 
 class Sdiskusage(Base):
     __tablename__ = 'sdiskusage'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    point = Column(VARCHAR(20))
-    total = Column(BIGINT)
-    used = Column(BIGINT)
-    free = Column(BIGINT)
-    percent = Column(DECIMAL(16, 2))
+    point = Column(VARCHAR(20), nullable=False)
+    total = Column(BIGINT, nullable=False)
+    used = Column(BIGINT, nullable=False)
+    free = Column(BIGINT, nullable=False)
+    percent = Column(DECIMAL(16, 2), nullable=False)
 
 
 class Snetio(Base):
     __tablename__ = 'snetio'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    device = Column(VARCHAR(20))
-    type = Column(Integer)
-    bytes_sent = Column(BIGINT)
-    bytes_recv = Column(BIGINT)
-    packets_sent = Column(BIGINT)
-    packets_recv = Column(BIGINT)
-    errin = Column(BIGINT)
-    errout = Column(BIGINT)
-    dropin = Column(BIGINT)
-    dropout = Column(BIGINT)
+    device = Column(VARCHAR(20), nullable=False)
+    type = Column(Integer, nullable=False)
+    bytes_sent = Column(BIGINT, nullable=False)
+    bytes_recv = Column(BIGINT, nullable=False)
+    packets_sent = Column(BIGINT, nullable=False)
+    packets_recv = Column(BIGINT, nullable=False)
+    errin = Column(BIGINT, nullable=False)
+    errout = Column(BIGINT, nullable=False)
+    dropin = Column(BIGINT, nullable=False)
+    dropout = Column(BIGINT, nullable=False)
 
 
 class Suser(Base):
     __tablename__ = 'suser'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    type = Column(Integer)
-    name = Column(VARCHAR(20))
-    terminal = Column(VARCHAR(20))
-    host = Column(CHAR(15))
-    started = Column(DECIMAL(16, 2))
+    type = Column(Integer, nullable=False)
+    name = Column(VARCHAR(20), nullable=False)
+    terminal = Column(VARCHAR(20), nullable=False)
+    host = Column(CHAR(15), nullable=False)
+    started = Column(DECIMAL(16, 2), nullable=False)
 
 
 class Sport(Base):
     __tablename__ = 'sport'
-    id = Column(Integer)
-    type = Column(Integer)
-    port = Column(Integer)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    type = Column(Integer, nullable=False)
+    port = Column(Integer, nullable=False)
 
 
 class Client(Base):
     __tablename__ = 'client'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    host = Column(CHAR(15), unique=True)
+    host = Column(CHAR(15), unique=True, nullable=False)
 
 
 class Receive(Base):
     __tablename__ = 'receive'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    datetime = Column(DATETIME)
-    client = Column(Integer, ForeignKey('client.id'))
-    cpu = Column(Integer, ForeignKey('scputimes.id'))
-    svmem = Column(Integer, ForeignKey('svmem.id'))
-    sswap = Column(Integer, ForeignKey('sswap.id'))
-    diskio = Column(Integer, ForeignKey('diskio.id'))
-    diskusage = Column(Integer, ForeignKey('diskusage'))
-    netio = Column(Integer)
-    user = Column(Integer)
-    port = Column(Integer)
+    datetime = Column(DATETIME, nullable=False)
+    client_id = Column(Integer, ForeignKey('client.id'), nullable=False)
+    cpu_id = Column(Integer, ForeignKey('scputimes.id'), nullable=False)
+    svmem_id = Column(Integer, ForeignKey('svmem.id'), nullable=False)
+    sswap_id = Column(Integer, ForeignKey('sswap.id'), nullable=False)
+    diskio_id = Column(Integer, ForeignKey('sdiskio.id'), nullable=False)
+    diskusage_id = Column(Integer, ForeignKey('sdiskusage.id'), nullable=False)
+    netio = Column(Integer, nullable=False)
+    user = Column(Integer, nullable=False)
+    port = Column(Integer, nullable=False)
 
-CREATE TABLE alarm (
-  id        INT PRIMARY KEY AUTO_INCREMENT,
-  recv_id   INT,
-  client_id INT,
-  cpu       DOUBLE,
-  svmem     DOUBLE,
-  swap      DOUBLE,
-  diskio    DOUBLE,
-  diskusage DOUBLE,
-  snetio    DOUBLE,
-  level     INT,
-  message   VARCHAR(200)
-);
 
 class Alarm(Base):
     __tablename__ = 'alarm'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    receive = Column(Integer, )
+    receive = Column(Integer, ForeignKey('receive.id'), nullable=False)
+    client = Column(Integer, ForeignKey('client.id'), nullable=False)
+    cpu = Column(DECIMAL(16, 2), nullable=False)
+    svmem = Column(DECIMAL(16, 2), nullable=False)
+    swap = Column(DECIMAL(16, 2), nullable=False)
+    diskio = Column(DECIMAL(16, 2), nullable=False)
+    diskusage = Column(DECIMAL(16, 2), nullable=False)
+    snetio = Column(DECIMAL(16, 2), nullable=False)
+    level = Column(Integer, nullable=False)
+    message = Column(VARCHAR(200), nullable=False)
 
 
+class Strategy(Base):
+    __tablename__ = 'strategy'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    type = Column(VARCHAR(20), nullable=False)
+    argv = Column(Integer, nullable=False)
 
-# 一对多
-class Favor(Base):
-    __tablename__ = 'favor'
-    nid = Column(Integer, primary_key=True)
-    caption = Column(String(50), default='red', unique=True)
+
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(VARCHAR(255), nullable=False)
 
 
-# 多对多
-class ServerToGroup(Base):
-    __tablename__ = 'servertogroup'
-    nid = Column(Integer, primary_key=True, autoincrement=True)
-    server_id = Column(Integer, ForeignKey('server.id'))
-    group_id = Column(Integer, ForeignKey('group.id'))
+class Port(Base):
+    __tablename__ = 'port'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    port = Column(Integer, nullable=False)
 
 
 # 定义初始化数据库函数
@@ -179,7 +178,7 @@ def drop_db():
     Base.metadata.drop_all(engine)
 
 
-# drop_db()
+#drop_db()
 init_db()
 
 # 创建mysql操作对象
