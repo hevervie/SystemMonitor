@@ -5,7 +5,9 @@
 """
 # 导入mysql的包
 import pymysql
-from Configure import Configure
+from Server.Configure import Configure
+import datetime
+import time
 
 
 class Persistent():
@@ -153,10 +155,13 @@ class Persistent():
             cur.execute(sql)
             conn.commit()
         index['port_type'] = type
-        # # receive
-        sql = "INSERT INTO informations_receive(client_id,cpu_id,svmem_id,sswap_id,diskio_id,diskusage_id,netio_type,user_type,port_type) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)" % (
+        # receive
+
+        sql = "INSERT INTO informations_receive(client_id,cpu_id,svmem_id,sswap_id,diskio_id,diskusage_id,netio_type,user_type,port_type,datetime) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\'%s\')" % (
             index['client_id'], index['cpu_id'], index['svmem_id'], index['sswap_id'], index['diskio_id'],
-            index['diskusage_id'], index['netio_type'], index['user_type'], index['port_type'])
+            index['diskusage_id'], index['netio_type'], index['user_type'], index['port_type'],
+            datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'))
+        print(sql)
         cur.execute(sql)
         conn.commit()
         conn.close()
@@ -192,7 +197,7 @@ class Persistent():
                 recv = result[0][0]
                 sql = "INSERT INTO informations_alarm(recv_id,client_id,cpu,svmem,swap,diskio,diskusage,snetio,level,message) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\'%s\')" % (
                     recv, index, data['cpu'], data['svmem'], data['sswap'], data['disk_io'], data['disk_usage'],
-                    data['net_avrg'], data['level'], data['message'],)
+                    data['net_avrg'], data['level'], data['message'])
                 cur.execute(sql)
                 # 将运行结果提交
                 conn.commit()
