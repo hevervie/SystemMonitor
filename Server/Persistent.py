@@ -5,7 +5,7 @@
 """
 # 导入mysql的包
 import pymysql
-from Server.Configure import Configure
+from Configure import Configure
 import datetime
 import time
 
