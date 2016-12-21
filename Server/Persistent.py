@@ -7,7 +7,10 @@
 import pymysql
 from Configure import Configure
 import datetime
-import time
+from SQL.Models import Scputimes, Svmem, Sswap, Sdiskio, Sdiskusage, Snetio, Suser, Sport, Client, Receive, Alarm, \
+    Strategy, User, Port
+
+from Server import session
 
 
 class Persistent():
@@ -25,18 +28,20 @@ class Persistent():
     def save_all_data(self, data, addr):
         """保存所有的原数据"""
         index = {}
-        conn = pymysql.connect(host=self.host, user=self.user, passwd=self.passwd, db=self.db, port=self.port,
-                               charset='utf8')
-        cur = conn.cursor()
+        # conn = pymysql.connect(host=self.host, user=self.user, passwd=self.passwd, db=self.db, port=self.port,
+        #                        charset='utf8')
+        # cur = conn.cursor()
 
-        # client 客户端列表
-        # 找出客户端是否存在
-        sql = "SELECT count(id),id FROM informations_client WHERE host = \'%s\';" % addr
+        # # client 客户端列表
+        # # 找出客户端是否存在
+        # sql = "SELECT count(id),id FROM informations_client WHERE host = \'%s\';" % addr
+        # # 执行sql语句
+        # cur.execute(sql)
+        # # 获取结果
+        # result = cur.fetchall()
 
-        # 执行sql语句
-        cur.execute(sql)
-        # 获取结果
-        result = cur.fetchall()
+        # ORM替代方案
+        result = session.query(Client).filter_by(name=addr).all()
 
         # 如果此客户端不存在
         if result[0][0] == 0:
@@ -57,6 +62,23 @@ class Persistent():
         cur.execute(sql)
         index['cpu_id'] = conn.insert_id()
         conn.commit()
+
+        # ORM替代方案
+        if result.count() == 0:
+            client = Client(host=addr)
+            session.add(client)
+            session.commit()
+            index['client_id'] = client.id
+        else:
+            index['client_id'] = result[0].id
+        d = data['cpu']
+        scputimes = Scputimes(user=d['user'], nice=d['nice'], system=d['system'], idle=d['idle'], iowait=d['iowait'],
+                              irq=d['irq'], softirq=d['softirq'], steal=d['steal'], guest=d['guest'],
+                              guest_nice=d['guest_nice'])
+        session.add(scputimes)
+        session.commit()
+        index['cpu_id'] = scputimes.id
+
 
         # svmem
         d = data['mem']['svmem']

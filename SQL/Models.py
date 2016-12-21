@@ -1,14 +1,13 @@
 #!/usr/env python
 # -*- coding: UTF-8 -*-
 """
-    Created by zhoupan on 12/10/16.
+    Created by zhoupan on 12/21/16.
 """
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, ForeignKey, DECIMAL, BIGINT, VARCHAR, DATETIME
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-import datetime
 
 Base = declarative_base()
 
@@ -257,8 +256,6 @@ if __name__ == '__main__':
     # 创建mysql操作对象
     Session = sessionmaker(bind=engine)
     session = Session()
-    user = User(name="lalal")
-    session.add(user)
-    print(user.id)
-    session.commit()
-    print(user.id)
+    # user = User(name="zhoupan")
+    # session.add(user)
+    # session.commit()

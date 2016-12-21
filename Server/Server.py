@@ -10,19 +10,30 @@ import threading
 import simplejson
 from socket import *
 
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+
 from Alarm import Strategies, Alarm
 from Configure import Configure
 from HandleInfo import InfoCompute, Information
 from Persistent import Persistent
 
 
+# ORM数据库初始化操作
+engine = create_engine("mysql+pymysql://root:root@127.0.0.1:3306/test", max_overflow=5)
+Base = declarative_base()
+Session = sessionmaker(bind=engine)
+session = Session()
+
+
+# 主线程
 class MainThread(threading.Thread):
     def __init__(self, thread_id, name):
         """一些类初始化工作"""
         threading.Thread.__init__(self)
         threading.threadID = thread_id
         threading.name = name
-
         # 读取配置文件
         cf = Configure()
         self.host = cf.read_config('server.conf', 'server', 'host')
