@@ -43,25 +43,25 @@ class Persistent():
         # ORM替代方案
         result = session.query(Client).filter_by(name=addr).all()
 
-        # 如果此客户端不存在
-        if result[0][0] == 0:
-            # 新建新的客户端数据
-            sql = "INSERT INTO informations_client(host) VALUES (\'%s\');" % addr
-            cur.execute(sql)
-            # 将运行结果提交
-            index['client_id'] = conn.insert_id()
-            conn.commit()
-        # 如果存在，则将此id记录下来
-        else:
-            index['client_id'] = result[0][1]
-
-        d = data['cpu']
-        sql = "INSERT INTO informations_scputimes(user,nice,system,idle,iowait,irq,softirq,steal,guest,guest_nice) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
-            d['user'], d['nice'], d['system'], d['idle'], d['iowait'], d['irq'], d['softirq'], d['steal'], d['guest'],
-            d['guest_nice'])
-        cur.execute(sql)
-        index['cpu_id'] = conn.insert_id()
-        conn.commit()
+        # # 如果此客户端不存在
+        # if result[0][0] == 0:
+        #     # 新建新的客户端数据
+        #     sql = "INSERT INTO informations_client(host) VALUES (\'%s\');" % addr
+        #     cur.execute(sql)
+        #     # 将运行结果提交
+        #     index['client_id'] = conn.insert_id()
+        #     conn.commit()
+        # # 如果存在，则将此id记录下来
+        # else:
+        #     index['client_id'] = result[0][1]
+        #
+        # d = data['cpu']
+        # sql = "INSERT INTO informations_scputimes(user,nice,system,idle,iowait,irq,softirq,steal,guest,guest_nice) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
+        #     d['user'], d['nice'], d['system'], d['idle'], d['iowait'], d['irq'], d['softirq'], d['steal'], d['guest'],
+        #     d['guest_nice'])
+        # cur.execute(sql)
+        # index['cpu_id'] = conn.insert_id()
+        # conn.commit()
 
         # ORM替代方案
         if result.count() == 0:
@@ -79,7 +79,6 @@ class Persistent():
         session.commit()
         index['cpu_id'] = scputimes.id
 
-
         # svmem
         d = data['mem']['svmem']
         sql = "INSERT INTO informations_svmem(total,available,percent,used,free,active,inactive,buffers,cached,shared) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
@@ -88,6 +87,10 @@ class Persistent():
         cur.execute(sql)
         index['svmem_id'] = conn.insert_id()
         conn.commit()
+
+        d = data['mem']['svmem']
+        svmem = Svmem(total=)
+
 
         # sswap
         d = data['mem']['sswap']

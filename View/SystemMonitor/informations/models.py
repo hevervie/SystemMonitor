@@ -162,16 +162,15 @@ class client(models.Model):
 
 class receive(models.Model):
     datetime = models.DateTimeField(auto_now=True)
-    # time = models.DateTimeField(auto_now=True)
-    client_id = models.IntegerField()
-    cpu_id = models.IntegerField()
-    svmem_id = models.IntegerField()
-    sswap_id = models.IntegerField()
-    diskio_id = models.IntegerField()
-    diskusage_id = models.IntegerField()
-    netio_type = models.IntegerField()
-    user_type = models.IntegerField()
-    port_type = models.IntegerField()
+    client = models.ForeignKey(client)
+    cpu = models.ForeignKey(scputimes)
+    svmem = models.ForeignKey(svmem)
+    sswap = models.ForeignKey(sswap)
+    sdiskio = models.ForeignKey(sdiskio)
+    sdiskusage = models.ForeignKey(sdiskusage)
+    snetio = models.IntegerField()
+    suser = models.IntegerField()
+    sport = models.IntegerField()
 
     def __unicode__(self):
         return self.id
@@ -182,8 +181,8 @@ class receive(models.Model):
 # /*=====================================================*/
 
 class alarm(models.Model):
-    recv_id = models.IntegerField()
-    client_id = models.IntegerField()
+    receive = models.ForeignKey(receive)
+    client = models.ForeignKey(client)
     cpu = models.DecimalField(max_digits=16, decimal_places=2)
     svmem = models.DecimalField(max_digits=16, decimal_places=2)
     swap = models.DecimalField(max_digits=16, decimal_places=2)
