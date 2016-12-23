@@ -79,62 +79,97 @@ class Persistent():
         session.commit()
         index['cpu_id'] = scputimes.id
 
+        # # svmem
+        # d = data['mem']['svmem']
+        # sql = "INSERT INTO informations_svmem(total,available,percent,used,free,active,inactive,buffers,cached,shared) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
+        #     d['total'], d['available'], d['percent'], d['used'], d['free'], d['active'], d['inactive'], d['buffers'],
+        #     d['cached'], d['shared'])
+        # cur.execute(sql)
+        # index['svmem_id'] = conn.insert_id()
+        # conn.commit()
+
         # svmem
         d = data['mem']['svmem']
-        sql = "INSERT INTO informations_svmem(total,available,percent,used,free,active,inactive,buffers,cached,shared) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
-            d['total'], d['available'], d['percent'], d['used'], d['free'], d['active'], d['inactive'], d['buffers'],
-            d['cached'], d['shared'])
-        cur.execute(sql)
-        index['svmem_id'] = conn.insert_id()
-        conn.commit()
+        svmem = Svmem(total=d['total'], available=d['available'], percent=d['percent'], used=d['used'], free=d['free'],
+                      active=d['active'], inactive=d['inactive'], buffers=d['buffers'], cached=d['cached'],
+                      shared=d['shared'])
+        session.add(svmem)
+        session.commit()
+        index['svmem_id'] = svmem.id
 
-        d = data['mem']['svmem']
-        svmem = Svmem(total=)
-
+        # # sswap
+        # d = data['mem']['sswap']
+        # sql = "INSERT INTO informations_sswap(total,used,free,percent,sin,sout) VALUES (%s,%s,%s,%s,%s,%s);" % (
+        #     d['total'], d['used'], d['free'], d['percent'], d['sin'], d['sout'])
+        # cur.execute(sql)
+        # index['sswap_id'] = conn.insert_id()
+        # conn.commit()
 
         # sswap
         d = data['mem']['sswap']
-        sql = "INSERT INTO informations_sswap(total,used,free,percent,sin,sout) VALUES (%s,%s,%s,%s,%s,%s);" % (
-            d['total'], d['used'], d['free'], d['percent'], d['sin'], d['sout'])
-        cur.execute(sql)
-        index['sswap_id'] = conn.insert_id()
-        conn.commit()
+        sswap = Sswap(total=d['total'], used=d['used'], free=d['free'], percent=d['percent'], sin=d['sin'],
+                      sout=d['sout'])
+        session.add(sswap)
+        session.commit()
+        index['sswap_id'] = sswap.id
+
+        # # sdiskio
+        # d = data['disk']['disk_io']
+        # sql = "INSERT INTO informations_sdiskio(read_count,write_count,read_bytes,write_bytes,read_time,write_time,read_merged_count,write_merged_count,busy_time) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
+        #     d['read_count'], d['write_count'], d['read_bytes'], d['write_bytes'], d['read_time'], d['write_time'],
+        #     d['read_merged_count'], d['write_merged_count'], d['busy_time'])
+        # cur.execute(sql)
+        # index['diskio_id'] = conn.insert_id()
+        # conn.commit()
 
         # sdiskio
         d = data['disk']['disk_io']
-        sql = "INSERT INTO informations_sdiskio(read_count,write_count,read_bytes,write_bytes,read_time,write_time,read_merged_count,write_merged_count,busy_time) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
-            d['read_count'], d['write_count'], d['read_bytes'], d['write_bytes'], d['read_time'], d['write_time'],
-            d['read_merged_count'], d['write_merged_count'], d['busy_time'])
-        cur.execute(sql)
-        index['diskio_id'] = conn.insert_id()
-        conn.commit()
+        sdiskio = Sdiskio(read_count=d['read_count'], write_count=d['write_count'], read_bytes=d['read_bytes'],
+                          write_bytes=d['write_bytes'], read_time=d['read_time'], write_time=d['write_time'],
+                          read_merged_count=d['read_merged_count'], write_merged_count=d['write_merged_count'],
+                          busy_time=d['busy_time'])
+        session.add(sdiskio)
+        session.commit()
+        index['diskio_id'] = sdiskio.id
+
+        # # sdiskusage
+        # d = data['disk']['disk_usage']
+        # sql = "INSERT INTO informations_sdiskusage(point,total,used,free,percent) VALUES (\'%s\',%s,%s,%s,%s);" % (
+        #     "/", d['total'], d['used'], d['free'], d['percent'])
+        # cur.execute(sql)
+        # index['diskusage_id'] = conn.insert_id()
+        # conn.commit()
 
         # sdiskusage
         d = data['disk']['disk_usage']
-        sql = "INSERT INTO informations_sdiskusage(point,total,used,free,percent) VALUES (\'%s\',%s,%s,%s,%s);" % (
-            "/", d['total'], d['used'], d['free'], d['percent'])
-        cur.execute(sql)
-        index['diskusage_id'] = conn.insert_id()
-        conn.commit()
+        sdiskusage = Sdiskusage(point=d['point'], total=d['total'], used=d['used'], free=d['free'],
+                                percent=d['percent'])
+        session.add(sdiskusage)
+        session.commit()
+        index['diskusage_id'] = sdiskusage
+
+
+        # # snetio
+        # # 获取type最大值
+        # sql = "select Max(type) from informations_snetio;"
+        # cur.execute(sql)
+        # result = cur.fetchall()
+        # type = 0
+        # if result[0][0] == None or result[0][0] == 0:
+        #     type = 1
+        # else:
+        #     type = result[0][0] + 1
+        #
+        # d = data['net']['net_avrg']
+        # sql = "INSERT INTO informations_snetio(device,type,bytes_sent,bytes_recv,packets_sent,packets_recv,errin,errout,dropin,dropout) VALUES (\'%s\',%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
+        #     "net_avrg", type, d['bytes_sent'], d['bytes_recv'], d['packets_sent'], d['packets_recv'], d['errin'],
+        #     d['errout'], d['dropin'], d['dropout'])
+        # cur.execute(sql)
+        # conn.commit()
 
         # snetio
 
-        # 获取type最大值
-        sql = "select Max(type) from informations_snetio;"
-        cur.execute(sql)
-        result = cur.fetchall()
-        type = 0
-        if result[0][0] == None or result[0][0] == 0:
-            type = 1
-        else:
-            type = result[0][0] + 1
 
-        d = data['net']['net_avrg']
-        sql = "INSERT INTO informations_snetio(device,type,bytes_sent,bytes_recv,packets_sent,packets_recv,errin,errout,dropin,dropout) VALUES (\'%s\',%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
-            "net_avrg", type, d['bytes_sent'], d['bytes_recv'], d['packets_sent'], d['packets_recv'], d['errin'],
-            d['errout'], d['dropin'], d['dropout'])
-        cur.execute(sql)
-        conn.commit()
 
         d = data['net']['net_count']
         for k, v in d.items():
