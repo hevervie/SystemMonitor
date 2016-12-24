@@ -11,6 +11,7 @@ from SQL.Models import Scputimes, Svmem, Sswap, Sdiskio, Sdiskusage, Snetio, Sus
     Strategy, User, Port
 
 from Server import session
+from sqlalchemy import func
 
 
 class Persistent():
@@ -148,7 +149,6 @@ class Persistent():
         session.commit()
         index['diskusage_id'] = sdiskusage
 
-
         # # snetio
         # # 获取type最大值
         # sql = "select Max(type) from informations_snetio;"
@@ -161,70 +161,128 @@ class Persistent():
         #     type = result[0][0] + 1
         #
         # d = data['net']['net_avrg']
-        # sql = "INSERT INTO informations_snetio(device,type,bytes_sent,bytes_recv,packets_sent,packets_recv,errin,errout,dropin,dropout) VALUES (\'%s\',%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
+        # sql = "INSERT INTO informations_snetio(device,type,bytes_sent,bytes_recv,packets_sent,packets_sent,errin,errout,dropin,dropout) VALUES (\'%s\',%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
         #     "net_avrg", type, d['bytes_sent'], d['bytes_recv'], d['packets_sent'], d['packets_recv'], d['errin'],
         #     d['errout'], d['dropin'], d['dropout'])
         # cur.execute(sql)
         # conn.commit()
 
+        # d = data['net']['net_count']
+        # for k, v in d.items():
+        #     sql = "INSERT INTO informations_snetio(device,type,bytes_sent,bytes_recv,packets_sent,packets_recv,errin,errout,dropin,dropout) VALUES (\'%s\',%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
+        #         k, type, v['bytes_sent'], v['bytes_recv'], v['packets_sent'], v['packets_recv'], v['errin'],
+        #         v['errout'], v['dropin'], v['dropout'])
+        #     cur.execute(sql)
+        #     conn.commit()
+        #
+        # index['netio_type'] = type
+
         # snetio
-
-
+        result = session.query(func.max(Snetio.type))
+        type = result[0][0]
+        if type == None:
+            type = 1
+        else:
+            type += 1
+        d = data['net']['net_avrg']
+        snetio = Snetio(device='net_avrg', type=type, bytes_sent=d['bytes_sent'], bytes_recv=d['bytes_recv'],
+                        packets_sent=d['packets_sent'], packets_recv=d['packets_recv'], errin=d['errin'],
+                        errout=d['errout'], dropin=d['dropin'], dropout=d['dropout'])
+        session.add(snetio)
+        session.commit()
 
         d = data['net']['net_count']
         for k, v in d.items():
-            sql = "INSERT INTO informations_snetio(device,type,bytes_sent,bytes_recv,packets_sent,packets_recv,errin,errout,dropin,dropout) VALUES (\'%s\',%s,%s,%s,%s,%s,%s,%s,%s,%s);" % (
-                k, type, v['bytes_sent'], v['bytes_recv'], v['packets_sent'], v['packets_recv'], v['errin'],
-                v['errout'], v['dropin'], v['dropout'])
-            cur.execute(sql)
-            conn.commit()
+            snetio = Snetio(device=k, type=type, bytes_sent=v['bytes_sent'], bytes_recv=v['bytes_recv'],
+                            packets_sent=v['packets_sent'], packets_recv=v['packets_recv'], errin=v['errin'],
+                            errout=v['errout'], dropin=v['dropin'], dropout=v['dropout'])
+            session.add(snetio)
+        session.commit()
         index['netio_type'] = type
-        # suser
 
-        # 获取type最大值
-        sql = "select Max(type) from informations_suser;"
-        cur.execute(sql)
-        result = cur.fetchall()
-        type = 0
-        if result[0][0] == None or result[0][0] == 0:
+        # # suser
+        # # 获取type最大值
+        # sql = "select Max(type) from informations_suser;"
+        # cur.execute(sql)
+        # result = cur.fetchall()
+        # type = 0
+        # if result[0][0] == None or result[0][0] == 0:
+        #     type = 1
+        # else:
+        #     type = result[0][0] + 1
+        #
+        # d = data['user']
+        # for v in d:
+        #     sql = "INSERT INTO informations_suser(type,name,terminal,host,started) VALUES (%s,\'%s\',\'%s\',\'%s\',%s);" % (
+        #         type, v['name'], v['terminal'], v['host'], v['started'])
+        #     cur.execute(sql)
+        #     conn.commit()
+        # index['user_type'] = type
+
+        # suser
+        result = session.query(func.max(Suser.type))
+        type = result[0][0]
+        if type == None:
             type = 1
         else:
-            type = result[0][0] + 1
+            type += 1
 
         d = data['user']
         for v in d:
-            sql = "INSERT INTO informations_suser(type,name,terminal,host,started) VALUES (%s,\'%s\',\'%s\',\'%s\',%s);" % (
-                type, v['name'], v['terminal'], v['host'], v['started'])
-            cur.execute(sql)
-            conn.commit()
+            suser = Suser(type=type, name=v['name'], terminal=v['terminal'], host=v['host'], started=v['started'])
+            session.add(suser)
+        session.commit()
         index['user_type'] = type
+
+        # # sport
+        # d = data['port']
+        # # 获取type最大值
+        # sql = "select Max(type) from informations_sport;"
+        # type = 0
+        # cur.execute(sql)
+        # result = cur.fetchall()
+        # if result[0][0] == None or result[0][0] == 0:
+        #     type = 1
+        # else:
+        #     type = result[0][0] + 1
+        # for v in d:
+        #     sql = "INSERT INTO informations_sport(type,port) VALUES (%s,%s)" % (type, v)
+        #     cur.execute(sql)
+        #     conn.commit()
+        # index['port_type'] = type
 
         # sport
         d = data['port']
-        # 获取type最大值
-        sql = "select Max(type) from informations_sport;"
-        type = 0
-        cur.execute(sql)
-        result = cur.fetchall()
-        if result[0][0] == None or result[0][0] == 0:
+        result = session.query(func.max(Sport.type))
+        type = result[0][0]
+        if type == None:
             type = 1
         else:
-            type = result[0][0] + 1
+            type += 1
         for v in d:
-            sql = "INSERT INTO informations_sport(type,port) VALUES (%s,%s)" % (type, v)
-            cur.execute(sql)
-            conn.commit()
+            suser = Sport(type=type, port=v)
+            session.add(suser)
+        session.commit()
         index['port_type'] = type
-        # receive
 
-        sql = "INSERT INTO informations_receive(client_id,cpu_id,svmem_id,sswap_id,diskio_id,diskusage_id,netio_type,user_type,port_type,datetime) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\'%s\')" % (
-            index['client_id'], index['cpu_id'], index['svmem_id'], index['sswap_id'], index['diskio_id'],
-            index['diskusage_id'], index['netio_type'], index['user_type'], index['port_type'],
-            datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'))
-        print(sql)
-        cur.execute(sql)
-        conn.commit()
-        conn.close()
+        # # receive
+        # sql = "INSERT INTO informations_receive(client_id,cpu_id,svmem_id,sswap_id,diskio_id,diskusage_id,netio_type,user_type,port_type,datetime) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\'%s\')" % (
+        #     index['client_id'], index['cpu_id'], index['svmem_id'], index['sswap_id'], index['diskio_id'],
+        #     index['diskusage_id'], index['netio_type'], index['user_type'], index['port_type'],
+        #     datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'))
+        # print(sql)
+        # cur.execute(sql)
+        # conn.commit()
+        # conn.close()
+
+        # receive
+        now = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
+        receive = Receive(client_id=index['client_id'], cpu_id=index['cpu_id'], svmem_id=index['svmem_id'],
+                          sswap_id=index['sswap_id'], diskio_id=index['diskio_id'], diskusage_id=index['diskusage_id'],
+                          netio_type=index['netio_type'], user_type=index['user_type'], port_type=index['port_type'],
+                          datetime=now)
+        session.add(receive)
+        session.commit()
 
     def save_alarm_data(self, data, addr):
         """保存处理过的告警数据"""
@@ -234,7 +292,6 @@ class Persistent():
                                charset='utf8')
         # 获取游标
         cur = conn.cursor()
-
         # 找出客户端
         sql = "SELECT count(id),id FROM informations_client WHERE host = \'%s\';" % addr
         cur.execute(sql)
@@ -261,7 +318,7 @@ class Persistent():
                 cur.execute(sql)
                 # 将运行结果提交
                 conn.commit()
-
+        result = session.query(Client).filter_by(name=addr).all()
 
 if __name__ == '__main__':
     data = ((1411.38, 5.03, 390.69, 17315.31, 202.76, 0.0, 2.68, 0.0, 0.0, 0.0), (
