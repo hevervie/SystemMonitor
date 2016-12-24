@@ -319,6 +319,14 @@ class Persistent():
                 # 将运行结果提交
                 conn.commit()
         result = session.query(Client).filter_by(name=addr).all()
+        if result.count() <= 0:
+            client = Client(host=addr)
+            session.add(client)
+            session.commit()
+        else:
+            index = result[0].id
+            session.query(Receive).filter_by(client_id=index).
+
 
 if __name__ == '__main__':
     data = ((1411.38, 5.03, 390.69, 17315.31, 202.76, 0.0, 2.68, 0.0, 0.0, 0.0), (
