@@ -5,7 +5,7 @@
 """
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, ForeignKey, DECIMAL, BIGINT, VARCHAR, DATETIME,func
+from sqlalchemy import Column, Integer, ForeignKey, DECIMAL, BIGINT, VARCHAR, DATETIME, func
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 import datetime
@@ -262,5 +262,8 @@ if __name__ == '__main__':
     # print(user.id)
     # session.commit()
     # print(user.id)
-    result = session.query(func.max(Suser.id))
-    print(result[0])
+    # result = session.query(func.max(Suser.id))
+    # print(result[0])
+    index = 1
+    result = session.query(func.max(User.id)).filter_by(id=index)
+    print(result[0][0])

@@ -287,37 +287,37 @@ class Persistent():
     def save_alarm_data(self, data, addr):
         """保存处理过的告警数据"""
 
-        # 连接数据库
-        conn = pymysql.connect(host=self.host, user=self.user, passwd=self.passwd, db=self.db, port=self.port,
-                               charset='utf8')
-        # 获取游标
-        cur = conn.cursor()
-        # 找出客户端
-        sql = "SELECT count(id),id FROM informations_client WHERE host = \'%s\';" % addr
-        cur.execute(sql)
-        result = cur.fetchall()
-        if result[0][0] == 0:
-            # 新建新的客户端数据
-            sql = "INSERT INTO informations_client(host) VALUES (\'%s\');" % addr
-            cur.execute(sql)
-            # 将运行结果提交
-            conn.commit()
-        else:
-            index = result[0][1]
-            # 找出数据的id
-            sql = "SELECT max(id),id FROM informations_receive WHERE client_id = %s " % (index)
-            cur.execute(sql)
-            result = cur.fetchall()
-            if result[0][0] == None or result[0][0] == 0:
-                pass
-            else:
-                recv = result[0][0]
-                sql = "INSERT INTO informations_alarm(recv_id,client_id,cpu,svmem,swap,diskio,diskusage,snetio,level,message) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\'%s\')" % (
-                    recv, index, data['cpu'], data['svmem'], data['sswap'], data['disk_io'], data['disk_usage'],
-                    data['net_avrg'], data['level'], data['message'])
-                cur.execute(sql)
-                # 将运行结果提交
-                conn.commit()
+        # # 连接数据库
+        # conn = pymysql.connect(host=self.host, user=self.user, passwd=self.passwd, db=self.db, port=self.port,
+        #                        charset='utf8')
+        # # 获取游标
+        # cur = conn.cursor()
+        # # 找出客户端
+        # sql = "SELECT count(id),id FROM informations_client WHERE host = \'%s\';" % addr
+        # cur.execute(sql)
+        # result = cur.fetchall()
+        # if result[0][0] == 0:
+        #     # 新建新的客户端数据
+        #     sql = "INSERT INTO informations_client(host) VALUES (\'%s\');" % addr
+        #     cur.execute(sql)
+        #     # 将运行结果提交
+        #     conn.commit()
+        # else:
+        #     index = result[0][1]
+        #     # 找出数据的id
+        #     sql = "SELECT max(id),id FROM informations_receive WHERE client_id = %s " % (index)
+        #     cur.execute(sql)
+        #     result = cur.fetchall()
+        #     if result[0][0] == None or result[0][0] == 0:
+        #         pass
+        #     else:
+        #         recv = result[0][0]
+        #         sql = "INSERT INTO informations_alarm(recv_id,client_id,cpu,svmem,swap,diskio,diskusage,snetio,level,message) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\'%s\')" % (
+        #             recv, index, data['cpu'], data['svmem'], data['sswap'], data['disk_io'], data['disk_usage'],
+        #             data['net_avrg'], data['level'], data['message'])
+        #         cur.execute(sql)
+        #         # 将运行结果提交
+        #         conn.commit()
         result = session.query(Client).filter_by(name=addr).all()
         if result.count() <= 0:
             client = Client(host=addr)
@@ -325,7 +325,16 @@ class Persistent():
             session.commit()
         else:
             index = result[0].id
-            session.query(Receive).filter_by(client_id=index).
+            result = session.query(func.max(Receive.id)).filter_by(client_id=index)
+            recv = result[0][0]
+            if recv is None:
+                pass
+            else:
+                alarm = Alarm(recv_id=recv, client_id=index, cpu=data['cpu'], svmem=data['svmem'], swap=data['swap'],
+                              diskio=data['diskio'], diskusage=data['diskusage'], snetio=data['snetio'],
+                              level=data['level'], message=data['message'])
+                session.add(alarm)
+                session.commit()
 
 
 if __name__ == '__main__':
