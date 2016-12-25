@@ -14,11 +14,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
-from Alarm import Strategies, Alarm
+from AlarmModule import Alarm, Strategies
 from Configure import Configure
 from HandleInfo import InfoCompute, Information
-from Persistent import Persistent
-
+from Persistent import *
 
 # ORM数据库初始化操作
 engine = create_engine("mysql+pymysql://root:root@127.0.0.1:3306/test", max_overflow=5)
@@ -109,13 +108,17 @@ class MainThread(threading.Thread):
         total, message = str.check_all_data(data_precent, self.old_alarm_dict[addr])
 
         # 告警
+        per = Persistent()
+        # 保存所有源数据
+        per.save_all_data(data, addr)
+
         alarm = Alarm()
         # 对数据进行检测，如果超出阈值，则就开始告警
         # sign : 0则表示不进行报警，1则表示告警的级别
         sign = alarm.send_mail(total, message)
 
         print("%s's sign: %d " % (addr, sign))
-
+        sign = 0
         # 告警过后，将历史数据清空
         if sign:
             total = self.init_alarm
