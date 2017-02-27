@@ -8,7 +8,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, ForeignKey, DECIMAL, BIGINT, VARCHAR, DATETIME, func
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-import datetime
 
 Base = declarative_base()
 
@@ -266,4 +265,10 @@ if __name__ == '__main__':
     # print(result[0])
     index = 1
     result = session.query(func.max(User.id)).filter_by(id=index)
-    print(result[0][0])
+
+    for i in range(1, 10000):
+        count = session.query(Client).filter_by(host="192.168.30.8").all()
+        #print(len(count))
+    #for i in range(1, 10000):
+    #    count = session.query("select count(*) from informations_alarm;")
+    #    print(count.filter)
