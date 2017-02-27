@@ -69,129 +69,42 @@ class Information():
 class InfoCompute():
     """对获取到的信息进行计算，方便进行后续处理"""
 
-    def __init__(self, new_data, old_data):
+    def __init__(self, data):
         """类初始化"""
-
-        self.new_data = new_data
-        self.old_data = old_data
+        self.data = data
 
     def compute_cpu_precent(self):
         """获取cpu使用率"""
-
-        new_info = Information(self.new_data)
-        old_info = Information(self.old_data)
-
-        new_total = 0.0
-        old_total = 0.0
-
-        # 计算出cpu各个参数总和
-
-        data = new_info.select_cpu_info()
-
-        for k in data:
-            new_total += data[k]
-        data = old_info.select_cpu_info()
-
-        for k in data:
-            old_total += data[k]
-
-        new_free = new_info.select_cpu_info()['idle']
-        old_free = old_info.select_cpu_info()['idle']
-
-        cpu_precent = 0.0
-
-        try:
-            cpu_precent = (1 - (new_free - old_free) / (new_total - old_total)) * 100
-        except ZeroDivisionError:
-            pass
-        except Exception:
-            pass
-        finally:
-            return round(cpu_precent, 2)
+        return self.data['cpu']['cpu_percent']
 
     def compute_svmem_precent(self):
         """获取内存使用率"""
-        new_info = Information(self.new_data)
-        return round(new_info.select_svmem_info()['percent'], 2)
+        return round(self.data['mem']['svmem']['percent'], 2)
 
     def compute_swap_precent(self):
         """获取交换分区使用率"""
-        new_info = Information(self.new_data)
-        return round(new_info.select_swap_info()['percent'], 2)
+        return round(self.data['mem']['sswap']['percent'], 2)
 
     def compute_diskio_precent(self):
         """获取磁盘IO使用率"""
-
-        new_info = Information(self.new_data)
-        old_info = Information(self.new_data)
-
-        new_read = new_info.select_diskio_info()['read_count']
-        old_read = old_info.select_diskio_info()['read_count']
-
-        new_write = new_info.select_diskio_info()['write_count']
-        old_write = old_info.select_diskio_info()['write_count']
-
-        new_read_merg = new_info.select_diskio_info()['read_merged_count']
-        old_read_merg = old_info.select_diskio_info()['read_merged_count']
-
-        new_write_merg = new_info.select_diskio_info()['write_merged_count']
-        old_write_merg = old_info.select_diskio_info()['write_merged_count']
-
-        diskio_percent = 0.0
-
-        try:
-            diskio_percent = (new_read_merg - old_read_merg) / (new_read - old_read) + (
-                                                                                           new_write_merg - old_write_merg) / (
-                                                                                           new_write - old_write)
-        except ZeroDivisionError:
-            pass
-        except Exception:
-            pass
-        finally:
-            return round(diskio_percent, 2)
+        return round(self.data['disk']['disk_io']['diskio_percent'], 2)
 
     def compute_diskusage_precent(self):
         """获取磁盘使用率"""
 
-        new_info = Information(self.new_data)
-        return round(new_info.select_diskusage_info()['percent'], 2)
+        return round(self.data['disk']['disk_usage']['percent'], 2)
 
     def compute_net_avrg_precent(self):
         """获取网络IO使用率"""
-        new_info = Information(self.new_data)
-        old_info = Information(self.old_data)
-
-        new_sent = new_info.select_net_avrg_info()['bytes_sent']
-        old_sent = old_info.select_net_avrg_info()['bytes_sent']
-
-        new_recv = new_info.select_net_avrg_info()['bytes_recv']
-        old_recv = old_info.select_net_avrg_info()['bytes_recv']
-
-        netio_precent = 0.0
-        try:
-            netio_precent = ((new_sent - old_sent) + (new_recv - old_recv) * 8) / 100 / 1024 / 1024 * 10
-        except ZeroDivisionError:
-            pass
-        except Exception:
-            pass
-        finally:
-            return round(netio_precent, 2)
+        return round(self.data['net']['net_avrg']['netio_precent'])
 
     def get_user(self):
         """获取用户列表"""
-        new_info = Information(self.new_data)
-
-        user = []
-        for item in new_info.select_user_info():
-            if item['name'] not in user:
-                user.append(item['name'])
-        return user
+        return self.data['user']
 
     def get_port(self):
         """获取端口列表"""
-        new_info = Information(self.new_data)
-        port = new_info.select_port_info()
-        return port
+        return self.data['port']
 
     def return_all_precent(self):
         """返回计算的所有信息"""

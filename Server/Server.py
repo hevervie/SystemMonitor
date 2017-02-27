@@ -14,13 +14,13 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
-from AlarmModule import Alarm, Strategies
 from Configure import Configure
 from HandleInfo import InfoCompute, Information
 from Persistent import *
+from Alarm import Alarm, Strategies
 
 # ORM数据库初始化操作
-engine = create_engine("mysql+pymysql://root:root@127.0.0.1:3306/test", max_overflow=5)
+engine = create_engine("mysql+pymysql://root:root@127.0.0.1:3306/SystemMonitor", max_overflow=5)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -39,43 +39,9 @@ class MainThread(threading.Thread):
         self.port = int(cf.read_config('server.conf', 'server', 'port'))
         self.max_line = int(cf.read_config('server.conf', 'server', 'max_line'))
         self.buf_size = int(cf.read_config('server.conf', 'buffer', 'size'))
-        # 保存历史源数据
-        self.old_data_dict = {}
+
         # 保存历史警告数据
         self.old_alarm_dict = {}
-
-        self.init_data = {
-            "cpu":
-                {"user": 0, "nice": 0, "system": 0, "idle": 0, "iowait": 0, "irq": 0.0,
-                 "softirq": 0, "steal": 0.0, "guest": 0.0, "guest_nice": 0.0
-                 },
-
-            "mem": {
-                "sswap": {"total": 0, "used": 0, "free": 0, "percent": 0.0, "sin": 0, "sout": 0},
-                "svmem": {"total": 0, "available": 0, "percent": 0.0, "used": 0, "free": 0, "active": 0,
-                          "inactive": 0, "buffers": 0, "cached": 0, "shared": 0
-                          }
-            },
-
-            "net": {
-                "net_avrg": {"bytes_sent": 0, "bytes_recv": 0, "packets_sent": 0, "packets_recv": 0, "errin": 0,
-                             "errout": 0, "dropin": 0, "dropout": 0},
-                "net_count": {
-                }
-            },
-
-            "user": [{"name": "zhoupan", "terminal": ":0", "host": "localhost", "started": 0.0}
-                     ],
-
-            "disk": {
-                "disk_io": {"read_count": 0, "write_count": 0, "read_bytes": 0,
-                            "write_bytes": 0, "read_time": 0, "write_time": 0,
-                            "read_merged_count": 0, "write_merged_count": 0, "busy_time": 0},
-                "disk_usage": {"total": 0, "used": 0, "free": 0, "percent": 0}
-            },
-
-            "port": []
-        }
         self.init_alarm = {
             'cpu': 0,
             'svmem': 0,
@@ -97,7 +63,7 @@ class MainThread(threading.Thread):
         data = simplejson.loads(data)
 
         # 对数据进行计算
-        info = InfoCompute(data, self.old_data_dict[addr])
+        info = InfoCompute(data)
 
         # 获取所有结果
         data_precent = info.return_all_precent()
@@ -108,10 +74,6 @@ class MainThread(threading.Thread):
         total, message = str.check_all_data(data_precent, self.old_alarm_dict[addr])
 
         # 告警
-        per = Persistent()
-        # 保存所有源数据
-        per.save_all_data(data, addr)
-
         alarm = Alarm()
         # 对数据进行检测，如果超出阈值，则就开始告警
         # sign : 0则表示不进行报警，1则表示告警的级别
@@ -135,7 +97,6 @@ class MainThread(threading.Thread):
         # 保存警告后的数据
         per.save_alarm_data(data_precent, addr)
         self.old_alarm_dict[addr] = total
-        self.old_data_dict[addr] = data
         # 退出后关闭连接
         tcp_client.close()
 
@@ -154,9 +115,10 @@ class MainThread(threading.Thread):
         while True:
             # 循环接受客户端的连接
             tcp_clinet, addr = tcp_main.accept()
+            self.client = []
             # 如果历史数据字典里面没有当前客户段的记录，则就新创建一个，并赋予初始值
-            if addr[0] not in self.old_data_dict.keys():
-                self.old_data_dict[addr[0]] = self.init_data
+            if addr[0] not in self.client:
+                self.client.append(addr[0])
                 self.old_alarm_dict[addr[0]] = self.init_alarm
             # 创建新的线程，用于处理连接后的后续操作
             _thread.start_new_thread(self.response, (addr[0], tcp_clinet, self.buf_size))

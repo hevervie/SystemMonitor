@@ -42,7 +42,7 @@ class Persistent():
         # result = cur.fetchall()
 
         # ORM替代方案
-        result = session.query(Client).filter_by(name=addr).all()
+        result = session.query(Client).filter_by(host=addr).all()
 
         # # 如果此客户端不存在
         # if result[0][0] == 0:
@@ -65,7 +65,7 @@ class Persistent():
         # conn.commit()
 
         # ORM替代方案
-        if result.count() == 0:
+        if len(result) == 0:
             client = Client(host=addr)
             session.add(client)
             session.commit()
@@ -143,11 +143,11 @@ class Persistent():
 
         # sdiskusage
         d = data['disk']['disk_usage']
-        sdiskusage = Sdiskusage(point=d['point'], total=d['total'], used=d['used'], free=d['free'],
+        sdiskusage = Sdiskusage(point='/', total=d['total'], used=d['used'], free=d['free'],
                                 percent=d['percent'])
         session.add(sdiskusage)
         session.commit()
-        index['diskusage_id'] = sdiskusage
+        index['diskusage_id'] = sdiskusage.id
 
         # # snetio
         # # 获取type最大值
@@ -229,7 +229,7 @@ class Persistent():
 
         d = data['user']
         for v in d:
-            suser = Suser(type=type, name=v['name'], terminal=v['terminal'], host=v['host'], started=v['started'])
+            suser = Suser(type=type, name=d[v]['name'], terminal=d[v]['terminal'], host=d[v]['host'], started=d[v]['started'])
             session.add(suser)
         session.commit()
         index['user_type'] = type
@@ -266,7 +266,7 @@ class Persistent():
         index['port_type'] = type
 
         # # receive
-        # sql = "INSERT INTO informations_receive(client_id,cpu_id,svmem_id,sswap_id,diskio_id,diskusage_id,netio_type,user_type,port_type,datetime) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\'%s\')" % (
+        # sql = "INSERT INTO informations_receive(client_id,cpu_id,svmem_id,sswap_id,sdiskio_id,sdiskusage_id,netio_type,user_type,port_type,datetime) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\'%s\')" % (
         #     index['client_id'], index['cpu_id'], index['svmem_id'], index['sswap_id'], index['diskio_id'],
         #     index['diskusage_id'], index['netio_type'], index['user_type'], index['port_type'],
         #     datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'))
@@ -278,8 +278,9 @@ class Persistent():
         # receive
         now = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
         receive = Receive(client_id=index['client_id'], cpu_id=index['cpu_id'], svmem_id=index['svmem_id'],
-                          sswap_id=index['sswap_id'], diskio_id=index['diskio_id'], diskusage_id=index['diskusage_id'],
-                          netio_type=index['netio_type'], user_type=index['user_type'], port_type=index['port_type'],
+                          sswap_id=index['sswap_id'], sdiskio_id=index['diskio_id'],
+                          sdiskusage_id=index['diskusage_id'],
+                          snetio=index['netio_type'], suser=index['user_type'], sport=index['port_type'],
                           datetime=now)
         session.add(receive)
         session.commit()
@@ -318,8 +319,8 @@ class Persistent():
         #         cur.execute(sql)
         #         # 将运行结果提交
         #         conn.commit()
-        result = session.query(Client).filter_by(name=addr).all()
-        if result.count() <= 0:
+        result = session.query(Client).filter_by(host=addr).all()
+        if len(result) <= 0:
             client = Client(host=addr)
             session.add(client)
             session.commit()
@@ -330,9 +331,10 @@ class Persistent():
             if recv is None:
                 pass
             else:
-                alarm = Alarm(recv_id=recv, client_id=index, cpu=data['cpu'], svmem=data['svmem'], swap=data['swap'],
-                              diskio=data['diskio'], diskusage=data['diskusage'], snetio=data['snetio'],
-                              level=data['level'], message=data['message'])
+                alarm = Alarm(receive_id=recv, client_id=index, cpu=data['cpu'], svmem=data['svmem'],
+                              swap=data['sswap'],
+                              diskio=data['disk_io'], diskusage=data['disk_usage'], snetio=data['net_avrg'],
+                              level=data['level'], message=data['message'].encode('utf-8'))
                 session.add(alarm)
                 session.commit()
 
