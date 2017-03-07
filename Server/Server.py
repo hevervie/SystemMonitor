@@ -13,6 +13,7 @@ from socket import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+import threadpool
 
 from Configure import Configure
 from HandleInfo import InfoCompute, Information
@@ -53,15 +54,17 @@ class MainThread(threading.Thread):
             'port': 0,
         }
 
-    def response(self, addr, tcp_client, buf_size):
+    def response(self, data):
         """新线程要做的事"""
+
+        addr = data['addr']
+        tcp_client = data['tcp_client']
+        buf_size = data['buf_size']
 
         # 接受客户端述数据
         data = tcp_client.recv(buf_size).decode()
         # 将客户端数据转换成列表
-
         data = simplejson.loads(data)
-
         # 对数据进行计算
         info = InfoCompute(data)
 
@@ -111,6 +114,7 @@ class MainThread(threading.Thread):
         tcp_main.bind((self.host, self.port))
         # 监听连接
         tcp_main.listen(self.max_line)
+        pool = threadpool.ThreadPool(5)
         print('服务器监听中......')
         while True:
             # 循环接受客户端的连接
@@ -120,8 +124,13 @@ class MainThread(threading.Thread):
             if addr[0] not in self.client:
                 self.client.append(addr[0])
                 self.old_alarm_dict[addr[0]] = self.init_alarm
+
             # 创建新的线程，用于处理连接后的后续操作
-            _thread.start_new_thread(self.response, (addr[0], tcp_clinet, self.buf_size))
+            data = [{'addr': addr[0], 'tcp_client': tcp_clinet, 'buf_size': self.buf_size}]
+            requests = threadpool.makeRequests(self.response, data)
+            [pool.putRequest(req) for req in requests]
+            pool.wait()
+            # _thread.start_new_thread(self.response, (addr[0], tcp_clinet, self.buf_size))
 
 
 if __name__ == '__main__':
