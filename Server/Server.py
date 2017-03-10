@@ -75,13 +75,11 @@ class MainThread(threading.Thread):
         str = Strategies()
         # 获取check的结果
         total, message = str.check_all_data(data_precent, self.old_alarm_dict[addr])
-
         # 告警
         alarm = Alarm()
         # 对数据进行检测，如果超出阈值，则就开始告警
         # sign : 0则表示不进行报警，1则表示告警的级别
         sign = alarm.send_mail(total, message)
-
         print("%s's sign: %d " % (addr, sign))
         sign = 0
         # 告警过后，将历史数据清空
