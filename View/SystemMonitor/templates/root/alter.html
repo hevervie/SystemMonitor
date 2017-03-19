@@ -1,8 +1,8 @@
-{% extends "root/index.html" %}
-{% block main %}
+<%inherit file="index.html"/>
+<%block name="main">
     <div class="crumb-wrap">
         <div class="crumb-list"><i class="icon-font"></i><a href="/root/">首页</a><span class="crumb-step">&gt;</span><a
-                class="crumb-step">&gt;</span><span>用户</span></div>
+                class="crumb-step">&gt;</span><span>用户</span></a></div>
     </div>
     <div class="result-wrap">
         <div class="result-content">
@@ -12,13 +12,15 @@
                     <tr>
                         <th><i class="require-red">*</i>工号：</th>
                         <td>
-                            <input class="common-text required" id="title" name="num" size="20" value="{{ num }}" type="text" placeholder="8位数字">
+                            <input class="common-text required" id="title" name="num" size="20" value="{{ num }}"
+                                   type="text" placeholder="8位数字">
                         </td>
                     </tr>
                     <tr>
                         <th><i class="require-red">*</i>姓名：</th>
                         <td>
-                            <input class="common-text required" id="title" name="name" size="20" value="{{ name }}" type="text" placeholder="小于20个字符">
+                            <input class="common-text required" id="title" name="name" size="20" value="{{ name }}"
+                                   type="text" placeholder="小于20个字符">
                         </td>
                     </tr>
                     <tr>
@@ -33,7 +35,8 @@
                     <tr>
                         <th><i class="require-red">*</i>邮箱地址：</th>
                         <td>
-                            <input class="common-text required" id="price" name="email" size="20" value="{{ email }}" type="email" placeholder="E-mail">
+                            <input class="common-text required" id="price" name="email" size="20" value="{{ email }}"
+                                   type="email" placeholder="E-mail">
                         </td>
                     </tr>
                     </tbody>
@@ -50,5 +53,4 @@
             {{ message }}
         </div>
     </div>
-{% endblock %}
-
+</%block>

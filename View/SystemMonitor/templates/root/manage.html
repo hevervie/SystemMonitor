@@ -1,5 +1,5 @@
-{% extends "root/index.html" %}
-{% block main %}
+<%inherit file="index.html"/>
+<%block name="main">
     <div class="crumb-wrap">
         <div class="crumb-list"><i class="icon-font"></i><a href="/root/">首页</a><span
                 class="crumb-step">&gt;</span><span class="crumb-name">用户管理</span></div>
@@ -22,38 +22,37 @@
                     <th class="tc">操作</th>
                     <th class="tc">操作</th>
                 </tr>
-                {% for u in user %}
-                    {% if u.user_type != 0 %}
-                        <tr>
-                            <td class="tc">{{ u.id }}</td>
-                            <td class="tc">{{ u.user_num }}</td>
-                            <td class="tc">{{ u.name }}</td>
-                            <td class="tc">{{ u.email }}</td>
-                            {% if u.user_type == 1 %}
-                                <td class="tc">{{ type1 }}</td>
-                            {% else %}
-                                <td class="tc">{{ type2 }}</td>
-                            {% endif %}
-                            <td class="tc">
-                                <form action="/root/alter/" method="post">{% csrf_token %}
-                                    <input value="{{ u.id }}" type="hidden" name="id">
-                                    <input class="btn btn-primary btn2" type="submit" value="修改">
-                                </form>
-
-                            </td>
-                            <td class="tc">
-                                <form action="/root/manage/" method="post">{% csrf_token %}
-                                    <input value="{{ u.id }}" type="hidden" name="id">
-                                    <input class="btn btn-primary btn2" type="submit" value="删除">
-                                </form>
-                            </td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
+                % for u in user:
+                % if u.user_type != 0:
+                <tr>
+                    <td class="tc">${u.id}</td>
+                    <td class="tc">${u.user_num}</td>
+                    <td class="tc">${u.name}</td>
+                    <td class="tc">${u.email}</td>
+                    % if u.user_type == 1:
+                    <td class="tc">${type1}}</td>
+                    % else:
+                    <td class="tc">${type2}</td>
+                    % endif
+                    <td class="tc">
+                        <form action="/root/alter/" method="post">
+                            <input value="${u.id}" type="hidden" name="id">
+                            <input class="btn btn-primary btn2" type="submit" value="修改">
+                        </form>
+                    </td>
+                    <td class="tc">
+                        <form action="/root/manage/" method="post">
+                            <input value="${u.id}" type="hidden" name="id">
+                            <input class="btn btn-primary btn2" type="submit" value="删除">
+                        </form>
+                    </td>
+                </tr>
+                % endif
+                % endfor
                 </tbody>
             </table>
         </div>
-        <div style="float: left"><br/>{{ message }}</div>
-        <div class="list-page" style="margin-left: 85%"> 共{{ count }}条</div>
+        <div style="float: left"><br/>${message}</div>
+        <div class="list-page" style="margin-left: 85%"> 共${count}条</div>
     </div>
-{% endblock %}
+</%block>

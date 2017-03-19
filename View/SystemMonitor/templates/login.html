@@ -7,27 +7,27 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- CSS -->
-    <link rel="stylesheet" href="{{ url }}/static/css/reset.css">
-    <link rel="stylesheet" href="{{ url }}/static/css/supersized.css">
-    <link rel="stylesheet" href="{{ url }}/static/css/style.css">
+    <link rel="stylesheet" href="${url}/static/css/reset.css">
+    <link rel="stylesheet" href="${url}/static/css/supersized.css">
+    <link rel="stylesheet" href="${url}/static/css/style.css">
 </head>
 <body>
 
 <div class="page-container">
     <h1>Login</h1>
-    <form action="/login/" method="POST" id="form1">{% csrf_token %}
+    <form action="/login/" method="POST" id="form1">
         <input type="text" name="username" class="Username" placeholder="Username">
         <input type="password" name="password" class="Password" placeholder="Password">
         <button type="submit">Sign in</button>
         <br/>
         <br/>
-        {{ message }}
+        ${message}
     </form>
 </div>
-<script src="{{ url }}/static/js/jquery-1.8.2.min.js"></script>
-<script src="{{ url }}/static/js/supersized.3.2.7.min.js"></script>
-<script src="{{ url }}/static/js/supersized-init.js"></script>
-<script src="{{ url }}/static/js/scripts.js"></script>
+<script src="${url}/static/js/jquery-1.8.2.min.js"></script>
+<script src="${url}/static/js/supersized.3.2.7.min.js"></script>
+<script src="${url}/static/js/supersized-init.js"></script>
+<script src="${url}/static/js/scripts.js"></script>
 </body>
 </html>
 

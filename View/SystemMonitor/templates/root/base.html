@@ -1,60 +1,120 @@
-<!doctype html>
+# coding=utf-8<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>用户管理</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/common.css"/>
-    <link rel="stylesheet" type="text/css" href="/static/css/main.css"/>
+    <!-- Bootstrap css -->
+    <link href="https://o.qcloud.com/static_api/v3/assets/bootstrap-3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <!-- kendo ui css -->
+    <link href="https://o.qcloud.com/static_api/v3/assets/kendoui-2015.2.624/styles/kendo.common.min.css"
+          rel="stylesheet">
+    <link href="https://o.qcloud.com/static_api/v3/assets/kendoui-2015.2.624/styles/kendo.default.min.css"
+          rel="stylesheet">
+    <!-- font-awesome -->
+    <link href="https://o.qcloud.com/static_api/v3/assets/fontawesome/css/font-awesome.css" rel="stylesheet">
+    <!--蓝鲸提供的公用样式库 -->
+    <link href="https://o.qcloud.com/static_api/v3/bk/css/bk.css?v=1.0.1" rel="stylesheet">
+    <link href="https://o.qcloud.com/static_api/v3/bk/css/bk_pack.css" rel="stylesheet">
+    <!-- 如果要使用Bootstrap的js插件，必须先调入jQuery -->
+    <script src="https://o.qcloud.com/static_api/v3/assets/js/jquery-1.10.2.min.js"></script>
+    <!-- 包括所有bootstrap的js插件或者可以根据需要使用的js插件调用　-->
+    <script src="https://o.qcloud.com/static_api/v3/assets/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <!-- 包括所有kendoui的js插件或者可以根据需要使用的js插件调用　-->
+    <script src="https://o.qcloud.com/static_api/v3/assets/kendoui-2015.2.624/js/kendo.all.min.js"></script>
+    <script src="https://o.qcloud.com/static_api/v3/bk/js/bk.js"></script>
+    <!-- 数据埋点统计 -->
+    <script src="https://o.qcloud.com/static_api/analysis.js"></script>
 </head>
-<body>
-<!--网页头部-->
-<div class="topbar-wrap white">
-    <div class="topbar-inner clearfix">
-        <div class="topbar-logo-wrap clearfix">
-            <ul class="navbar-list clearfix">
-                <li style="font-size:20px; font-weight:bold;">用户管理</li>
-            </ul>
-        </div>
-        <div class="top-info-wrap">
-            <ul class="top-info-list clearfix">
-                <li><a href="#"><i class="icon-font">&#xe059;</i></a></li>
-            </ul>
-        </div>
+
+<body class="bg-bright3" data-bg-color="bg-bright3">
+<div class="king-page-box">
+    <div class="king-layout1-header">
+        <nav>
+            <div class="king-header2 navbar navbar-blue king-horizontal-info f14">
+                <div class="nav-container">
+                    <div class="navbar-header">
+                        <button class="pull-right visible-xs navbar-toggle collapsed navbar-toggle-sm" type="button"
+                                data-toggle="collapse" data-target="#king-header2-navbar-collapse"><i
+                                class="fa fa-fw fa-ellipsis-v"> </i></button>
+                        <a class="navbar-brand" href="javascript:;" title="集群监控系统">
+                            <img src="https://o.qcloud.com/static_api/v3/bk/images/logo.png" alt="" class="logo"
+                                 style="margin-top:-5px;"> </a>
+                    </div>
+                    <div class="navbar-collapse collapse" id="king-header2-navbar-collapse">
+                        <ul class="nav navbar-nav navbar-left hidden-sm"></ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <a href="javascript:void(0)">
+                                    <span>${user.user_num}</span>
+                                </a>
+                            </li>
+                            <li><a href="javascript:void(0)"> 退出 </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
     </div>
-</div>
-<!--头部结束-->
+    <div class="king-layout1-main clearfix">
+        <!-- sidebar start -->
+        <div class="king-layout1-sidebar" style="width:216px;">
+            <nav style="height:100%;" class="   f14">
+                <div class="king-vertical-nav4">
+                    <div class="sidebar-inner">
+                        <ul class="navi">
+                            <li class="has_submenu current open c-open active">
+                                <a href="javascript:void(0);"> <i class="fa fa-gear "> </i>
+                                    <span>常用操作</span>
+                                    <span class="pull-right"><i class="fa fa-angle-down"></i></span>
+                                </a>
+                                <ul class="sub-menu">
+                                    <li><a href="/root/manage>用户管理<i class="fa fa-chevron-right pull-right"></i></a>
+                                    </li>
+                                    <li><a href="/root/alter">用户变更<i class="fa fa-chevron-right pull-right"></i></a></li>
+                                </ul>
+                            </li>
+                            <li class="has_submenu current open c-open">
+                                <a href="javascript:void(0);"> <i class="fa fa-tasks "> </i>
+                                    <span>其它</span>
+                                    <span class="pull-right"><i class="fa fa-angle-down"></i></span>
+                                </a>
+                                <ul class="sub-menu">
+                                    <li><a href="/root/passwd">密码修改<i class="fa fa-chevron-right pull-right"></i></a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <!-- sidebar end -->
 
 
-<div class="container clearfix">
-    <!--网页菜单栏-->
-    <div class="sidebar-wrap">
-        <div class="sidebar-title">
-            <h1>菜单</h1>
+        <!-- content start -->
+        <div class="king-content-wrap">
+            <div class="king-layout1-content" style="margin-left: 216px;"></div>
+            <%block name="context"/>
         </div>
-        <div class="sidebar-content">
-            <ul class="sidebar-list">
-                <li>
-                    <a href="#"><i class="icon-font">&#xe003;</i>常用操作</a>
-                    <ul class="sub-menu">
-                        {% block common_operation %}
-                        {% endblock %}
-                    </ul>
-                </li>
-                <li>
-                    <a href="#"><i class="icon-font">&#xe018;</i>其它</a>
-                    <ul class="sub-menu">
-                        {% block extra_operation %}
-                        {% endblock %}
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <!--菜单栏结束-->
-    <div class="main-wrap">
-        {% block main %}
-        {% endblock %}
+        <!-- content end -->
     </div>
 </div>
+<script>
+    $(function () {
+        var li = $('.navi li');
+        li.each(function () {
+            $(this).click(function () {
+                if ($(this).hasClass('c-open')) {
+                    $(this).find('ul').slideUp(350);
+                    $(this).removeClass('c-open');
+                } else {
+                    $(this).find('ul').slideDown(350);
+                    $(this).addClass('c-open');
+                }
+            })
+        });
+    })
+</script>
 </body>
 </html>
