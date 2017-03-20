@@ -8,7 +8,7 @@ import pymysql
 from Configure import Configure
 import datetime
 from SQL.Models import Scputimes, Svmem, Sswap, Sdiskio, Sdiskusage, Snetio, Suser, Sport, Client, Receive, Alarm, \
-    Strategy, User, Port
+    Strategy, User, Port, Warn
 
 from Server import session
 from sqlalchemy import func
@@ -229,7 +229,8 @@ class Persistent():
 
         d = data['user']
         for v in d:
-            suser = Suser(type=type, name=d[v]['name'], terminal=d[v]['terminal'], host=d[v]['host'], started=d[v]['started'])
+            suser = Suser(type=type, name=d[v]['name'], terminal=d[v]['terminal'], host=d[v]['host'],
+                          started=d[v]['started'])
             session.add(suser)
         session.commit()
         index['user_type'] = type
@@ -284,6 +285,11 @@ class Persistent():
                           datetime=now)
         session.add(receive)
         session.commit()
+
+    def save_warn_data(self, data):
+        now = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
+        warn = Warn()
+
 
     def save_alarm_data(self, data, addr):
         """保存处理过的告警数据"""

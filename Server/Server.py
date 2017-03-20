@@ -40,7 +40,6 @@ class MainThread(threading.Thread):
         self.port = int(cf.read_config('server.conf', 'server', 'port'))
         self.max_line = int(cf.read_config('server.conf', 'server', 'max_line'))
         self.buf_size = int(cf.read_config('server.conf', 'buffer', 'size'))
-
         # 保存历史警告数据
         self.old_alarm_dict = {}
         self.init_alarm = {
@@ -81,22 +80,19 @@ class MainThread(threading.Thread):
         # sign : 0则表示不进行报警，1则表示告警的级别
         sign = alarm.send_mail(total, message)
         print("%s's sign: %d " % (addr, sign))
-        sign = 0
-        # 告警过后，将历史数据清空
-        if sign:
-            total = self.init_alarm
-            print("------------------")
-
-        # 将结果保存到列表里面
         data_precent['level'] = sign
         data_precent['message'] = message
-
+        # 将结果保存到列表里面
         per = Persistent()
         # 保存所有源数据
         per.save_all_data(data, addr)
-
         # 保存警告后的数据
         per.save_alarm_data(data_precent, addr)
+
+        # 告警过后，将历史数据清空
+        if sign >= 4:
+            total = self.init_alarm
+            print("------------------")
         self.old_alarm_dict[addr] = total
         # 退出后关闭连接
         tcp_client.close()
@@ -113,16 +109,16 @@ class MainThread(threading.Thread):
         # 监听连接
         tcp_main.listen(self.max_line)
         pool = threadpool.ThreadPool(5)
+        self.client = []
         print('服务器监听中......')
         while True:
             # 循环接受客户端的连接
             tcp_clinet, addr = tcp_main.accept()
-            self.client = []
+
             # 如果历史数据字典里面没有当前客户段的记录，则就新创建一个，并赋予初始值
             if addr[0] not in self.client:
                 self.client.append(addr[0])
                 self.old_alarm_dict[addr[0]] = self.init_alarm
-
             # 创建新的线程，用于处理连接后的后续操作
             data = [{'addr': addr[0], 'tcp_client': tcp_clinet, 'buf_size': self.buf_size}]
             requests = threadpool.makeRequests(self.response, data)

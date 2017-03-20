@@ -10,6 +10,7 @@ from email.mime.text import MIMEText
 
 from Configure import Configure
 
+
 class Strategies():
     """告警策略定义"""
 
@@ -70,16 +71,14 @@ class Strategies():
     def check_user_data(self, user):
         rtu = "以下用户非法登录："
         sign = 0
-        for i in user:
-            if i not in self.user:
+        for i in user.keys():
+            if user[i]['name'] not in self.user:
                 rtu += str(i)
                 rtu += ','
-                sign = 2
-
+                sign = 4
         if sign:
             return sign, rtu
         else:
-            # return 0, "登录用户正常"
             return 0, ""
 
     def check_port_data(self, port):
@@ -89,7 +88,7 @@ class Strategies():
             if i not in self.port:
                 rtu += str(i)
                 rtu += ','
-                sign = 1
+                sign = 4
         if sign:
             return sign, rtu
         else:
@@ -146,7 +145,7 @@ class Strategies():
         if port:
             message += port_message
             message += " "
-            return total, message
+        return total, message
 
 
 class Alarm():
@@ -175,15 +174,14 @@ class Alarm():
                     match_data.append(i)
                 if int(key) > level:
                     level = int(key)
-        return level, tuple(match_data)
+        return m, tuple(match_data)
 
     def send_mail(self, total, ms):
         level, mail_tuple = self.send_list(total)
-        sign = 0
         for i in range(len(mail_tuple)):
             print(mail_tuple[i])
             print(ms)
-            sign = level
+        sign = level
         return sign
         #     # print(mail_tuple[i])
         # message = MIMEText('告警信息:%s' % ms, 'plain', 'utf-8')
