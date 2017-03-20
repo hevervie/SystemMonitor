@@ -1,56 +1,195 @@
-<%inherit file="index.html"/>
+<%inherit file="alter.html"/>
 <%block name="main">
-    <div class="crumb-wrap">
-        <div class="crumb-list"><i class="icon-font"></i><a href="/root/">首页</a><span class="crumb-step">&gt;</span><a
-                class="crumb-step">&gt;</span><span>用户</span></a></div>
-    </div>
-    <div class="result-wrap">
-        <div class="result-content">
-            <form action="/root/alter/" method="post" id="myform" name="myform">{% csrf_token %}
-                <table class="insert-tab" width="100%" id="fid" cellpadding="0" cellspacing="0">
-                    <tbody>
-                    <tr>
-                        <th><i class="require-red">*</i>工号：</th>
-                        <td>
-                            <input class="common-text required" id="title" name="num" size="20" value="{{ num }}"
-                                   type="text" placeholder="8位数字">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><i class="require-red">*</i>姓名：</th>
-                        <td>
-                            <input class="common-text required" id="title" name="name" size="20" value="{{ name }}"
-                                   type="text" placeholder="小于20个字符">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><i class="require-red">*</i>角色类型：</th>
-                        <td>
-                            <select name="type">
-                                <option value=1>普通运维</option>
-                                <option value=2>系统管理员</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><i class="require-red">*</i>邮箱地址：</th>
-                        <td>
-                            <input class="common-text required" id="price" name="email" size="20" value="{{ email }}"
-                                   type="email" placeholder="E-mail">
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <br>
-                <input type="hidden" value="{{ user_id }}" name="id">
-                <input id="subid" class="btn btn-primary btn6 mr10" value="提交" type="submit" style="margin-left: 29%">
-                <input class="btn btn6" onclick="self.location='/root/'" value="返回" type="button">
-            </form>
+    <div class="panel panel-default mb0">
+        <div class="panel-heading">用户变更</div>
+        <div class="panel-body">
+            <div class="container-fluid mb0">
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <form class="form-vertical p15">
+                            <div class="form-group ">
+                                <label>工号：</label>
+                                <input type="text" class="form-control" id="num" placeholder="请输入工号后七位"
+                                       value="${user_num}">
+                                <p class="help-block" id="num_warn"></p>
+                            </div>
+                            <div class="form-group ">
+                                <label>姓名：</label>
+                                <input type="text" class="form-control" id="name" placeholder="请输入姓名" value="${name}">
+                                <p class="help-block" id="name_warn"></p>
+                            </div>
+                            <div class="form-group">
+                                <label>类型：</label>
+                                <select id="type" class="form-control bk-valign-top">
+                                    % if type == 3:
+                                        <option value="3" selected>普通运维人员</option>
+                                        <option value="2">高级运维人员</option>
+                                        <option value="1">系统管理员</option>
+                                    %elif type == 2:
+                                        <option value="3">普通运维人员</option>
+                                        <option value="2" selected>高级运维人员</option>
+                                        <option value="1">系统管理员</option>
+                                    %elif type == 1:
+                                        <option value="3">普通运维人员</option>
+                                        <option value="2">高级运维人员</option>
+                                        <option value="1" selected>系统管理员</option>
+                                    %endif
+                                </select>
+                                <p class="help-block" id="type_warn"></p>
+                            </div>
+                            <div class="form-group ">
+                                <label>邮箱：</label>
+                                <input type="email" class="form-control" id="mail" placeholder="请输入邮箱" value="${email}">
+                                <p class="help-block" id="mail_warn"></p>
+                            </div>
+                            <div class="form-group clearfix">
+                                <div class="col-sm-9 col-sm-offset-3">
+                                    <button type="button" id="submit" class="king-btn mr10  king-success">提交</button>
+                                    <button type="button" id="cancel" class="king-btn king-default ">取消</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="result-wrap">
-        <div class="result-content" id="fid">
-            {{ message }}
-        </div>
-    </div>
+</%block>
+<%block name="script">
+    <style type="text/css">
+        .help-block {
+            color: red;
+        }
+    </style>
+    <link href="https://o.qcloud.com/static_api/v3/assets/artDialog-6.0.4/css/ui-dialog.css" rel="stylesheet">
+    <script src="https://o.qcloud.com/static_api/v3/assets/artDialog-6.0.4/dist/dialog-min.js"></script>
+    <script>
+        $("#num").keyup(function () {
+            var num = $("#num").val();
+            /* 校验工号*/
+            var num_patter = new RegExp("^[0-9]{7}$");
+            if (num.length <= 0 || $.trim(num).length <= 0) {
+                $("#num_warn").html("不能为空！");
+            } else if (!num_patter.test(num)) {
+                $("#num_warn").html("必须为7位整数!");
+            } else {
+                $("#num_warn").html("");
+            }
+        });
+        $("#name").keyup(function () {
+            var name = $("#name").val();
+            if (name.length <= 0 || $.trim(name).length <= 0) {
+                $("#name_warn").html("姓名不能为空!");
+            } else if (name.length > 20) {
+                $("#name_warn").html("姓名不能超过20个字符!");
+            } else {
+                $("#name_warn").html("");
+            }
+        });
+        $("#mail").keyup(function () {
+            var mail = $("#mail").val();
+            var mail_patter = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
+            if (mail.length <= 0 || $.trim(mail).length <= 0) {
+                $("#mail_warn").html("邮箱不能为空！");
+            } else if (!mail_patter.test(mail)) {
+                $("#mail_warn").html("邮箱格式错误！");
+            } else {
+                $("#mail_warn").html("");
+            }
+        });
+        $("#submit").click(function () {
+            var sign = 1;
+            var num = $("#num").val();
+            var name = $("#name").val();
+            var type = $("#type").val();
+            var mail = $("#mail").val();
+            /* 校验工号*/
+            var num_patter = new RegExp("^[0-9]{7}$");
+            if (num.length <= 0 || num.trim().length <= 0) {
+                $("#num_warn").html("不能为空！");
+                sign = 0;
+            } else if (!num_patter.test(num)) {
+                $("#num_warn").html("必须为7位整数");
+                sign = 0;
+            } else {
+                $("#num_warn").html("");
+            }
+            /*校验姓名*/
+            if (name.length <= 0 || $.trim(name).length <= 0) {
+                $("#name_warn").html("姓名不能为空!");
+                sign = 0;
+            } else if (name.length > 20) {
+                $("#name_warn").html("姓名不能超过20个字符!");
+                sign = 0;
+            } else {
+                $("#name_warn").html("");
+            }
+            /*校验类型*/
+            if (type != 1 && type != 2 && type != 3) {
+                $("#type_warn").html("类型错误！");
+                sign = 0;
+            } else {
+                $("#type_warn").html("");
+            }
+            /*校验邮箱*/
+            var mail_patter = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
+            if (mail.length <= 0 || $.trim(mail).length <= 0) {
+                $("#mail_warn").html("邮箱不能为空！");
+                sign = 0;
+            } else if (!mail_patter.test(mail)) {
+                $("#mail_warn").html("邮箱格式错误！");
+                sign = 0;
+            } else {
+                $("#mail_warn").html("");
+            }
+            var number = type + "" + num;
+            if (sign) {
+                var d = dialog({
+                    width: 260,
+                    title: '消息提醒',
+                    content: '<h4>确定提交？</h4>',
+                    okValue: '确定',
+                    ok: function () {
+                        $.post('/root/alter', {
+                            id:${id},
+                            num: number,
+                            name: name,
+                            type: type,
+                            mail: mail
+                        }, function (result) {
+                            var json = JSON.parse(result);
+                            if (json.status) {
+                                var res = dialog({
+                                    width: 260,
+                                    title: '消息提醒',
+                                    content: '<h4>添加成功！</h4>',
+                                    okValue: '确定',
+                                    ok: function () {
+                                        window.location = "/root/"
+                                    }
+                                });
+                                res.showModal();
+                            } else {
+                                var res = dialog({
+                                    width: 260,
+                                    title: '消息提醒',
+                                    content: '<h4>添加失败:' + json.message + '</h4>',
+                                    okValue: '确定',
+                                    ok: function () {
+                                    }
+                                });
+                                res.showModal();
+                            }
+                        });
+                    },
+                    cancelValue: '取消',
+                    cancel: function () {
+                    }
+                });
+                d.showModal();
+            }
+        });
+    </script>
 </%block>

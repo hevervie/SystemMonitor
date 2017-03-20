@@ -228,6 +228,18 @@ class Port(Base):
     port = Column(Integer, nullable=False)
 
 
+# /*=====================================================*/
+# /*     table: warn            警告保存数据表              */
+# /*=====================================================*/
+class Warn(Base):
+    __tablename__ = 'informations_port'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    alarmid_id = Column(Integer, ForeignKey('informations_alarm.id'), nullable=False)
+    datetime = Column(DATETIME, nullable=False)
+    status = Column(Integer, default=0, nullable=False)
+    type = Column(Integer, nullable=False)
+
+
 # 定义初始化数据库函数
 def init_db(engine):
     Base.metadata.create_all(engine)

@@ -216,6 +216,7 @@ class User(Base):
     __tablename__ = 'informations_user'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(VARCHAR(255), nullable=False)
+    passwd = Column(VARCHAR(30), nullable=False)
 
 
 # /*=====================================================*/
@@ -228,6 +229,18 @@ class Port(Base):
     port = Column(Integer, nullable=False)
 
 
+# /*=====================================================*/
+# /*     table: warn            警告保存数据表              */
+# /*=====================================================*/
+class Warn(Base):
+    __tablename__ = 'informations_port'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    alarmid_id = Column(Integer, ForeignKey('informations_alarm.id'), nullable=False)
+    datetime = Column(DATETIME, nullable=False)
+    status = Column(Integer, default=0, nullable=False)
+    type = Column(Integer, nullable=False)
+
+
 # 定义初始化数据库函数
 def init_db(engine):
     Base.metadata.create_all(engine)
@@ -238,37 +251,9 @@ def drop_db(engine):
     Base.metadata.drop_all(engine)
 
 
-# class Singleton(object):
-#     INSTANCE = None
-#     lock = threading.RLock()
-#
-#     def __new__(cls):
-#         cls.lock.acquire()
-#         if cls.INSTANCE is None:
-#
-#             cls.INSTANCE =
-#         cls.lock.release()
-#         return cls.INSTANCE
-
-
 if __name__ == '__main__':
-    engine = create_engine("mysql+pymysql://root:root@127.0.0.1:3306/test", max_overflow=5)
+    engine = create_engine("mysql+pymysql://root:root@127.0.0.1:3306/SystemMonitor", max_overflow=5)
     # 创建mysql操作对象
     Session = sessionmaker(bind=engine)
     session = Session()
-    # user = User(name="lalal")
-    # session.add(user)
-    # print(user.id)
-    # session.commit()
-    # print(user.id)
-    # result = session.query(func.max(Suser.id))
-    # print(result[0])
-    index = 1
-    result = session.query(func.max(User.id)).filter_by(id=index)
-
-    for i in range(1, 10000):
-        count = session.query(Client).filter_by(host="192.168.30.8").all()
-        #print(len(count))
-    #for i in range(1, 10000):
-    #    count = session.query("select count(*) from informations_alarm;")
-    #    print(count.filter)
+    init_db(engine)
