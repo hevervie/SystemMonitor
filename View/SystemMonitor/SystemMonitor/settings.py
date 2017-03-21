@@ -42,7 +42,7 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -67,6 +67,8 @@ TEMPLATES = [
         },
     },
 ]
+MAKO_TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
+MAKO_TEMPLATE_MODULE_DIR = os.path.join(BASE_DIR, 'templates')
 
 WSGI_APPLICATION = 'SystemMonitor.wsgi.application'
 
@@ -87,7 +89,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
