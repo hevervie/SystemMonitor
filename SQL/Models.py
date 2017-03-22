@@ -232,7 +232,7 @@ class Port(Base):
 # /*     table: warn            警告保存数据表              */
 # /*=====================================================*/
 class Warn(Base):
-    __tablename__ = 'informations_port'
+    __tablename__ = 'informations_warn'
     id = Column(Integer, primary_key=True, autoincrement=True)
     alarmid_id = Column(Integer, ForeignKey('informations_alarm.id'), nullable=False)
     datetime = Column(DATETIME, nullable=False)
@@ -268,6 +268,7 @@ if __name__ == '__main__':
     # 创建mysql操作对象
     Session = sessionmaker(bind=engine)
     session = Session()
+    init_db(engine)
     # user = User(name="zhoupan")
     # session.add(user)
     # session.commit()

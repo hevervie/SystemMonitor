@@ -288,8 +288,9 @@ class Persistent():
 
     def save_warn_data(self, data):
         now = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
-        warn = Warn()
-
+        warn = Warn(alarmid_id=data['alarmid'], datetime=now, status=0, type=data['type'])
+        session.add(warn)
+        session.commit()
 
     def save_alarm_data(self, data, addr):
         """保存处理过的告警数据"""
@@ -343,6 +344,12 @@ class Persistent():
                               level=data['level'], message=data['message'].encode('utf-8'))
                 session.add(alarm)
                 session.commit()
+                if data['level'] >= 4:
+                    datas = {
+                        'alarmid': alarm.id,
+                        'type': data['level'] - 4
+                    }
+                    self.save_warn_data(datas)
 
 
 if __name__ == '__main__':
