@@ -1,47 +1,180 @@
-{% extends "root/index.html" %}
-{% block main %}
-    <div class="crumb-wrap">
-        <div class="crumb-list">
-            <i class="icon-font"></i>
-            <a href="/root/">首页</a>
-            <span class="crumb-step">&gt;</span>
-            <span>更改密码</span>
+<%inherit file="base.html"/>
+<%block name="main">
+    <div class="panel panel-default mb0">
+        <div class="panel-heading">密码修改</div>
+        <div class="panel-body">
+            <div class="container-fluid mb0 ">
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <form class="form-vertical p15">
+                            <div class="form-group ">
+                                <label>原始密码：</label>
+                                <input type="password" class="form-control" id="origin" placeholder="请输入密码">
+                                <p class="help-block" id="origin_warn"></p>
+                            </div>
+                            <div class="form-group ">
+                                <label>新密码：</label>
+                                <input type="password" class="form-control" id="news" placeholder="请输入密码">
+                                <p class="help-block" id="new_warn"></p>
+                            </div>
+                            <div class="form-group ">
+                                <label>确认密码：</label>
+                                <input type="password" class="form-control" id="repeat" placeholder="请输入密码">
+                                <p class="help-block" id="repeat_warn"></p>
+                            </div>
+                            <div class="form-group clearfix">
+                                <div class="col-sm-9 col-sm-offset-3">
+                                    <button type="button" class="king-btn mr10  king-success" id="submit">提交</button>
+                                    <button type="button" class="king-btn king-default " id="cancel">取消</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="result-wrap">
-        <div class="result-content">
-            <form action="/root/passwd/" method="post" id="myform" name="myform" enctype="multipart/form-data">{% csrf_token %}
-                <table class="insert-tab" width="100%" id="fid" cellpadding="0" cellspacing="0">
-                    <tbody>
-                    <tr>
-                        <th width="120"><i class="require-red">*</i>原始密码：</th>
-                        <td>
-                            <input class="common-text required" id="old" name="old_passwd" size="20" value=""
-                                   type="password">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><i class="require-red">*</i>新密码：</th>
-                        <td>
-                            <input class="common-text required" id="new" name="new_passwd" size="20" value=""
-                                   type="password">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><i class="require-red">*</i>密码确认：</th>
-                        <td>
-                            <input class="common-text required" id="confirm" name="confirm_passwd" size="20" value=""
-                                   type="password">
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <br>
-                <input id="subid" class="btn btn-primary btn6 mr10" value="提交" type="submit" style="margin-left: 6%;">
-                <input class="btn btn6" onclick="self.location='/root/'" value="返回" type="button"
-                       style="margin-left: 2%;">
-            </form>
-        </div>
-        {{ message }}
-    </div>
-{% endblock %}
+</%block>
+<%block name="script">
+    <style type="text/css">
+        .help-block {
+            color: red;
+        }
+    </style>
+    <link href="https://o.qcloud.com/static_api/v3/assets/artDialog-6.0.4/css/ui-dialog.css" rel="stylesheet">
+    <script src="https://o.qcloud.com/static_api/v3/assets/artDialog-6.0.4/dist/dialog-min.js"></script>
+    <script type="text/javascript">
+        $("#origin").keyup(function () {
+            var origin = this.value;
+            if (origin.length <= 0 || $.trim(origin).length <= 0) {
+                $("#origin_warn").html("密码不能为空！");
+            } else if (origin.length > 16 || $.trim(origin).length > 16) {
+                $("#origin_warn").html("密码不能超过16位！");
+            } else {
+                $("#origin_warn").html("");
+            }
+        });
+        $("#news").keyup(function () {
+            var news = this.value;
+            if (news.length <= 0 || $.trim(news).length <= 0) {
+                $("#news").html("密码不能为空！");
+            } else if (news.length > 16 || $.trim(news).length > 16) {
+                $("#new_warn").html("密码不能超过16位！");
+            } else {
+                $("#new_warn").html("");
+            }
+        });
+        $("#repeat").keyup(function () {
+            var repeat = this.value;
+            if (repeat.length <= 0 || $.trim(repeat).length <= 0) {
+                $("#repeat_warn").html("密码不能为空！");
+            } else if (repeat.length > 16 || $.trim(repeat).length > 16) {
+                $("#repeat_warn").html("密码不能超过16位！");
+            } else if ($("#news").val() != repeat) {
+                $("#repeat_warn").html("两次密码不相同！");
+            } else {
+                $("#repeat_warn").html("");
+            }
+        });
+        $("#submit").click(function () {
+            var sign = 1;
+            var origin = $("#origin").val();
+            var news = $("#news").val();
+            var repeat = $("#repeat").val();
+
+
+            if (origin.length <= 0 || $.trim(origin).length <= 0) {
+                $("#origin_warn").html("密码不能为空！");
+                sign = 0;
+            } else if (origin.length > 16 || $.trim(origin).length > 16) {
+                $("#origin_warn").html("密码不能超过16位！");
+                sign = 0;
+            } else {
+                $("#origin_warn").html("");
+            }
+
+            if (news.length <= 0 || $.trim(news).length <= 0) {
+                $("#new_warn").html("密码不能为空！");
+                sign = 0;
+            } else if (news.length > 16 || $.trim(news).length > 16) {
+                $("#new_warn").html("密码不能超过16位！");
+                sign = 0;
+            } else {
+                $("#new_warn").html("");
+            }
+
+            if (repeat.length <= 0 || $.trim(repeat).length <= 0) {
+                $("#repeat_warn").html("密码不能为空！");
+                sign = 0;
+            } else if (repeat.length > 16 || $.trim(repeat).length > 16) {
+                $("#repeat_warn").html("密码不能超过16位！");
+                sign = 0;
+            } else if (news != repeat) {
+                $("#repeat_warn").html("两次密码不相同！");
+                sign = 0;
+            } else {
+                $("#repeat_warn").html("");
+            }
+            if (sign) {
+                var d = dialog({
+                    width: 260,
+                    title: '消息提醒',
+                    content: '<h4>确定提交？</h4>',
+                    okValue: '确定',
+                    ok: function () {
+                        $.post('/root/passwd/', {
+                            origin: origin,
+                            new: news,
+                            repeat: repeat
+                        }, function (result) {
+                            var json = JSON.parse(result);
+                            if (json.status) {
+                                var res = dialog({
+                                    width: 260,
+                                    title: '消息提醒',
+                                    content: '<h4>修改成功！</h4>',
+                                    okValue: '确定',
+                                    ok: function () {
+                                        window.location = "/root/"
+                                    }
+                                });
+                                res.showModal();
+                            } else {
+                                var res = dialog({
+                                    width: 260,
+                                    title: '消息提醒',
+                                    content: '<h4>修改失败:' + json.message + '</h4>',
+                                    okValue: '确定',
+                                    ok: function () {
+                                    }
+                                });
+                                res.showModal();
+                            }
+                        });
+                    },
+                    cancelValue: '取消',
+                    cancel: function () {
+                    }
+                });
+                d.showModal();
+            }
+        });
+        $("#cancel").click(function () {
+            var d = dialog({
+                width: 260,
+                title: '消息提醒',
+                content: '<h4>确认取消？</h4>',
+                okValue: '确定',
+                ok: function () {
+                    window.location = "/root/"
+                },
+                cancelValue: '取消',
+                cancel: function () {
+                }
+            });
+            d.showModal();
+        });
+    </script>
+</%block>

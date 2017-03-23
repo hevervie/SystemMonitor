@@ -1,58 +1,118 @@
 <%inherit file="index.html"/>
 <%block name="main">
-    <div class="crumb-wrap">
-        <div class="crumb-list"><i class="icon-font"></i><a href="/root/">首页</a><span
-                class="crumb-step">&gt;</span><span class="crumb-name">用户管理</span></div>
-    </div>
-    <div class="result-wrap">
-        <div class="result-title">
-            <div class="result-list">
-                <a href="/root/add/"><i class="icon-font"></i>添加</a>
-            </div>
+    <div class="panel king-panel1 mb0  ">
+        <div class="panel-heading king-panel-head1 king-panel-top1">
+            <h3 class="panel-title">所有用户</h3>
         </div>
-        <div class="result-content" id="fid">
-            <table class="result-tab" width="100%" id="tableid" cellpadding="0" cellspacing="0">
+        <div class="panel-body">
+            <table class="table mb0 pr15 ranger-box2 table-striped table-bordered table-header-bg table-out-bordered table-hover  table-striped table-bordered table-header-bg table-out-bordered table-hover ">
+                <thead>
+                <tr>
+                    <th style="width: 70px;">#</th>
+                    <th style="width: 15%;">工号</th>
+                    <th style="width: 15%;">姓名</th>
+                    <th style="width: 15%;">email</th>
+                    <th style="width: 15%;">类型</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
                 <tbody>
-                <tr>
-                    <th class="tc">ID</th>
-                    <th class="tc">工号</th>
-                    <th class="tc">姓名</th>
-                    <th class="tc">email</th>
-                    <th class="tc">类型</th>
-                    <th class="tc">操作</th>
-                    <th class="tc">操作</th>
-                </tr>
-                % for u in user:
-                % if u.user_type != 0:
-                <tr>
-                    <td class="tc">${u.id}</td>
-                    <td class="tc">${u.user_num}</td>
-                    <td class="tc">${u.name}</td>
-                    <td class="tc">${u.email}</td>
-                    % if u.user_type == 1:
-                    <td class="tc">${type1}}</td>
-                    % else:
-                    <td class="tc">${type2}</td>
-                    % endif
-                    <td class="tc">
-                        <form action="/root/alter/" method="post">
-                            <input value="${u.id}" type="hidden" name="id">
-                            <input class="btn btn-primary btn2" type="submit" value="修改">
-                        </form>
-                    </td>
-                    <td class="tc">
-                        <form action="/root/manage/" method="post">
-                            <input value="${u.id}" type="hidden" name="id">
-                            <input class="btn btn-primary btn2" type="submit" value="删除">
-                        </form>
-                    </td>
-                </tr>
-                % endif
-                % endfor
+                    <%
+                        id=0
+                    %>
+                    % for u in alluser:
+                        %if u.user_type != 1 :
+                            <%
+                                id =id+1
+                            %>
+                            <td style="width: 70px;">${id}</td>
+                            <td style="width: 15%;">${u.user_num}</td>
+                            <td style="width: 15%;">${u.name}</td>
+                            <td style="width: 15%;">${u.email}</td>
+                            %if u.user_type == 1:
+                                <td style="width: 15%;">系统管理员</td>
+                            %elif u.user_type == 2 :
+                                <td style="width: 15%;">高级运维人员</td>
+                            %else:
+                                <td style="width: 15%;">一般运维人员</td>
+                            %endif
+                            <td>
+                                <button class="btn btn-xs btn-warning edit" title="编辑" value="${u.id}"><i
+                                        class="glyphicon glyphicon-edit"></i></button>
+                                <button class="btn btn-xs btn-danger delete" title="删除" value="${u.id}"><i
+                                        class="glyphicon glyphicon-remove"></i></button>
+                            </td>
+                        %endif
+                        </tr>
+                    % endfor
                 </tbody>
             </table>
+            <div style="float: left"><br/>${message}</div>
+            <br/>
+            <div class="list-page" style="margin-left: 93%"> 共${id}条</div>
         </div>
-        <div style="float: left"><br/>${message}</div>
-        <div class="list-page" style="margin-left: 85%"> 共${count}条</div>
     </div>
+</%block>
+<%block name="script">
+    <link href="https://o.qcloud.com/static_api/v3/assets/artDialog-6.0.4/css/ui-dialog.css" rel="stylesheet">
+    <script src="https://o.qcloud.com/static_api/v3/assets/artDialog-6.0.4/dist/dialog-min.js"></script>
+    <script>
+        $(".edit").click(function () {
+            var id = this.value;
+            var d = dialog({
+                width: 260,
+                title: '消息提醒',
+                content: '<h4>确定编辑？</h4>',
+                okValue: '确定',
+                ok: function () {
+                    window.location = "/root/alter?id=" + id
+                },
+                cancelValue: '取消',
+                cancel: function () {
+                }
+            });
+            d.showModal();
+        });
+        $(".delete").click(function () {
+            var id = this.value;
+            var d = dialog({
+                width: 260,
+                title: '消息提醒',
+                content: '<h4>确定删除？</h4>',
+                okValue: '确定',
+                ok: function () {
+                    $.post("/root/delete", {id: id}, function (result) {
+                        var json = JSON.parse(result);
+                        if (json.status) {
+                            var res = dialog({
+                                width: 260,
+                                title: '消息提醒',
+                                content: '<h4>删除成功！</h4>',
+                                okValue: '确定',
+                                ok: function () {
+                                    window.location = "/root/manager/";
+                                }
+                            });
+                            res.showModal();
+                        } else {
+                            var res = dialog({
+                                width: 260,
+                                title: '消息提醒',
+                                content: '<h4>删除失败：' + json.message + '</h4>',
+                                okValue: '确定',
+                                ok: function () {
+                                    window.location = "/root/manager/";
+                                }
+                            });
+                            res.showModal();
+                        }
+                    });
+                },
+                cancelValue: '取消',
+                cancel: function () {
+                }
+            });
+            d.showModal();
+        });
+    </script>
 </%block>

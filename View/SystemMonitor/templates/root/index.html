@@ -1,4 +1,26 @@
 <%inherit file="base.html"/>
-<%block name="context">
-
+<%block name="main">
+    <div class="panel panel-default mb0">
+        <div class="panel-heading"> 系统概况</div>
+        <div class="panel-body" style="height: 16%">
+            <div class="panel mb0 panel-box">
+                <div class="list-justified-container">
+                    <ul class="list-justified text-center">
+                        <li>
+                            <p class="f24">1</p>
+                            <p>系统管理员</p>
+                        </li>
+                        <li>
+                            <p class="f24">${high_manager}</p>
+                            <p>高级运维人员</p>
+                        </li>
+                        <li>
+                            <p class="f24">${common_manager}</p>
+                            <p>普通运维人员</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </%block>

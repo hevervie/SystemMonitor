@@ -1,4 +1,4 @@
-<%inherit file="alter.html"/>
+<%inherit file="base.html"/>
 <%block name="main">
     <div class="panel panel-default mb0">
         <div class="panel-heading">用户变更</div>
@@ -10,8 +10,11 @@
                         <form class="form-vertical p15">
                             <div class="form-group ">
                                 <label>工号：</label>
+                                <%
+                                    num = user_num[1:]
+                                %>
                                 <input type="text" class="form-control" id="num" placeholder="请输入工号后七位"
-                                       value="${user_num}">
+                                       value="${num}">
                                 <p class="help-block" id="num_warn"></p>
                             </div>
                             <div class="form-group ">
@@ -152,8 +155,8 @@
                     content: '<h4>确定提交？</h4>',
                     okValue: '确定',
                     ok: function () {
-                        $.post('/root/alter', {
-                            id:${id},
+                        $.post('/root/alter/', {
+                            id: ${id},
                             num: number,
                             name: name,
                             type: type,
@@ -164,7 +167,7 @@
                                 var res = dialog({
                                     width: 260,
                                     title: '消息提醒',
-                                    content: '<h4>添加成功！</h4>',
+                                    content: '<h4>更新成功！</h4>',
                                     okValue: '确定',
                                     ok: function () {
                                         window.location = "/root/"
@@ -175,7 +178,7 @@
                                 var res = dialog({
                                     width: 260,
                                     title: '消息提醒',
-                                    content: '<h4>添加失败:' + json.message + '</h4>',
+                                    content: '<h4>更新失败:' + json.message + '</h4>',
                                     okValue: '确定',
                                     ok: function () {
                                     }
@@ -190,6 +193,21 @@
                 });
                 d.showModal();
             }
+        });
+        $("#cancel").click(function () {
+            var d = dialog({
+                width: 260,
+                title: '消息提醒',
+                content: '<h4>确认退出？</h4>',
+                okValue: '确定',
+                ok: function () {
+                    window.location = "/root/"
+                },
+                cancelValue: '取消',
+                cancel: function () {
+                }
+            });
+            d.showModal();
         });
     </script>
 </%block>

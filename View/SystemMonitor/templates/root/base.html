@@ -1,10 +1,10 @@
-# coding=utf-8<!DOCTYPE html>
+# coding=utf-8
 <html>
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>用户管理</title>
+    <title></title>
     <!-- Bootstrap css -->
     <link href="https://o.qcloud.com/static_api/v3/assets/bootstrap-3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <!-- kendo ui css -->
@@ -26,6 +26,9 @@
     <script src="https://o.qcloud.com/static_api/v3/bk/js/bk.js"></script>
     <!-- 数据埋点统计 -->
     <script src="https://o.qcloud.com/static_api/analysis.js"></script>
+    <!-- 以下两个插件用于在IE8以及以下版本浏览器支持HTML5元素和媒体查询，如果不需要用可以移除 -->
+    <!--[if lt IE 9]><script src="https://o.qcloud.com/static_api/v3/assets/js/html5shiv.min.js"></script><script src="https://o.qcloud.com/static_api/v3/assets/js/respond.min.js"></script>
+    <![endif]-->
 </head>
 
 <body class="bg-bright3" data-bg-color="bg-bright3">
@@ -38,16 +41,16 @@
                         <button class="pull-right visible-xs navbar-toggle collapsed navbar-toggle-sm" type="button"
                                 data-toggle="collapse" data-target="#king-header2-navbar-collapse"><i
                                 class="fa fa-fw fa-ellipsis-v"> </i></button>
-                        <a class="navbar-brand" href="javascript:;" title="集群监控系统">
-                            <img src="https://o.qcloud.com/static_api/v3/bk/images/logo.png" alt="" class="logo"
-                                 style="margin-top:-5px;"> </a>
+                        <a class="navbar-brand" href="javascript:;" title="故障预警系统">
+                            <img src="/static/images/logo.png" alt="" class="logo" style="margin-top:-27px;margin-left:-20px;height: 70px;width: 220px;">
+                        </a>
                     </div>
                     <div class="navbar-collapse collapse" id="king-header2-navbar-collapse">
                         <ul class="nav navbar-nav navbar-left hidden-sm"></ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li>
                                 <a href="javascript:void(0)">
-                                    <span>${user.user_num}</span>
+                                    <span>${users.name}</span>
                                 </a>
                             </li>
                             <li><a href="javascript:void(0)"> 退出 </a></li>
@@ -70,9 +73,10 @@
                                     <span class="pull-right"><i class="fa fa-angle-down"></i></span>
                                 </a>
                                 <ul class="sub-menu">
-                                    <li><a href="/root/manage>用户管理<i class="fa fa-chevron-right pull-right"></i></a>
+                                    <li><a href="/root/manager">用户管理<i class="fa fa-chevron-right pull-right"></i></a>
                                     </li>
-                                    <li><a href="/root/alter">用户变更<i class="fa fa-chevron-right pull-right"></i></a></li>
+                                    <li><a href="/root/add">用户添加<i class="fa fa-chevron-right pull-right"></i></a></li>
+                                    </li>
                                 </ul>
                             </li>
                             <li class="has_submenu current open c-open">
@@ -81,7 +85,8 @@
                                     <span class="pull-right"><i class="fa fa-angle-down"></i></span>
                                 </a>
                                 <ul class="sub-menu">
-                                    <li><a href="/root/passwd">密码修改<i class="fa fa-chevron-right pull-right"></i></a></li>
+                                    <li><a href="/root/passwd">密码修改<i class="fa fa-chevron-right pull-right"></i></a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
@@ -90,12 +95,11 @@
             </nav>
         </div>
         <!-- sidebar end -->
-
-
         <!-- content start -->
         <div class="king-content-wrap">
-            <div class="king-layout1-content" style="margin-left: 216px;"></div>
-            <%block name="context"/>
+            <div class="king-layout1-content" style="margin-left: 216px;">
+                    <%block name="main"/>
+            </div>
         </div>
         <!-- content end -->
     </div>
@@ -116,5 +120,7 @@
         });
     })
 </script>
+<%block name="script"/>
 </body>
+
 </html>
