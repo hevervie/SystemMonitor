@@ -1,13 +1,182 @@
-<!--**
- * Created by zhoupan on 3/21/17.
- **-->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<%inherit file="base.html"/>
+<%block name="style">
+    <link href="https://o.qcloud.com/static_api/v3/assets/kendoui-2015.2.624/styles/kendo.common.min.css"
+          rel="stylesheet">
+    <link href="https://o.qcloud.com/static_api/v3/assets/kendoui-2015.2.624/styles/kendo.default.min.css"
+          rel="stylesheet">
+    <link href="https://o.qcloud.com/static_api/v3/assets/select2-3.5.2/select2.css" rel="stylesheet">
+</%block>
+<%block name="main">
+    <div class="panel panel-default mb0">
+        <div class="panel-heading"> CPU信息</div>
+        <div class="panel-body">
+            <form class="form-vertical p15">
+                <div class="container-fluid mb0 ">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group clearfix ">
+                                <label class="col-sm-3 control-label bk-lh30 pt0">日期：</label>
+                                <input type="text" class="form-control" id="plugin16_demo1_1" placeholder="选择日期...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group clearfix ">
+                                <label class="col-sm-3 control-label bk-lh30 pt0">时间：</label>
+                                <div class="col-sm-9">
+                                    <select name="" id="" class="form-control bk-valign-top">
+                                        <option value="00:00:00">全天</option>
+                                        <option value="00:00:00">0：00</option>
+                                        <option value="01:00:00">1：00</option>
+                                        <option value="02:00:00">2：00</option>
+                                        <option value="03:00:00">3：00</option>
+                                        <option value="04:00:00">4：00</option>
+                                        <option value="05:00:00">5：00</option>
+                                        <option value="06:00:00">6：00</option>
+                                        <option value="07:00:00">7：00</option>
+                                        <option value="08:00:00">8：00</option>
+                                        <option value="09:00:00">9：00</option>
+                                        <option value="10:00:00">10：00</option>
+                                        <option value="11:00:00">11：00</option>
+                                        <option value="12:00:00">12：00</option>
+                                        <option value="13:00:00">13：00</option>
+                                        <option value="14:00:00">14：00</option>
+                                        <option value="15:00:00">15：00</option>
+                                        <option value="16:00:00">16：00</option>
+                                        <option value="17:00:00">17：00</option>
+                                        <option value="18:00:00">18：00</option>
+                                        <option value="19:00:00">29：00</option>
+                                        <option value="20:00:00">20：00</option>
+                                        <option value="21:00:00">21：00</option>
+                                        <option value="22:00:00">22：00</option>
+                                        <option value="23:00:00">23：00</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group clearfix">
+                                <div class="col-sm-9 col-sm-offset-3">
+                                    <button type="button" class="king-btn mr10  king-success">提交</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div style="height: 300px; position: relative;" id="chart_1490075644707"
+                 class="king-chart-box chart-line  k-chart" data-role="chart"></div>
+        </div>
+    </div>
+</%block>
+<%block name="script">
+    <script src="https://o.qcloud.com/static_api/v3/assets/select2-3.5.2/select2.js"></script>
+    <script>
+        $(function () {
+            var li = $('.navi li');
+            li.each(function () {
+                $(this).click(function () {
+                    if ($(this).hasClass('c-open')) {
+                        $(this).find('ul').slideUp(350);
+                        $(this).removeClass('c-open');
+                    } else {
+                        $(this).find('ul').slideDown(350);
+                        $(this).addClass('c-open');
+                    }
+                })
+            });
+        })
+    </script>
+    <script>
+        // 创建图表
+        function createKendoLineChart(conf) {
+            $(conf.selector).kendoChart({
+                transitions: false,
+                legend: {
+                    position: "top"
+                },
+                theme: 'bootstrap',
+                seriesDefaults: {
+                    type: 'line',
+                    style: "smooth",
+                    markers: {
+                        visible: false
+                    }
+                },
+                series: conf.data.series,
+                categoryAxis: {
+                    majorGridLines: {
+                        visible: false
+                    },
+                    categories: conf.data.categories,
+                    labels: {
+                        rotation: "auto"
+                    }
+                },
+                tooltip: {
+                    visible: true,
+                    template: "#= category # #= value #"
+                }
+            });
+            //重新绘制
+            $(window).on('resize', function () {
+                var chart = $(conf.selector).data("kendoChart");
+                chart.redraw();
+            });
+        }
+
+        function initKendoLineChart(conf) {
+            // 异步请求后台数据
+            $.ajax({
+                url: conf.url,
+                type: 'GET',
+                dataType: conf.dataType,
+                success: function (res) {
+                    //获取数据成功
+                    if (res.result) {
+                        var data = {
+                            series: res.data.series,
+                            categories: res.data.categories
+                        };
+                        createKendoLineChart({
+                            selector: conf.container, // 图表窗器
+                            data: data // 图表数据
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+    <script>
+
+        $(function () {
+            initKendoLineChart({
+                url: 'https://o.qcloud.com/static_api/v3/components/charts_line/demo.json',
+                dataType: 'json',
+                container: '#chart_1490075644707'
+            });
+        });
+    </script>
+
+
+    <script src="https://o.qcloud.com/static_api/v3/assets/js/jquery-1.10.2.min.js"></script>
+    <script src="https://o.qcloud.com/static_api/v3/assets/kendoui-2015.2.624/js/kendo.all.min.js"></script>
+
+    <script type="text/javascript">
+        //日期选择
+        $('#plugin16_demo1_1').kendoDatePicker({
+            value: new Date(),
+            format: "yyyy-MM-dd"
+        });
+        //时间选择
+        $("#plugin16_demo1_2").kendoTimePicker();
+        //时间日期选择
+        $("#plugin16_demo1_3").kendoDateTimePicker({
+            value: new Date()
+        });
+    </script>
+
+    <script type="text/javascript">
+        // select2 基础
+        $("#plugin3_demo1 .select2_box").select2();
+    </script>
+</%block>

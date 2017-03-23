@@ -1,13 +1,223 @@
-<!--**
- * Created by zhoupan on 3/21/17.
- **-->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<%inherit file="base.html"/>
+<%block name="main">
+    <div class="panel panel-default mb0">
+        <div class="panel-heading"> 磁盘信息</div>
+        <div class="panel-body">
+            <div class="container-fluid mb0 ">
+                <div class="row">
+                    <div class="col-md-4">
+                        <form class="form-horizontal">
+                            <div class="form-group clearfix ">
+                                <label class="col-sm-3 control-label bk-lh30 pt0">参数：</label>
+                                <div class="col-sm-9">
+                                    <select name="" id="" class="form-control bk-valign-top">
+                                        <option value="选择项1">选择项1</option>
+                                        <option value="选择项2">选择项2</option>
+                                        <option value="选择项3">选择项3</option>
+                                        <option value="选择项4">选择项4</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4"></div>
+                </div>
+            </div>
+            <div style="height: 300px; position: relative;" id="chart_1490077434069"
+                 class="king-chart-box chart-pie  k-chart" data-role="chart"></div>
+            <br/>
+            <br/>
+            <div class="container-fluid mb0 ">
+                <div class="row">
+                    <div class="col-md-4">
+                        <form class="form-horizontal">
+                            <div class="form-group clearfix ">
+                                <label class="col-sm-3 control-label bk-lh30 pt0">参数：</label>
+                                <div class="col-sm-9">
+                                    <select name="" id="" class="form-control bk-valign-top">
+                                        <option value="选择项1">选择项1</option>
+                                        <option value="选择项2">选择项2</option>
+                                        <option value="选择项3">选择项3</option>
+                                        <option value="选择项4">选择项4</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4">
+                        <form class="form-horizontal">
+                            <div class="form-group clearfix ">
+                                <label class="col-sm-3 control-label bk-lh30 pt0">参数：</label>
+                                <div class="col-sm-9">
+                                    <select name="" id="" class="form-control bk-valign-top">
+                                        <option value="选择项1">选择项1</option>
+                                        <option value="选择项2">选择项2</option>
+                                        <option value="选择项3">选择项3</option>
+                                        <option value="选择项4">选择项4</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            </div>
+            <br/>
+            <br/>
+            <div style="height: 300px; position: relative;" id="chart_1490077418166"
+                 class="king-chart-box chart-line  k-chart" data-role="chart"></div>
+            <form class="form-horizontal"></form>
+        </div>
+    </div>
+</%block>
+<%block name="script">
+    <script>
+        $(function () {
+            var li = $('.navi li');
+            li.each(function () {
+                $(this).click(function () {
+                    if ($(this).hasClass('c-open')) {
+                        $(this).find('ul').slideUp(350);
+                        $(this).removeClass('c-open');
+                    } else {
+                        $(this).find('ul').slideDown(350);
+                        $(this).addClass('c-open');
+                    }
+                })
+            });
+        })
+    </script>
+    <script>
+        // 创建图表
+        function createKendoPieChart(conf) {
+            $(conf.selector).kendoChart({
+                title: {
+                    text: conf.data.title
+                },
+                legend: {
+                    position: "top"
+                },
+                theme: 'bootstrap',
+                seriesDefaults: {
+                    labels: {
+                        template: "#= category # - #= kendo.format('{0:P}', percentage)#",
+                        position: "outsideEnd",
+                        visible: true,
+                        background: "transparent"
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    data: conf.data.series
+                }],
+                tooltip: {
+                    visible: true,
+                    template: "#= category # - #= kendo.format('{0:P}', percentage) #"
+                }
+            });
+            $(window).resize(function () {
+                $(conf.selector).data("kendoChart").refresh();
+            });
+        }
+
+        function initKendoPieChart(conf) {
+            // 异步请求后台数据
+            $.ajax({
+                url: conf.url,
+                type: 'GET',
+                dataType: conf.dataType,
+                success: function (res) {
+                    //获取数据成功
+                    if (res.result) {
+                        var data = {
+                            series: res.data.series
+                        };
+                        createKendoPieChart({
+                            selector: conf.container, // 图表窗器
+                            data: data // 图表数据
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+    <script>
+        $(function () {
+            initKendoPieChart({
+                url: 'https://o.qcloud.com/static_api/v3/components/charts_pie/demo.json',
+                dataType: 'json',
+                container: '#chart_1490077434069'
+            });
+        });
+    </script>
+    <script>
+        // 创建图表
+        function createKendoLineChart(conf) {
+            $(conf.selector).kendoChart({
+                transitions: false,
+                legend: {
+                    position: "top"
+                },
+                theme: 'bootstrap',
+                seriesDefaults: {
+                    type: 'line',
+                    style: "smooth",
+                    markers: {
+                        visible: false
+                    }
+                },
+                series: conf.data.series,
+                categoryAxis: {
+                    majorGridLines: {
+                        visible: false
+                    },
+                    categories: conf.data.categories,
+                    labels: {
+                        rotation: "auto"
+                    }
+                },
+                tooltip: {
+                    visible: true,
+                    template: "#= category # #= value #"
+                }
+            });
+            //重新绘制
+            $(window).on('resize', function () {
+                var chart = $(conf.selector).data("kendoChart");
+                chart.redraw();
+            });
+        }
+
+        function initKendoLineChart(conf) {
+            // 异步请求后台数据
+            $.ajax({
+                url: conf.url,
+                type: 'GET',
+                dataType: conf.dataType,
+                success: function (res) {
+                    //获取数据成功
+                    if (res.result) {
+                        var data = {
+                            series: res.data.series,
+                            categories: res.data.categories
+                        };
+                        createKendoLineChart({
+                            selector: conf.container, // 图表窗器
+                            data: data // 图表数据
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+    <script>
+        $(function () {
+            initKendoLineChart({
+                url: 'https://o.qcloud.com/static_api/v3/components/charts_line/demo.json',
+                dataType: 'json',
+                container: '#chart_1490077418166'
+            });
+        });
+    </script>
+</%block>

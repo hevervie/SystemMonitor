@@ -1,25 +1,166 @@
-{% extends "admin/base.html" %}
-{% block common_operation %}
-    <li><a href="/root/manage/"><i class="icon-font">&#xe063;</i>监控告警</a></li>
-    <li><a href="/root/alter/"><i class="icon-font">&#xe014;</i>服务器管理</a></li>
-    <li><a href="/root/alter/"><i class="icon-font">&#xe014;</i>服务器信息详情</a></li>
-    <li><a href="/root/alter/"><i class="icon-font">&#xe014;</i>告警策略配置</a></li>
-{% endblock %}
-{% block extra_operation %}
-    <li><a href="/root/alter/"><i class="icon-font">&#xe014;</i>告警人员管理</a></li>
-    <li><a href="/root/passwd/"><i class="icon-font">&#xe065;</i>密码修改</a></li>
-{% endblock %}
-{% block main %}
-    <div class="result-wrap">
-        <div class="result-title">
-            <h1>欢迎来到集群监控管理界面</h1>
-        </div>
-        <div class="result-content">
-            <div class="short-wrap">
-                <p>当前正在监测的主机共有：<strong>{{ number }}</strong> 个.</p><br/>
-                <p style="color: red">高危主机：<strong>{{ number }}</strong> 个，请及时处理！</p><br/>
-                <p style="color: #da4f49">监控告警：<strong>{{ number }}</strong> 个，请及时处理！</p><br/>
+<%inherit file="base.html"/>
+<%block name="main">
+    <div class="panel panel-default mb0">
+        <div class="panel-heading"> 总览</div>
+        <div class="panel-body">
+            <div class="container-fluid mb0 ">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="king-widget2 king-widget-info king-widget-info m0">
+                            <div class="king-widget-content p20">
+                                <div class="king-counter king-counter-lg">
+                                    <div class="king-counter-label text-uppercase f16">成功告警共</div>
+                                    <div class="king-counter-number-group">
+                                        <span class="king-counter-number white">${all}</span>
+                                        <span class="king-counter-icon ml10"> <i class="fa fa-image"></i> </span>
+                                    </div>
+                                    <div class="king-counter-label text-uppercase f16">次</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 设置面板Start -->
+                        <!-- 设置面板End -->
+                    </div>
+                    <div class="col-md-3">
+                        <div class="king-widget2 king-widget-info king-widget-success m0">
+                            <div class="king-widget-content p20">
+                                <div class="king-counter king-counter-lg">
+                                    <div class="king-counter-label text-uppercase f16">已处理</div>
+                                    <div class="king-counter-number-group">
+                                        <span class="king-counter-number white">${deal}</span>
+                                        <span class="king-counter-icon ml10"> <i class="fa fa-image"></i> </span>
+                                    </div>
+                                    <div class="king-counter-label text-uppercase f16">次</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 设置面板Start -->
+                        <!-- 设置面板End -->
+                    </div>
+                    <div class="col-md-3">
+                        <div class="king-widget2 king-widget-info king-widget-danger m0">
+                            <div class="king-widget-content p20">
+                                <div class="king-counter king-counter-lg">
+                                    <div class="king-counter-label text-uppercase f16">未处理</div>
+                                    <div class="king-counter-number-group">
+                                        <span class="king-counter-number white">${untreate}</span>
+                                        <span class="king-counter-icon ml10"> <i class="fa fa-image"></i> </span>
+                                    </div>
+                                    <div class="king-counter-label text-uppercase f16">次</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 设置面板Start -->
+                        <!-- 设置面板End -->
+                    </div>
+                    <div class="col-md-3">
+                        <div class="king-widget2 king-widget-info king-widget-primary m0">
+                            <div class="king-widget-content p20">
+                                <div class="king-counter king-counter-lg">
+                                    <div class="king-counter-label text-uppercase f16">已连续运行</div>
+                                    <div class="king-counter-number-group">
+                                        <span class="king-counter-number white">${rundays}</span>
+                                        <span class="king-counter-icon ml10"> <i class="fa fa-image"></i> </span>
+                                    </div>
+                                    <div class="king-counter-label text-uppercase f16">天</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 设置面板Start -->
+                        <!-- 设置面板End -->
+                    </div>
+                </div>
             </div>
+            <br/>
+            <br/>
+            <div style="height: 300px; position: relative;" id="chart_1490004289740"
+                 class="king-chart-box chart-line  k-chart" data-role="chart"></div>
         </div>
     </div>
-{% endblock %}
+</%block>
+<%block name="script">
+    <script>
+        $(function () {
+            var li = $('.navi li');
+            li.each(function () {
+                $(this).click(function () {
+                    if ($(this).hasClass('c-open')) {
+                        $(this).find('ul').slideUp(350);
+                        $(this).removeClass('c-open');
+                    } else {
+                        $(this).find('ul').slideDown(350);
+                        $(this).addClass('c-open');
+                    }
+                })
+            });
+        })
+    </script>
+    <script>
+        // 创建图表
+        function createKendoLineChart(conf) {
+            $(conf.selector).kendoChart({
+                transitions: false,
+                legend: {
+                    position: "top"
+                },
+                theme: 'bootstrap',
+                seriesDefaults: {
+                    type: 'line',
+                    style: "smooth",
+                    markers: {
+                        visible: false
+                    }
+                },
+                series: conf.data.series,
+                categoryAxis: {
+                    majorGridLines: {
+                        visible: false
+                    },
+                    categories: conf.data.categories,
+                    labels: {
+                        rotation: "auto"
+                    }
+                },
+                tooltip: {
+                    visible: true,
+                    template: "#= category # #= value #"
+                }
+            });
+            //重新绘制
+            $(window).on('resize', function () {
+                var chart = $(conf.selector).data("kendoChart");
+                chart.redraw();
+            });
+        }
+        function initKendoLineChart(conf) {
+            // 异步请求后台数据
+            $.ajax({
+                url: conf.url,
+                type: 'GET',
+                dataType: conf.dataType,
+                success: function (res) {
+                    //获取数据成功
+                    if (res.result) {
+                        var data = {
+                            series: res.data.series,
+                            categories: res.data.categories
+                        };
+                        createKendoLineChart({
+                            selector: conf.container, // 图表窗器
+                            data: data // 图表数据
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+    <script>
+        $(function () {
+            initKendoLineChart({
+                url: '/sysadm/json?type=warn',
+                dataType: 'json',
+                container: '#chart_1490004289740'
+            });
+        });
+    </script>
+</%block>
