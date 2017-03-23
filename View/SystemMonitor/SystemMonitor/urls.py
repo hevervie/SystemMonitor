@@ -18,21 +18,31 @@ from informations.views import *
 from login.views import *
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^test/$', ajax_test),
-    url(r'^$', index),
-    url(r'^login/$', user_login)
+    url(r'^admin/$', include(admin.site.urls)),
+    # url(r'^test/$', ajax_test),
+
 ]
 login = [
     url(r'^root/$', login_root),
     url(r'^root/passwd/$', login_passwd),
-    url(r'^root/manage', login_manage),
-    url(r'^root/add', login_add),
-    url(r'^root/alter', login_alter),
+    url(r'^root/manager/$', login_manage),
+    url(r'^root/add/$', login_add),
+    url(r'^root/alter/$', login_alter),
+    url(r'^root/delete/$', login_delete),
+    url(r'^root/test', test),
+    url(r'^$', user_login)
 ]
 
 informations = [
-    url(r'^sysadm/$', adm_index),
+    url(r'^sysadm/$', admin_index),
+    url(r'^sysadm/json', admin_index_json),
+    url(r'^sysadm/cpu/$', cpu),
+    url(r'^sysadm/memory/$', memory),
+    url(r'^sysadm/disk/$', disk),
+    url(r'^sysadm/network/$', network),
+    url(r'^sysadm/loginuser/$', loginuser),
+    url(r'^sysadm/port/$', port),
+    url(r'^sysadm/test/$', admin_test),
 ]
 
 urlpatterns += login

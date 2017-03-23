@@ -1,5 +1,7 @@
 from django.db import models
+from django.utils import timezone
 import datetime
+from django.db import connection
 
 
 # Create your models here.
@@ -175,6 +177,76 @@ class receive(models.Model):
     def __unicode__(self):
         return self.id
 
+    def get_receive_by_time(self, date_from=None, date_to=None):
+        cursor = connection.cursor()
+        # 都为空
+        if date_from is None and date_to is None:
+            rtu = receive.objects.all()
+            data = []
+            for i in rtu:
+                data.append(i)
+            return data
+
+        elif date_from is None:  # 起始时间为空
+            # dt = datetime.datetime.strptime(date_to, "%Y-%m-%d %H:%M:%S")
+            # return receive.objects.filter(datetime__lt=dt)
+            cursor.execute("select * from informations_receive where  datetime > '%s'" % date_from)
+            data = []
+            for i in cursor:
+                data.append(i)
+            return data
+
+        elif date_to is None:  # 结束时间为空
+            # df = datetime.datetime.strptime(date_from, "%Y-%m-%d %H:%M:%S")
+            # return receive.objects.filter(datetime__gt=df)
+            cursor.execute("select * from informations_receive where  datetime < '%s'" % date_from)
+            data = []
+            for i in cursor:
+                data.append(i)
+            return data
+        else:  # 都不为空
+            # df = datetime.datetime.strptime(date_from, "%Y-%m-%d %H:%M:%S")
+            # dt = datetime.datetime.strptime(date_to, "%Y-%m-%d %H:%M:%S")
+            # return receive.objects.filter(datetime__range=(df, dt))
+            cursor.execute(
+                "select * from informations_receive where  datetime > '%s' and datetime < '%s'" % (date_from, date_to))
+            data = []
+            for i in cursor:
+                data.append(i)
+            return data
+
+    def get_receive_by_time_count(self, date_from=None, date_to=None):
+        cursor = connection.cursor()
+        if date_from is None and date_to is None:
+            return receive.objects.all().count()
+        elif date_from is None:  # 起始时间为空
+            # dt = datetime.datetime.strptime(date_to, "%Y-%m-%d %H:%M:%S")
+            # return receive.objects.filter(datetime__lt=dt).count()
+            return cursor.execute("select * from informations_receive where  datetime > '%s'" % date_from)
+        elif date_to is None:  # 结束时间为空
+            # df = datetime.datetime.strptime(date_from, "%Y-%m-%d %H:%M:%S")
+            # return receive.objects.filter(datetime__gt=df).count()
+            return cursor.execute("select * from informations_receive where  datetime < '%s'" % date_from)
+        else:  # 都不为空
+            # df = datetime.datetime.strptime(date_from, "%Y-%m-%d %H:%M:%S")
+            # dt = datetime.datetime.strptime(date_to, "%Y-%m-%d %H:%M:%S")
+            # return receive.objects.filter(datetime__range=(df, dt)).count()
+            return cursor.execute(
+                "select * from informations_receive where  datetime > '%s' and datetime < '%s'" % (
+                    date_from, date_to))
+
+    def get_all_receive(self):
+        return receive.objects.all()
+
+    def get_run_days(self):
+        recv = receive.objects.all()[0]
+        df = recv.datetime
+        print(df)
+        dt = datetime.datetime.now()
+        df = datetime.datetime.strptime(df.strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+        dt = datetime.datetime.strptime(dt.strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+        return (dt - df).days
+
 
 # /*=====================================================*/
 # /*     table: alarm            警告信息                 */
@@ -228,3 +300,92 @@ class port(models.Model):
 
     def __unicode__(self):
         return self.port
+
+
+# 告警库，需要告警的保存到此数据库中
+class warn(models.Model):
+    alarmid = models.ForeignKey(alarm)  # 告警id
+    datetime = models.DateTimeField(auto_created=True)  # 告警时间
+    status = models.IntegerField(default=0)  # 告警状态 # 0 未处理 1 已处理
+    type = models.IntegerField(default=0)  # 告警级别 0 一般 1：重要 2:严重
+
+    def get_warn_count_by_type(self, types=None):
+        if types is None:
+            return warn.objects.count()
+        else:
+            return warn.objects.filter(type=types).count()
+
+    def get_warn_by_type(self, types=None):
+        if types is None:
+            return warn.objects.all()
+        else:
+            return warn.objects.filter(type=types)
+
+    def get_warn_count_by_status(self, status=None):
+        if status is None:
+            return warn.objects.count()
+        else:
+            return warn.objects.filter(status=status).count()
+
+    def get_warn_by_status(self, status=None):
+        if status is None:
+            return warn.objects.all()
+        else:
+            return warn.objects.filter(status=status)
+
+    def get_warn_by_time(self, date_from=None, date_to=None):
+        # 都为空
+        cursor = connection.cursor()
+        if date_from is None and date_to is None:
+            rtu = warn.objects.all()
+            data = []
+            for i in rtu:
+                data.append(i)
+            return data
+        elif date_from is None:  # 起始时间为空
+            # dt = datetime.datetime.strptime(date_to, "%Y-%m-%d %H:%M:%S")
+            # return warn.objects.filter(datetime__lt=dt)
+            cursor.execute("select * from informations_warn where  datetime > '%s'" % date_from)
+            data = []
+            for i in cursor:
+                data.append(i)
+            return data
+        elif date_to is None:  # 结束时间为空
+            # df = datetime.datetime.strptime(date_from, "%Y-%m-%d %H:%M:%S")
+            # return warn.objects.filter(datetime__gt=df)
+            cursor.execute("select * from informations_warn where  datetime < '%s'" % date_from)
+            data = []
+            for i in cursor:
+                data.append(i)
+            return data
+        else:  # 都不为空
+            # df = datetime.datetime.strptime(date_from, "%Y-%m-%d %H:%M:%S")
+            # dt = datetime.datetime.strptime(date_to, "%Y-%m-%d %H:%M:%S")
+            # return warn.objects.filter(datetime__range=(df, dt))
+            cursor.execute(
+                "select * from informations_warn where  datetime > '%s' and datetime < '%s'" % (date_from, date_to))
+            data = []
+            for i in cursor:
+                data.append(i)
+            return data
+
+    def get_warn_by_time_count(self, date_from=None, date_to=None):
+        cursor = connection.cursor()
+        if date_from is None and date_to is None:
+            return warn.objects.all().count()
+        elif date_from is None:  # 起始时间为空
+            # dt = datetime.datetime.strptime(date_to, "%Y-%m-%d %H:%M:%S")
+            # return warn.objects.filter(datetime__lt=dt).count()
+            return cursor.execute("select * from informations_warn where  datetime > '%s'" % date_from)
+        elif date_to is None:  # 结束时间为空
+            # df = datetime.datetime.strptime(date_from, "%Y-%m-%d %H:%M:%S")
+            # return warn.objects.filter(datetime__gt=df).count()
+            return cursor.execute("select * from informations_warn where  datetime < '%s'" % date_from)
+        else:  # 都不为空
+            # df = datetime.datetime.strptime(date_from, "%Y-%m-%d %H:%M:%S")
+            # dt = datetime.datetime.strptime(date_to, "%Y-%m-%d %H:%M:%S")
+            # return warn.objects.filter(datetime__range=(df, dt)).count()
+
+            return cursor.execute(
+                "select * from informations_warn where  datetime > '%s' and datetime < '%s'" % (
+                    date_from, date_to))
