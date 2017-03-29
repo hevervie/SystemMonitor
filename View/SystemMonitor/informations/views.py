@@ -63,7 +63,6 @@ def admin_index_json(request):
                 "result": True,
                 "message": "success",
                 "data": {
-
                     "series": [
                         {
                             "name": yesterday + "告警监测",
